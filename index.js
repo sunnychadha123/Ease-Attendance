@@ -4,7 +4,28 @@ const bodyParser = require('body-parser')
 const request = require('request')
 const path = require('path')
 const app = express()
+const http = require("http")
 const port = process.env.PORT || 4000
+const WebSocket = require("ws");
+
+
+
+
+const wsServer = new WebSocket.Server({noServer: true})
+
+wsServer.on("connection", socket => {
+  console.log("new client connected")
+  socket.on("message", data => {
+    console.log('Client says : ' + data);
+  });
+  socket.on("close", () => {
+    console.log("Client has disconnected");
+  })
+  socket.send("hello client. This is a message from the server")
+})
+
+
+
 
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '/')));
@@ -38,6 +59,9 @@ app.get('/zoomverify/verifyzoom.html', (req, res) => {
 
 app.post('/', (req, res) => {
   console.log(req.body)
+  wsServer.clients.forEach((client) =>{
+    client.send(req.body.event);
+  })
 })
 
 app.post('/deauthorize', (req, res) => {
@@ -73,4 +97,9 @@ app.post('/deauthorize', (req, res) => {
   }
 })
 
-app.listen(port, () => console.log(`Unsplash Chatbot for Zoom listening on port ${port}!`))
+const server = app.listen(port, () => console.log(`Unsplash Chatbot for Zoom listening on port ${port}!`))
+server.on('upgrade', (request, socket, head) => {
+  wsServer.handleUpgrade(request, socket, head, socket => {
+    wsServer.emit('connection', socket, request);
+  });
+});

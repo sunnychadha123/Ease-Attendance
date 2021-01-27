@@ -38,5 +38,18 @@
    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
    <script type="text/javascript"  charset="UTF-8"  src="main.js"></script>
+    <script>
+        const socket = new WebSocket('ws://localhost:4000');
+
+        socket.addEventListener("open", () => {
+            console.log("we are connected")
+            socket.send("hello from client")
+
+        })
+        socket.addEventListener('message', function (event) {
+            console.log('Message from server ', event.data);
+        });
+
+    </script>
  </body>
 </html>
