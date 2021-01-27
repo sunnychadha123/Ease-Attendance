@@ -2,21 +2,15 @@ require('dotenv').config()
 const express = require('express')
 const bodyParser = require('body-parser')
 const request = require('request')
-const app = express()
 const path = require('path')
+const app = express()
 const port = process.env.PORT || 4000
-const mongoose = require("mongoose")
 
+app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '/')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 })
-
-app.post('/', (req, res) => {
-  console.log(req.body)
-  console.log("cool")
-})
-
 
 app.get('/authorize', (req, res) => {
   res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid)
@@ -42,9 +36,8 @@ app.get('/zoomverify/verifyzoom.html', (req, res) => {
   res.send(process.env.zoom_verification_code)
 })
 
-app.post('/unsplash', (req, res) => {
+app.post('/', (req, res) => {
   console.log(req.body)
-  res.send('Chat received')
 })
 
 app.post('/deauthorize', (req, res) => {
@@ -81,4 +74,3 @@ app.post('/deauthorize', (req, res) => {
 })
 
 app.listen(port, () => console.log(`Unsplash Chatbot for Zoom listening on port ${port}!`))
-
