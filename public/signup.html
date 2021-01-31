@@ -16,7 +16,7 @@
             <div class="signup-content">
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
-                    <form method="POST" class="register-form" id="register-form">
+                    <form method="POST" action="" class="register-form" id="register-form">
                         <div class="form-group">
                             <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
                             <input type="text" name="name" id="name" placeholder="Your Name"/>
@@ -39,7 +39,7 @@
                     </form>
                 </div>
                 <div class="signup-image">
-                    <figure><img src="Images/TeacherImage1.png" alt="sing up image"></figure>
+                    <figure><img src="Images/TeacherImage1.png" ></figure>
                     <a href="#" class="signup-image-link">I already have an account</a>
                 </div>
             </div>
@@ -47,5 +47,28 @@
     </section>
 </div>
 <script src="vendor/jquery/jquery.min.js"></script>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-analytics.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+        apiKey: "AIzaSyArNouw56zZhTG5zuwFAYuev3zlK02VMok",
+        authDomain: "easeattendance-c68ed.firebaseapp.com",
+        projectId: "easeattendance-c68ed",
+        storageBucket: "easeattendance-c68ed.appspot.com",
+        messagingSenderId: "200365032412",
+        appId: "1:200365032412:web:4935cf8c68760d25818519",
+        measurementId: "G-HW6X22SK2H"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+</script>
 </body>
 </html>
