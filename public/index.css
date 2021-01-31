@@ -26,6 +26,11 @@
 #login-link{
   color: black;
 }
+
+.navbar{
+  background-color: white;
+}
+
 .icon-bar{
   width: 22px;
   height: 2px;
@@ -68,10 +73,7 @@
   transform: rotate(0);
   background-color: black;
 }
-a.middle
-{
-  position: relative;
-}
+
 
 a.middle:before {
   content: "";
@@ -89,3 +91,38 @@ a.middle:hover:before {
   visibility: visible;
   transform: scaleX(1);
 }
+
+.landing-page-container{
+  margin-top: 150px;
+}
+.landing-page-text{
+  margin-top: 200px;
+  min-width: 300px !important;
+}
+.landing-page-image{
+  min-width: 500px !important;
+}
+.secondary-text{
+  color: grey;
+}
+.sign-up-text{
+  margin-top: 15px;
+  width: 100px;
+  background-color: #ee6165;
+  padding-right: 10px !important;
+  padding-left: 23px !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25) !important;
+}
+.sign-up-text:hover{
+  color: white;
+}
+
+@media (max-width: 991px){
+  .landing-page-text{
+    margin-top: -10px;
+    margin-bottom: 100px;
+    min-width: 300px !important;
+  }
+}
+

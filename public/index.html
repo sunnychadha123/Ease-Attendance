@@ -21,15 +21,18 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <!-- MDB core JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-    <link rel="stylesheet" href="../modules/all.min.css">
-    <link rel="stylesheet" type="text/css" href="../modules/font-awesome.css">
+
+    <link rel="stylesheet" href="modules/all.min.css">
+    <link rel="stylesheet" type="text/css" href="modules/font-awesome.css">
+
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     <link type="text/css" rel="stylesheet" href="index.css"/>
 
 </head>
-<body class="text-center">
+
 <nav class="navbar fixed-top navbar-expand-lg">
-    <a class="navbar-brand" href="#"><img  class="logo" src="../Images/Ease%20Attendance%20Header%20Logo.png"></a>
+    <a class="navbar-brand" href="#"><img  class="logo" src="Images/Ease%20Attendance%20Header%20Logo.png"></a>
+
     <button class="navbar-toggler navbar-light collapsed" type="button" data-toggle="collapse" data-target="#main-navigation">
         <span class="icon-bar top-bar"></span>
         <span class="icon-bar middle-bar"></span>
@@ -55,22 +58,26 @@
         </ul>
     </div>
 </nav>
-    <div class="container">
-        <div class="row">
-            <div class="col-4">
-
+<body class="text-center">
+    <div class="container landing-page-container">
+        <div class="row justify-content-center">
+            <div class="col landing-page-image">
+                <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+                <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_SuD7G5.json"  background="transparent"  speed="1"  style="width: 100%; height: 100%;"  loop  autoplay></lottie-player>
             </div>
-            <div class="col-4">
-                <h1 class="title-text">Simplify the Process</h1>
-                <h6 class="secondary-text">
+            <div class="col-4 text-left landing-page-text">
+                <h3 class="title-text">Simplify the Process</h3>
+                <h5 class="secondary-text">
                     We know that teaching through Zoom can be tough so at least let us help you with your attendance. Join now and make your life easier.
-                </h6>
+                </h5>
+                <a class="nav-link sign-up-text" href="Signup.html">Sign Up</a>
             </div>
         </div>
     </div>
-   <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
-   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
-       <script type="text/javascript"  charset="UTF-8"  src="../main.js"></script>
+ </body>
+<script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+<script type="text/javascript"  charset="UTF-8"  src="main.js"></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="/__/firebase/8.2.5/firebase-app.js"></script>
 
@@ -80,5 +87,5 @@
 
     <!-- Initialize Firebase -->
     <script src="/__/firebase/init.js"></script>
- </body>
+
 </html>
