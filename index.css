@@ -1,49 +1,91 @@
-html,
-body {
-  height: 100%;
+.logo{
+  width: 300px;
+}
+.nav-link{
+  color: #161616;
+  font-family: "Roboto", sans-serif;
+}
+.middle:hover{
+ color: black;
+
+}
+.nav-right{
+  margin-left: 30px;
+}
+.sign-up:hover{
+  color: white;
+}
+.sign-up{
+
+  background-color: #ee6165;
+  padding-right: 19px !important;
+  padding-left: 19px !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25) !important;
+}
+#login-link{
+  color: black;
+}
+.icon-bar{
+  width: 22px;
+  height: 2px;
+  background-color: #000000;
+  display: block;
+  transition: all 0.2s;
+  margin-top: 4px;
+}
+.navbar-toggler {
+  border: none;
+}
+.navbar-toggler .top-bar {
+  transform: rotate(45deg);
+  transform-origin: 10% 10%;
+  background-color: #ee6165;
 }
 
-body {
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: flex;
-  -ms-flex-align: center;
-  -ms-flex-pack: center;
-  -webkit-box-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  justify-content: center;
-  padding-top: 40px;
-  padding-bottom: 40px;
-  background-color: #f5f5f5;
+.navbar-toggler .middle-bar {
+  opacity: 0;
+  background-color: #ee6165;
 }
 
-.form-signin {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+.navbar-toggler .bottom-bar {
+  transform: rotate(-45deg);
+  transform-origin: 10% 90%;
+  background-color: #ee6165;
 }
-.form-signin .checkbox {
-  font-weight: 400;
+
+.navbar-toggler.collapsed .top-bar {
+  transform: rotate(0);
+  background-color: black;
 }
-.form-signin .form-control {
+
+.navbar-toggler.collapsed .middle-bar {
+  opacity: 1;
+  background-color: black;
+}
+
+.navbar-toggler.collapsed .bottom-bar {
+  transform: rotate(0);
+  background-color: black;
+}
+a.middle
+{
   position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
 }
-.form-signin .form-control:focus {
-  z-index: 2;
+
+a.middle:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #ee6165;
+  visibility: hidden;
+  transform: scaleX(0);
+  transition: all 0.3s ease-in-out;
 }
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+a.middle:hover:before {
+  visibility: visible;
+  transform: scaleX(1);
 }
