@@ -16,6 +16,7 @@
   color: white;
 }
 .sign-up{
+
   background-color: #ee6165;
   padding-right: 19px !important;
   padding-left: 19px !important;
@@ -25,9 +26,11 @@
 #login-link{
   color: black;
 }
+
 .navbar{
   background-color: white;
 }
+
 .icon-bar{
   width: 22px;
   height: 2px;
@@ -71,6 +74,7 @@
   background-color: black;
 }
 
+
 a.middle:before {
   content: "";
   position: absolute;
@@ -87,6 +91,7 @@ a.middle:hover:before {
   visibility: visible;
   transform: scaleX(1);
 }
+
 .landing-page-container{
   margin-top: 150px;
 }
@@ -120,3 +125,4 @@ a.middle:hover:before {
     min-width: 300px !important;
   }
 }
+
