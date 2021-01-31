@@ -156,7 +156,7 @@ figure {
     display: inline-block;
     background: #e77474;
     color: #fff;
-    border-bottom: none;
+    border: none;
     width: auto;
     padding: 15px 39px;
     border-radius: 55px;
@@ -378,6 +378,9 @@ label.valid:after {
     margin-left: 110px;
     margin-right: 20px;
     margin-top: 10px; }
+#signUpMessage{
+    color: #720707;
+}
 
 @media screen and (max-width: 1200px) {
     .container {
@@ -453,4 +456,4 @@ label.valid:after {
         margin-right: 0px;
         margin-bottom: 10px; } }
 
-/*# sourceMappingURL=style.css.map */
+

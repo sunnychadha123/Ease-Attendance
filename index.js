@@ -7,8 +7,18 @@ const app = express()
 const http = require("http")
 const port = process.env.PORT || 4000
 const WebSocket = require("ws");
-
-
+var firebase = require("firebase/app");
+require("firebase/auth");
+require("firebase/firestore");
+const firebaseConfig = {
+  apiKey: "AIzaSyArNouw56zZhTG5zuwFAYuev3zlK02VMok",
+  authDomain: "easeattendance-c68ed.firebaseapp.com",
+  projectId: "easeattendance-c68ed",
+  storageBucket: "easeattendance-c68ed.appspot.com",
+  messagingSenderId: "200365032412",
+  appId: "1:200365032412:web:4935cf8c68760d25818519",
+  measurementId: "G-HW6X22SK2H"
+};
 
 
 const wsServer = new WebSocket.Server({noServer: true})
