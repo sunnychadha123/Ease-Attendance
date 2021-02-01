@@ -2,7 +2,7 @@
 
 
 const auth = firebase.auth()
-
+const firestore = firebase.firestore()
 
 
 function authenticate(){
@@ -25,9 +25,20 @@ function authenticate(){
                     if(userEmail == null){
                         userEmail = ""
                     }
-                    localStorage.setItem("userDisplayName",userDisplayName)
-                    localStorage.setItem("userEmail",userEmail)
-                    window.location.href = "dashboard.html";
+                    const user = cred.user
+                    firestore.collection("Users").doc(user.uid).set({
+                        name: user.displayName,
+                        email: user.email
+                    })
+                        .then(function() {
+                            localStorage.setItem("userDisplayName",userDisplayName)
+                            localStorage.setItem("userEmail",userEmail)
+                            window.location.href = "dashboard.html";
+                        })
+                        .catch(function(error) {
+                            document.getElementById("signUpMessage").innerHTML = error.message
+                        });
+
                 }).catch((e) => {
                     document.getElementById("signUpMessage").innerHTML = e.message
                 })
