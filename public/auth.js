@@ -25,19 +25,24 @@ function authenticate(){
                     if(userEmail == null){
                         userEmail = ""
                     }
-                    const user = cred.user
-                    firestore.collection("Users").doc(user.uid).set({
-                        name: user.displayName,
-                        email: user.email
-                    })
-                        .then(function() {
-                            localStorage.setItem("userDisplayName",userDisplayName)
-                            localStorage.setItem("userEmail",userEmail)
-                            window.location.href = "dashboard.html";
+                    auth.currentUser.sendEmailVerification().then(() => {
+                        const user = cred.user
+                        firestore.collection("Users").doc(user.uid).set({
+                            name: user.displayName,
+                            email: user.email,
                         })
-                        .catch(function(error) {
-                            document.getElementById("signUpMessage").innerHTML = error.message
-                        });
+                            .then(function() {
+                                localStorage.setItem("userDisplayName",userDisplayName)
+                                localStorage.setItem("userEmail",userEmail)
+                                window.location.href = "verify.html";
+                            })
+                            .catch(function(error) {
+                                document.getElementById("signUpMessage").innerHTML = error.message
+                            });
+                    }).catch((error) => {
+                        document.getElementById("signUpMessage").innerHTML = error.message
+                    })
+
 
                 }).catch((e) => {
                     document.getElementById("signUpMessage").innerHTML = e.message
@@ -76,6 +81,16 @@ function login(){
 
     }).catch(err => {
         document.getElementById("loginMessage").innerHTML = err.message;
+    })
+
+}
+function resend(){
+    auth.currentUser.sendEmailVerification().then(() => {
+        document.getElementById("resend-title").innerHTML = "Please verify your email"
+        document.getElementById("resend-description").innerHTML = "A new verification link has just been sent to your email"
+    }).catch((error) => {
+        document.getElementById("resend-title").innerHTML = "An error has occurred"
+        document.getElementById("resend-description").innerHTML = ""
     })
 
 }
