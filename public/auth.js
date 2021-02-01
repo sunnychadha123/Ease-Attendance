@@ -34,12 +34,8 @@ function authenticate(){
                             .then(function() {
                                 localStorage.setItem("userDisplayName",userDisplayName)
                                 localStorage.setItem("userEmail",userEmail)
-                                auth.signOut().then(r => {
-                                    localStorage.setItem("userDisplayName","")
-                                    localStorage.setItem("userEmail","")
-                                    window.location.href = "verify.html";
-                                }).catch(err => {
-                                    console.log(err.message)});
+                                window.location.href = "verify.html";
+
                             })
                             .catch(function(error) {
                                 document.getElementById("signUpMessage").innerHTML = error.message
