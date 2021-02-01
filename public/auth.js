@@ -1,7 +1,6 @@
 
 
 
-
 const auth = firebase.auth()
 
 
@@ -18,6 +17,16 @@ function authenticate(){
                         displayName: name
                     }
                 ).then(function() {
+                    var userEmail = cred.user.email
+                    var userDisplayName = cred.user.displayName
+                    if(userDisplayName == null){
+                        userDisplayName = ""
+                    }
+                    if(userEmail == null){
+                        userEmail = ""
+                    }
+                    localStorage.setItem("userDisplayName",userDisplayName)
+                    localStorage.setItem("userEmail",userEmail)
                     window.location.href = "dashboard.html";
                 }).catch((e) => {
                     document.getElementById("signUpMessage").innerHTML = e.message
@@ -42,6 +51,16 @@ function login(){
     const email = document.getElementById("login-email").value
     const pass = document.getElementById("login-pass").value
     auth.signInWithEmailAndPassword(email,pass).then(cred => {
+        var userEmail = cred.user.email
+        var userDisplayName = cred.user.displayName
+        if(userDisplayName == null){
+            userDisplayName = ""
+        }
+        if(userEmail == null){
+            userEmail = ""
+        }
+        localStorage.setItem("userDisplayName",userDisplayName)
+        localStorage.setItem("userEmail",userEmail)
         window.location.href = "dashboard.html";
 
     }).catch(err => {

@@ -1,7 +1,7 @@
-setTimeout(() => {
-    document.getElementById("user-name").innerHTML = firebase.auth().currentUser.displayName
-    document.getElementById("user-email").innerHTML = firebase.auth().currentUser.email
-},3000)
+
+document.getElementById("user-name").innerHTML = localStorage.getItem("userDisplayName")
+document.getElementById("user-email").innerHTML = localStorage.getItem("userEmail")
+
 
 function logout(){
     auth.signOut().then(r => {
