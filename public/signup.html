@@ -30,19 +30,19 @@
                             <input type="password" name="pass" id="pass" placeholder="Password"/>
                         </div>
                         <div class="form-group">
-                            <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                            <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
                             <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password"/>
                         </div>
                         <h6 id="signUpMessage"></h6>
                         <div class="form-group form-button">
-                            <button onclick="signup()" type="button" name="signup" id="signup" class="form-submit" value="Sign Up">Sign Up</button>
+                            <button onclick="authenticate()" type="button" name="signup" id="signup" class="form-submit" value="Sign Up">Sign Up</button>
                         </div>
                     </div>
 
                 </div>
                 <div class="signup-image">
                     <figure><img src="Images/TeacherImage1.png" ></figure>
-                    <a href="#" class="signup-image-link">I already have an account</a>
+                    <a href="login.html" class="signup-image-link">I already have an account</a>
                 </div>
             </div>
         </div>
@@ -57,9 +57,8 @@
      https://firebase.google.com/docs/web/setup#available-libraries -->
 <script src="https://www.gstatic.com/firebasejs/8.2.5/firebase-analytics.js"></script>
 
+
 <script>
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
     var firebaseConfig = {
         apiKey: "AIzaSyArNouw56zZhTG5zuwFAYuev3zlK02VMok",
         authDomain: "easeattendance-c68ed.firebaseapp.com",
@@ -75,5 +74,5 @@
 
 </script>
 </body>
-<script type="text/javascript" src="signup.js" ></script>
+<script type="text/javascript" src="auth.js" ></script>
 </html>
