@@ -5,33 +5,58 @@ const request = require('request')
 const path = require('path')
 const app = express()
 const http = require("http")
+const https = require("https")
 const port = process.env.PORT || 4000
 const WebSocket = require("ws");
 var firebase = require("firebase/app");
 require("firebase/auth");
 require("firebase/firestore");
-const firebaseConfig = {
-  apiKey: "AIzaSyArNouw56zZhTG5zuwFAYuev3zlK02VMok",
-  authDomain: "easeattendance-c68ed.firebaseapp.com",
-  projectId: "easeattendance-c68ed",
-  storageBucket: "easeattendance-c68ed.appspot.com",
-  messagingSenderId: "200365032412",
-  appId: "1:200365032412:web:4935cf8c68760d25818519",
-  measurementId: "G-HW6X22SK2H"
-};
 
+const options = {
+  hostname: 'https://api.zoom.us/v2',
+  port: 4000,
+  path: '/past_meetings/',
+  method: 'GET'
+}
 
 const wsServer = new WebSocket.Server({noServer: true})
 
+class Meeting{
+  constructor(hostId,meetingName,hostEmail) {
+    this.hostId = hostId
+    this.meetingName = meetingName
+    this.participantsToSend = []
+    this.hostEmail = hostEmail
+    this.finishedTS = new Set()
+    this.messageLog = []
+  }
+}
+
+// Client Websockets
+Clients = {}
+// current meetings going on
+Meetings = {}
+// Email to host id references
+EmailToID = {}
+
+
 wsServer.on("connection", socket => {
-  console.log("new client connected")
-  socket.on("message", data => {
-    console.log('Client says : ' + data);
+  socket.on("message", email => {
+    console.log(email)
+    if(email.includes("@")){
+      Clients[email] = socket
+      socket.id = email
+      if(email in EmailToID){
+        for(i = 0; i < Meetings[EmailToID[email]].messageLog.length;i++){
+          socket.send(Meetings[EmailToID[email]].messageLog[i])
+        }
+      }
+    }
   });
   socket.on("close", () => {
-    console.log("Client has disconnected");
+    console.log(socket.id + " has disconnected");
+    delete Clients[socket.id]
   })
-  socket.send("hello client. This is a message from the server")
 })
 
 
@@ -44,34 +69,99 @@ app.get('/', (req, res) => {
 })
 
 app.get('/authorize', (req, res) => {
+
   res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid)
 })
 
-app.get('/support', (req, res) => {
-  res.send('Contact tommy.gaessler@zoom.us for support.')
-})
-
-app.get('/privacy', (req, res) => {
-  res.send('The Unsplash Chatbot for Zoom does not store any user data.')
-})
-
-app.get('/terms', (req, res) => {
-  res.send('By installing the Unsplash Chatbot for Zoom, you are accept and agree to these terms...')
-})
-
-app.get('/documentation', (req, res) => {
-  res.send('Try typing "island" to see a photo of an island, or anything else you have in mind!')
-})
 
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
   res.send(process.env.zoom_verification_code)
 })
+function remove(array, element) {
+  const index = array.indexOf(element);
 
+  if (index !== -1) {
+    array.splice(index, 1);
+  }
+}
 app.post('/', (req, res) => {
-  console.log(req.body)
-  wsServer.clients.forEach((client) =>{
-    client.send(req.body.event);
-  })
+  res.status(200)
+  res.send()
+  const body = req.body
+  const host_id = body.payload.object.host_id
+  if(Meetings[host_id] == null){
+    Meetings[host_id] = new Meeting(host_id, null,null)
+  }
+  if(!Meetings[host_id].finishedTS.has(body.event_ts)){
+    Meetings[host_id].finishedTS.add(body.event_ts)
+    console.log(body.event_ts)
+    console.log("<====================================================>")
+    console.log(req.body)
+    console.log(req.body.payload.object.participant)
+    console.log("<====================================================>")
+    if(body.event === "meeting.started"){
+      Meetings[host_id].meetingName = body.payload.object.topic
+    }
+    else if(body.event === "meeting.ended"){
+      delete Meetings[host_id]
+    }
+    else if(body.event === "meeting.participant_joined"){
+      const participant = body.payload.object.participant
+      const participantID = participant.id
+      const participantName = participant.user_name
+      const participantEmail = participant.email
+      if(participantID === host_id){
+        EmailToID[participantEmail] = host_id;
+        Meetings[host_id].hostEmail = participantEmail
+        console.log("<host email>")
+        console.log(participantEmail)
+        console.log("<host email>")
+        Meetings[host_id].messageLog.push("Meeting Started: " + Meetings[host_id].meetingName)
+        Meetings[host_id].messageLog.push("joined: " + participantName)
+        Clients[participantEmail].send("Meeting Started: " + Meetings[host_id].meetingName)
+        Clients[participantEmail].send("joined: " + participantName)
+        for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
+          Meetings[host_id].messageLog.push("joined: " + Meetings[host_id].participantsToSend[i])
+          Clients[participantEmail].send("joined: " + Meetings[host_id].participantsToSend[i])
+        }
+      }
+      else{
+        if(Meetings[host_id].hostEmail == null){
+          Meetings[host_id].participantsToSend.push(participantName)
+          // TODO: remove participants in queue after moving to message
+        }
+        else{
+          Meetings[host_id].messageLog.push("joined: " + participantName)
+          Clients[Meetings[host_id].hostEmail].send("joined: " + participantName)
+        }
+      }
+
+    }
+    else if(body.event === "meeting.participant_left"){
+      const participant = body.payload.object.participant
+      const participantID = participant.id
+      const participantName = participant.user_name
+      const participantEmail = participant.email
+      if(Meetings[host_id].hostEmail == null){
+        remove(Meetings[host_id].participantsToSend,participantName)
+      }
+      else{
+        if(participantEmail === Meetings[host_id].hostEmail){
+          delete EmailToID[participantEmail]
+          Meetings[host_id].messageLog.push("Meeting Ended: " + Meetings[host_id].meetingName)
+          Clients[participantEmail].send("Meeting Ended: " + Meetings[host_id].meetingName)
+        }
+        Meetings[host_id].messageLog.push("Left: " + participantName)
+        Clients[Meetings[host_id].hostEmail].send("Left: " + participantName)
+      }
+
+    }
+
+
+  }
+
+
+
 })
 
 app.post('/deauthorize', (req, res) => {
@@ -107,7 +197,7 @@ app.post('/deauthorize', (req, res) => {
   }
 })
 
-const server = app.listen(port, () => console.log(`Unsplash Chatbot for Zoom listening on port ${port}!`))
+const server = app.listen(port, () => console.log(`Server Up and Running on ${port}!`))
 server.on('upgrade', (request, socket, head) => {
   wsServer.handleUpgrade(request, socket, head, socket => {
     wsServer.emit('connection', socket, request);
