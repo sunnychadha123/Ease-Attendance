@@ -19,5 +19,6 @@
     <orderEntry type="library" name="firebase-auth" level="application" />
     <orderEntry type="library" name="firebase-firestore" level="application" />
     <orderEntry type="library" name="firebase-analytics" level="application" />
+    <orderEntry type="library" name="iconify" level="application" />
   </component>
 </module>

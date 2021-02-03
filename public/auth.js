@@ -98,8 +98,8 @@ function resend(){
 function logout(){
     auth.signOut().then(r => {
         console.log("user has signed out")
-        localStorage.setItem("userDisplayName","")
-        localStorage.setItem("userEmail","")
+        localStorage.setItem("userDisplayName",null)
+        localStorage.setItem("userEmail",null)
         window.location.href = "index.html";
     }).catch(err => {console.log(err.message)});
 }

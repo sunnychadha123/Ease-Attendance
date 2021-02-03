@@ -116,23 +116,23 @@ app.post('/', (req, res) => {
         console.log("<host email>")
         console.log(participantEmail)
         console.log("<host email>")
-        Meetings[host_id].messageLog.push("Meeting Started: " + Meetings[host_id].meetingName)
-        Meetings[host_id].messageLog.push("joined: " + participantName)
-        Clients[participantEmail].send("Meeting Started: " + Meetings[host_id].meetingName)
-        Clients[participantEmail].send("joined: " + participantName)
+        Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
+        Meetings[host_id].messageLog.push("participant.joined " + participantName)
+        Clients[participantEmail].send("meeting.started " + Meetings[host_id].meetingName)
+        Clients[participantEmail].send("participant.joined " + participantName)
         for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
-          Meetings[host_id].messageLog.push("joined: " + Meetings[host_id].participantsToSend[i])
-          Clients[participantEmail].send("joined: " + Meetings[host_id].participantsToSend[i])
+          Meetings[host_id].messageLog.push("participant.joined " + Meetings[host_id].participantsToSend[i])
+          Clients[participantEmail].send("participant.joined " + Meetings[host_id].participantsToSend[i])
         }
+        Meetings[host_id].participantsToSend.splice(0,Meetings[host_id].participantsToSend.length)
       }
       else{
         if(Meetings[host_id].hostEmail == null){
           Meetings[host_id].participantsToSend.push(participantName)
-          // TODO: remove participants in queue after moving to message
         }
         else{
-          Meetings[host_id].messageLog.push("joined: " + participantName)
-          Clients[Meetings[host_id].hostEmail].send("joined: " + participantName)
+          Meetings[host_id].messageLog.push("participant.joined " + participantName)
+          Clients[Meetings[host_id].hostEmail].send("participant.joined " + participantName)
         }
       }
 
@@ -148,11 +148,11 @@ app.post('/', (req, res) => {
       else{
         if(participantEmail === Meetings[host_id].hostEmail){
           delete EmailToID[participantEmail]
-          Meetings[host_id].messageLog.push("Meeting Ended: " + Meetings[host_id].meetingName)
-          Clients[participantEmail].send("Meeting Ended: " + Meetings[host_id].meetingName)
+          Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
+          Clients[participantEmail].send("meeting.ended " + Meetings[host_id].meetingName)
         }
-        Meetings[host_id].messageLog.push("Left: " + participantName)
-        Clients[Meetings[host_id].hostEmail].send("Left: " + participantName)
+        Meetings[host_id].messageLog.push("participant.left " + participantName)
+        Clients[Meetings[host_id].hostEmail].send("participant.left " + participantName)
       }
 
     }

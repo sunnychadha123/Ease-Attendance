@@ -121,3 +121,85 @@ hr{
 .tab-content{
     padding: 50px;
 }
+#participant-table-head{
+    background-color: #ee6165 !important;
+
+}
+.table-head-title{
+    color: white;
+}
+.badge{
+    font-size: 14px;
+}
+.badge-success{
+    background-color: #45d66d;
+    padding: 5px;
+    padding-right: 8px;
+    padding-left: 8px;
+    border-radius: 10px;
+}
+.badge-warning{
+    background-color: #ffc46c;
+    padding: 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    border-radius: 10px;
+}
+.badge-danger{
+    background-color: #e2301a;
+    padding: 5px;
+    padding-right: 11px;
+    padding-left: 11px;
+    border-radius: 10px;
+}
+#logout-button{
+    color: white;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: -2px;
+}
+
+#logout-button:hover{
+    color: #F5B364 !important;
+
+}
+#currentMeeting-name{
+    color: black;
+    margin-bottom: 10px;
+}
+#status{
+    color: black;
+    margin-bottom: 50px;
+}
+
+.dots {
+    margin: 40px auto;
+}
+
+.dot {
+    display: inline-block;
+    border-radius: 50%;
+    background-color: #EEE;
+    height: 13px;
+    width: 13px;
+    margin: 0 2px;
+}
+.dot.dot-success {
+    background-color: #54cb84;
+}
+.dot.dot-warning {
+    background-color: #f0ad4e;
+}
+.dot.dot-danger {
+    background-color: #e23b39;
+}
+.dot.dot-sm {
+    height: 10px;
+    width: 10px;
+}
+.dot.dot-lg {
+    margin: 0 4px;
+    height: 20px;
+    width: 20px;
+}
