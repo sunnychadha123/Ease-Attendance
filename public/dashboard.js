@@ -29,11 +29,12 @@ socket.addEventListener("open", () => {
 
 })
 function clearTable(){
-    const currentNumRows = participantTable.rows
-    for(i = 0; i < currentNumRows; i++){
-        participantTable.deleteRow(0);
+    const currentNumRows = participantTable.rows.length
+    for(i = 0; i < currentNumRows-1; i++){
+        participantTable.deleteRow(1);
     }
 }
+
 socket.addEventListener('message', function (event) {
     const data = event.data.split(" ");
     const eventType = data[0]
@@ -69,6 +70,7 @@ socket.addEventListener('message', function (event) {
         Participants.unshift(new Participant(participantFirst, participantLast, "present"))
         var row = participantTable.insertRow(1)
         row.style.backgroundColor = "#ffffff"
+        row.style.color = "#000000"
         var cell1 = row.insertCell(0)
         var cell2 = row.insertCell(1)
         var cell3 = row.insertCell(2)
@@ -88,7 +90,7 @@ socket.addEventListener('message', function (event) {
         }
         for(i = 0; i < Participants.length; i++){
             if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
-                participantTable.deleteRow(1);
+                participantTable.deleteRow(i+1);
                 Participants.splice(i,1)
                 break
             }
@@ -96,3 +98,99 @@ socket.addEventListener('message', function (event) {
     }
 });
 
+$("#student-search-input-field").on('keyup', function (e) {
+    currValue = $("#student-search-input-field").val();
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        $("#student-search-input-field").blur()
+    }
+    clearTable()
+    for(let i = Participants.length-1; i >= 0; i--){
+        const fullName = Participants[i].firstName + " " + Participants[i].lastName
+        if(fullName.includes(currValue)){
+            var row = participantTable.insertRow(1);
+            row.style.backgroundColor = "#ffffff"
+            row.style.color = "#000000"
+            var cell1 = row.insertCell(0)
+            var cell2 = row.insertCell(1)
+            var cell3 = row.insertCell(2)
+            cell3.innerHTML = Participants[i].state
+            cell1.innerHTML = Participants[i].firstName
+            cell2.innerHTML = Participants[i].lastName
+        }
+    }
+
+});
+function filterClick(clicked_id){
+    document.getElementById(clicked_id).classList.add("filter-active")
+    clearTable()
+    if(clicked_id === "all-filter"){
+        document.getElementById("present-filter").classList.remove("filter-active")
+        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("tardy-filter").classList.remove("filter-active")
+        for(let i = Participants.length-1; i >= 0; i--){
+            var row = participantTable.insertRow(1);
+            row.style.backgroundColor = "#ffffff"
+            row.style.color = "#000000"
+            var cell1 = row.insertCell(0)
+            var cell2 = row.insertCell(1)
+            var cell3 = row.insertCell(2)
+            cell3.innerHTML = Participants[i].state
+            cell1.innerHTML = Participants[i].firstName
+            cell2.innerHTML = Participants[i].lastName
+        }
+    }
+    else if(clicked_id === "present-filter"){
+        document.getElementById("all-filter").classList.remove("filter-active")
+        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("tardy-filter").classList.remove("filter-active")
+        for(let i = Participants.length-1; i >= 0; i--){
+            if(Participants[i].state === "present"){
+                var row = participantTable.insertRow(1);
+                row.style.backgroundColor = "#ffffff"
+                row.style.color = "#000000"
+                var cell1 = row.insertCell(0)
+                var cell2 = row.insertCell(1)
+                var cell3 = row.insertCell(2)
+                cell3.innerHTML = Participants[i].state
+                cell1.innerHTML = Participants[i].firstName
+                cell2.innerHTML = Participants[i].lastName
+            }
+        }
+    }
+    else if(clicked_id === "not-present-filter"){
+        document.getElementById("all-filter").classList.remove("filter-active")
+        document.getElementById("present-filter").classList.remove("filter-active")
+        document.getElementById("tardy-filter").classList.remove("filter-active")
+        for(let i = Participants.length-1; i >= 0; i--){
+            if(Participants[i].state === "not-present"){
+                var row = participantTable.insertRow(1);
+                row.style.backgroundColor = "#ffffff"
+                row.style.color = "#000000"
+                var cell1 = row.insertCell(0)
+                var cell2 = row.insertCell(1)
+                var cell3 = row.insertCell(2)
+                cell3.innerHTML = Participants[i].state
+                cell1.innerHTML = Participants[i].firstName
+                cell2.innerHTML = Participants[i].lastName
+            }
+        }
+    }
+    else if(clicked_id === "tardy-filter"){
+        document.getElementById("all-filter").classList.remove("filter-active")
+        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("present-filter").classList.remove("filter-active")
+        for(let i = Participants.length-1; i >= 0; i--){
+            if(Participants[i].state === "tardy"){
+                var row = participantTable.insertRow(1);
+                row.style.backgroundColor = "#ffffff"
+                row.style.color = "#000000"
+                var cell1 = row.insertCell(0)
+                var cell2 = row.insertCell(1)
+                var cell3 = row.insertCell(2)
+                cell3.innerHTML = Participants[i].state
+                cell1.innerHTML = Participants[i].firstName
+                cell2.innerHTML = Participants[i].lastName
+            }
+        }
+    }
+}

@@ -203,3 +203,28 @@ hr{
     height: 20px;
     width: 20px;
 }
+.filter-button{
+    color: #acacac !important;
+    background: none;
+    border: none !important;
+}
+.filter-button:hover{
+    color: #F5B364 !important;
+    background: none;
+}
+.filter-button:active{
+    background: none !important;
+}
+.filter-active{
+    font-weight: bold!important;
+    color: #F5B364 !important;
+}
+#person-search{
+    width: 225px;
+    margin-top: -10px;
+}
+.input-group-text{
+    background-color: #ffffff !important;
+
+}
+

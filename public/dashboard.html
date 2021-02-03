@@ -85,6 +85,18 @@
                 <h5 id="status">Status:
                     <span id="status-dot" class='dot dot-danger'></span>
                 </h5>
+                <div id="person-search" class="input-group flex-nowrap float-left">
+                    <div id="search-prepend" class="input-group-prepend">
+                        <span class="input-group-text" id="addon-wrapping"><span class="iconify" data-inline="false" data-icon="ant-design:search-outlined" style="font-size: 20px;"></span></span>
+                    </div>
+                    <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Student Name" aria-label="Student Name" aria-describedby="addon-wrapping">
+                </div>
+                <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
+                    <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
+                    <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
+                    <a id="not-present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Present</a>
+                    <a id="tardy-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Tardy</a>
+                </div>
                 <table class="table" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
