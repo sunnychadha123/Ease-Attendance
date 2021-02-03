@@ -49,7 +49,7 @@ socket.addEventListener('message', function (event) {
         document.getElementById("status-dot").classList.add("dot-success")
     }
     else if(eventType === "meeting.ended"){
-        document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + CurrentMeeting + " has ended"
+        document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + CurrentMeeting
         meetingOccuring = false
         CurrentMeeting = ""
         document.getElementById("status-dot").classList.remove("dot-success")
@@ -84,7 +84,7 @@ socket.addEventListener('message', function (event) {
         }
         else if(data.length > 2){
             participantFirst = data[1]
-            participantLast = data[2]
+            participantLast = data[data.length-1]
         }
         for(i = 0; i < Participants.length; i++){
             if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
