@@ -3,7 +3,7 @@
 
 const auth = firebase.auth()
 const firestore = firebase.firestore()
-
+var names = []
 
 function authenticate(){
     const pass = document.getElementById("pass").value
@@ -30,6 +30,7 @@ function authenticate(){
                         firestore.collection("Users").doc(user.uid).set({
                             name: user.displayName,
                             email: user.email,
+                            periods: names
                         })
                             .then(function() {
                                 localStorage.setItem("userDisplayName",userDisplayName)
@@ -63,7 +64,50 @@ function authenticate(){
     }
 }
 
+function addPeriod(){
 
+    const user = auth.currentUser
+    var periodName = document.getElementById("PeriodName").value
+
+    console.log("period name is "+ periodName)
+
+    firestore.collection("Periods").doc(user.uid+periodName).set({
+        names: names,
+    })
+
+    console.log("collection send with "+ names)
+
+    var temp = firestore.collection("Users").doc(user.uid)
+    var prevPeriods = temp.periods
+
+    console.log("prev periods from user "+ prevPeriods)
+
+
+    if (prevPeriods !== undefined) {
+        prevPeriods.add(user.uid+periodName)
+
+        firestore.collection("Users").doc(user.uid).update({
+            periods: prevPeriods
+        })
+    }else{
+        var tempReference = [user.uid+periodName]
+        firestore.collection("Users").doc(user.uid).update({
+            periods: tempReference
+        })
+    }
+    console.log("prev periods from user "+ prevPeriods)
+    names.splice(0,names.length)
+    document.getElementById("list").value = ""
+}
+
+function updateList() {
+    console.log("request to update list sent")
+    var text = document.getElementById("personName").value;
+    names[names.length] = text
+    console.log(names)
+    //Now use appendChild and add it to the list!
+    document.getElementById("list").append(" "+text);
+}
 function login(){
     const email = document.getElementById("login-email").value
     const pass = document.getElementById("login-pass").value
