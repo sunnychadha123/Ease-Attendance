@@ -114,12 +114,16 @@
                     <input type='text' id = 'personName' placeholder="names" />
                     <input onclick="updateList()" type='button' value = 'add to list' id = 'add' >
                 </div>
+                <h1 id='list'></h1>
                 <div>
                     <input type='text' id = 'meetingId' placeholder="meetingID"/>
                     <input type='text' id = 'PeriodName' />
                     <input onclick="addPeriod()" type='button' value = 'add Period to db' id = 'addPeriod' >
                 </div>
-                <h1 id='list'></h1>
+                <div>
+                    <input type='text' id = 'DeletePeriodName' placeholder="delete a period" />
+                    <input onclick="deletePeriod()" type='button' value = 'delete period' id = 'deletePeriodButton' >
+                </div>
 
             </div>
             <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1>asdfasdfasdf</h1></div>

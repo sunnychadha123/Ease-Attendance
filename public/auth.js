@@ -92,6 +92,15 @@ function addPeriod(){
     document.getElementById("list").value = ""
 }
 
+function deletePeriod(){
+    const periodName = document.getElementById("DeletePeriodName").value
+    const userUID = auth.currentUser.uid
+    firestore.collection("Periods").doc(userUID+periodName).delete()
+    firestore.collection("Users").doc(userUID).update({
+        periods : firebase.firestore.FieldValue.arrayRemove(userUID+periodName)
+    })
+}
+
 function updateList() {
     //gets name from editable and displays under buttons, puts in global array 'names'
     var name = document.getElementById("personName").value;
