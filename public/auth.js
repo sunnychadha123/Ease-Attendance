@@ -66,11 +66,11 @@ function authenticate(){
 
 function addPeriod(){
 
+    //following creates a document in 'Periods' collection with the following values
+    //names is constantly being updated with every click of button 'personName' in updateList()
     const user = auth.currentUser
     var periodName = document.getElementById("PeriodName").value
     var meetingId = document.getElementById("meetingId").value
-
-    console.log("period name is "+ periodName)
 
     firestore.collection("Periods").doc(user.uid+periodName).set({
         periodName : periodName,
@@ -78,39 +78,31 @@ function addPeriod(){
         studentsNames: names,
     })
 
-    console.log("collection send with "+ names)
-
+    //adds reference to Period document in 'Period' array in User document
+    //using const var firestore didnt work but firebase.firestore does for some reason
+    //^^that needs a fix lmao
     var temp = firestore.collection("Users").doc(user.uid)
-    var prevPeriods = temp.periods
+    temp.update({
+        periods : firebase.firestore.FieldValue.arrayUnion(user.uid+periodName)
+    })
 
-    console.log("prev periods from user "+ prevPeriods)
-
-
-    if (prevPeriods !== undefined) {
-        prevPeriods.add(user.uid+periodName)
-
-        firestore.collection("Users").doc(user.uid).update({
-            periods: prevPeriods
-        })
-    }else{
-        var tempReference = [user.uid+periodName]
-        firestore.collection("Users").doc(user.uid).update({
-            periods: tempReference
-        })
-    }
-    console.log("prev periods from user "+ prevPeriods)
+    //resets array and visual aids that show array on dashboard
+    document.getElementById("list").innerHTML = ''
     names.splice(0,names.length)
     document.getElementById("list").value = ""
 }
 
 function updateList() {
-    console.log("request to update list sent")
-    var textFirstName = document.getElementById("personName").value;
+    //gets name from editable and displays under buttons, puts in global array 'names'
+    var name = document.getElementById("personName").value;
 
-    names[names.length] = textFirstName
-    console.log(names)
-    //Now use appendChild and add it to the list!
-    document.getElementById("list").append(" "+textFirstName);
+    var codeBlock = '<div class="content">' +
+        '<h3>'+name+'</h3>' +
+        '</div>';
+
+    names[names.length] = name
+    //appends codeblock into list
+    document.getElementById("list").innerHTML = document.getElementById("list").innerHTML+codeBlock
 }
 function login(){
     const email = document.getElementById("login-email").value
