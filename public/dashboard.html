@@ -20,6 +20,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
 
+
     <link rel="stylesheet" href="modules/all.min.css">
     <link rel="stylesheet" type="text/css" href="modules/font-awesome.css">
 
@@ -96,12 +97,22 @@
                     </tbody>
                 </table>
             </div>
-            <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="profile-tab"><h1>asdfasdfasdf</h1></div>
+            <div class="tab-pane fade" id="meetings" role="tabpanel" aria-labelledby="profile-tab"><h1>Create period</h1>
+                <input type='text' id = 'personName' />
+                <input onclick="updateList()" type='button' value = 'add to list' id = 'add' >
+                <input type='text' id = 'PeriodName' />
+                <input onclick="addPeriod()" type='button' value = 'add Period to db' id = 'addPeriod' >
+
+
+                <h1 id='list'></h1>
+
+            </div>
             <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1>asdfasdfasdf</h1></div>
         </div>
     </div>
 
 </div>
+
 
 
 </body>
@@ -128,7 +139,7 @@
     firebase.analytics();
 
 </script>
-<script type="text/javascript" src="auth.js" ></script>
 <script type="text/javascript" src="dashboard.js"></script>
+<script type="text/javascript" src="auth.js" ></script>
 </html>
 
