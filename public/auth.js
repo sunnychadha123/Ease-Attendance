@@ -68,11 +68,14 @@ function addPeriod(){
 
     const user = auth.currentUser
     var periodName = document.getElementById("PeriodName").value
+    var meetingId = document.getElementById("meetingId").value
 
     console.log("period name is "+ periodName)
 
     firestore.collection("Periods").doc(user.uid+periodName).set({
-        names: names,
+        periodName : periodName,
+        meetingId : meetingId,
+        studentsNames: names,
     })
 
     console.log("collection send with "+ names)
@@ -102,11 +105,12 @@ function addPeriod(){
 
 function updateList() {
     console.log("request to update list sent")
-    var text = document.getElementById("personName").value;
-    names[names.length] = text
+    var textFirstName = document.getElementById("personName").value;
+
+    names[names.length] = textFirstName
     console.log(names)
     //Now use appendChild and add it to the list!
-    document.getElementById("list").append(" "+text);
+    document.getElementById("list").append(" "+textFirstName);
 }
 function login(){
     const email = document.getElementById("login-email").value
@@ -127,7 +131,6 @@ function login(){
     }).catch(err => {
         document.getElementById("loginMessage").innerHTML = err.message;
     })
-
 }
 function resend(){
     auth.currentUser.sendEmailVerification().then(() => {
