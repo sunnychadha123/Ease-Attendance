@@ -109,6 +109,7 @@ hr{
     padding: 15px !important;
     border-radius: 0 20px 20px 0 !important;
     margin-left: 15px;
+    min-width: 250px;
 }
 #user-name{
     color: white;
@@ -204,8 +205,10 @@ hr{
     width: 20px;
 }
 .filter-button{
+    -webkit-appearance: none!important;
+    margin-bottom: 10px;
     color: #acacac !important;
-    background: none;
+    background: none !important;
     border: none !important;
 }
 .filter-button:hover{
@@ -221,10 +224,116 @@ hr{
 }
 #person-search{
     width: 225px;
-    margin-top: -10px;
+    margin-top: -5px;
 }
 .input-group-text{
     background-color: #ffffff !important;
 
 }
 
+#myTabContent{
+    min-width: 800px;
+}
+.tab-title{
+    color: black;
+}
+#meeting-title{
+    margin-bottom: 50px;
+}
+#meeting-table{
+    margin-top: 500px !important;
+    color: black;
+}
+#add-meeting-button{
+    background: none;
+    outline: none;
+    border-color: #F5B364;
+}
+#add-meeting-button:hover{
+    background: #F5B364;
+    color: white;
+    outline: none;
+    border-color: #F5B364;
+}
+.meeting-table-title{
+    background-color: #ee6165 !important;
+
+}
+.meeting-id-text{
+    color: #a7a7a7;
+}
+.modal-dialog{
+    color: black;
+    min-width: 800px!important;
+}
+.student-name{
+    width:200px;
+
+}
+.student-first-name{
+    margin-right: 25px;
+    margin-left: 15px;
+}
+.trash-btn{
+    margin-top: -20px;
+    height:30px;
+    padding: 0;
+    border: 1px solid #FF7373;
+    color: #FF7373;
+    margin-left: 40px;
+}
+.trash-btn:hover{
+    background-color: #FF7373;
+    color: white;
+}
+#meeting-id, #meeting-name{
+    margin-left: 15px!important;
+    margin-bottom: 20px;
+}
+#meeting-id{
+    width: 230px;
+
+}
+#meeting-name{
+    width: 400px;
+}
+.modal-input{
+    margin-bottom: 20px;
+}
+.modal-title{
+    margin-bottom: 20px;
+}
+#add-student-button{
+    width:130px;
+    right: 0;
+    border-color: #F5B364;
+    margin-right: 307px;
+}
+#add-student-button:hover{
+    background: #F5B364;
+    color: white;
+    outline: none;
+    border-color: #F5B364;
+
+}
+#close-meetings-modal{
+    color: #ababab !important;
+}
+#close-meetings-modal:hover{
+    color: #ff3131 !important;
+}
+#save-meeting-button{
+    background: none;
+    outline: none;
+    border-color: #6483f5;
+    color: black;
+}
+#save-meeting-button:hover{
+     background: #6483f5;
+     color: white;
+     outline: none;
+     border-color: #6483f5;
+ }
+.student-name-error{
+    border-color: red;
+}

@@ -99,10 +99,12 @@ socket.addEventListener('message', function (event) {
 });
 
 $("#student-search-input-field").on('keyup', function (e) {
+    //TODO : base on current table not on participant list
     currValue = $("#student-search-input-field").val();
     if (e.key === 'Enter' || e.keyCode === 13) {
         $("#student-search-input-field").blur()
     }
+
     clearTable()
     for(let i = Participants.length-1; i >= 0; i--){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
@@ -193,4 +195,24 @@ function filterClick(clicked_id){
             }
         }
     }
+}
+const studentInputTable = document.getElementById("student-input-table")
+const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
+    "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
+    "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
+function addMeetingModal(){
+    $("#meeting-id-input-field").val("")
+    $("#meeting-name-input-field").val("")
+    while(studentInputTable.rows.length !== 0){
+        studentInputTable.deleteRow(0)
+    }
+    addStudent()
+}
+function addStudent(){
+    let row = studentInputTable.insertRow(studentInputTable.rows.length)
+    row.innerHTML = studentTableBlock
+}
+function deleteStudent(e){
+    const currentRow = e.parentNode.parentNode
+    currentRow.parentNode.removeChild(currentRow)
 }

@@ -30,7 +30,7 @@ function authenticate(){
                         firestore.collection("Users").doc(user.uid).set({
                             name: user.displayName,
                             email: user.email,
-                            periods: names
+                            periods: []
                         })
                             .then(function() {
                                 localStorage.setItem("userDisplayName",userDisplayName)
@@ -63,55 +63,86 @@ function authenticate(){
         document.getElementById("signUpMessage").innerHTML = err.message;
     }
 }
+function getNames(){
+    names = []
+    var currentName = ""
+    var currentCount = 0
+    var shouldProceed = true;
+    $('.student-name').each(function(index,data) {
+        const value = $(this).val().trim();
+        if(currentCount % 2 === 0){
+            currentName += value + " "
+        }
+        else{
+            currentName += value
+            names.push(currentName)
+            currentName = ""
+        }
+        if(value === "" || value == null){
+            this.classList.add("student-name-error")
+            shouldProceed = false;
+        }
+        else{
+            this.classList.remove("student-name-error")
+        }
+        currentCount += 1
+    });
+    return shouldProceed
+}
+function addMeeting(){
+    const shouldProceed = getNames()
+    if(shouldProceed){
+        const user = auth.currentUser
+        const periodName = document.getElementById("meeting-name-input-field").value
+        const meetingId = document.getElementById("meeting-id-input-field").value
+        firestore.collection("Periods").doc(user.uid+meetingId).set({
+            periodName : periodName,
+            meetingId : meetingId,
+            studentsNames: names,
+        }).then(() => {
+            firestore.collection("Users").doc(user.uid).get().then((doc) => {
+                if (doc.exists) {
+                    var currentPeriods = doc.data().periods
+                    const newPeriod = user.uid + meetingId
+                    currentPeriods.push(newPeriod)
+                    firestore.collection("Users").doc(user.uid).update({
+                        periods: currentPeriods
+                    }).then(() => {
+                        $("#add-edit-meeting-modal").modal("hide")
+                    }).catch((error) => {
+                        console.log(error.message)
+                        //TODO: add alert
+                    })
+                } else {
+                    const newPeriod = user.uid + meetingId
+                    var newPeriodArray = []
+                    newPeriodArray.push(newPeriod)
+                    firestore.collection("Users").doc(user.uid).update({
+                        periods: newPeriodArray
+                    }).then(() => {
+                        $("#add-edit-meeting-modal").modal("hide")
+                    }).catch((error) => {
+                        console.log(error.message)
+                        //TODO: add alert
+                    })
+                }
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+                //TODO: add alert
+            });
 
-function addPeriod(){
-
-    const user = auth.currentUser
-    var periodName = document.getElementById("PeriodName").value
-    var meetingId = document.getElementById("meetingId").value
-
-    console.log("period name is "+ periodName)
-
-    firestore.collection("Periods").doc(user.uid+periodName).set({
-        periodName : periodName,
-        meetingId : meetingId,
-        studentsNames: names,
-    })
-
-    console.log("collection send with "+ names)
-
-    var temp = firestore.collection("Users").doc(user.uid)
-    var prevPeriods = temp.periods
-
-    console.log("prev periods from user "+ prevPeriods)
-
-
-    if (prevPeriods !== undefined) {
-        prevPeriods.add(user.uid+periodName)
-
-        firestore.collection("Users").doc(user.uid).update({
-            periods: prevPeriods
-        })
-    }else{
-        var tempReference = [user.uid+periodName]
-        firestore.collection("Users").doc(user.uid).update({
-            periods: tempReference
+        }).catch((error)=>{
+            console.log(error.message)
+            //TODO: add alert
         })
     }
-    console.log("prev periods from user "+ prevPeriods)
-    names.splice(0,names.length)
-    document.getElementById("list").value = ""
+    else{
+        console.log("check input vals")
+        //TODO: add alert
+    }
+
 }
 
-function updateList() {
-    console.log("request to update list sent")
-    var textFirstName = document.getElementById("personName").value;
-
-    names[names.length] = textFirstName
-    console.log(names)
-    //Now use appendChild and add it to the list!
-    document.getElementById("list").append(" "+textFirstName);
-}
 function login(){
     const email = document.getElementById("login-email").value
     const pass = document.getElementById("login-pass").value
