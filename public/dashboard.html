@@ -113,7 +113,7 @@
                 <!-- TODO: Add hover effect for table rows-->
                 <!-- TODO: Add refresh meetings when clicked on my meetings -->
                 <h1 id="meeting-title" class="tab-title float-left">My Meetings</h1>
-                <table class="table" >
+                <table class="table" id="my-meetings-table">
                     <thead>
                     <tr>
                         <th class="table-head-title meeting-table-title" scope="col">Meeting Name</th>
@@ -122,7 +122,7 @@
                     </tr>
                     </thead>
                     <tbody id="meeting-table">
-                    <tr>
+                    <tr  class="meeting-row">
                         <th  scope="col">Period 1</th>
                         <th  scope="col" class="meeting-id-text">XXX-XXXX-XXXX</th>
 
@@ -140,7 +140,7 @@
                     </tr>
                     </tbody>
                 </table>
-                <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal"type="button" id="add-meeting-button">Add Meeting</button>
+                <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-meeting-button">Add Meeting</button>
 
                 <!-- Add/Edit Meeting Modal -->
                 <div class="modal fade meeting-modal" id="add-edit-meeting-modal" tabindex="-1" role="dialog" aria-labelledby="add-edit-meeting-modal" aria-hidden="true">
@@ -193,6 +193,7 @@
                                 <button onclick="addStudent()" class="float-right btn" type="button" id="add-student-button">Add Student</button>
                             </div>
                             <div class="modal-footer">
+                                <button onclick="deleteMeeting()" id="delete-meeting-button" type="button" class="btn btn-primary">Delete Meeting</button>
                                 <button onclick="addMeeting()" id="save-meeting-button" type="button" class="btn btn-primary">Save changes</button>
                             </div>
                         </div>

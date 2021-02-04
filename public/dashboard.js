@@ -4,7 +4,7 @@
 
 document.getElementById("user-name").innerHTML = "Welcome " + localStorage.getItem("userDisplayName")
 
-if(localStorage.getItem("userEmail") === ""){
+if(localStorage.getItem("userEmail") === "null"){
     window.location.href = "index.html";
 }
 class Participant{
@@ -200,17 +200,28 @@ const studentInputTable = document.getElementById("student-input-table")
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
+
+
 function addMeetingModal(){
+    $("#delete-meeting-button").prop('disabled',true)
+    $("#delete-meeting-button").hide()
     $("#meeting-id-input-field").val("")
     $("#meeting-name-input-field").val("")
+
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
     addStudent()
 }
-function addStudent(){
+function addStudent(name){
     let row = studentInputTable.insertRow(studentInputTable.rows.length)
     row.innerHTML = studentTableBlock
+    if(name){
+        var res = name.split(" ")
+
+        row.cells[0].children[0].value = res[0]
+        row.cells[1].children[0].value = res[1]
+    }
 }
 function deleteStudent(e){
     const currentRow = e.parentNode.parentNode
