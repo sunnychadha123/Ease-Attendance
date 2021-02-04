@@ -64,10 +64,27 @@ function authenticate(){
     }
 }
 function check(){
+    const idInput = document.getElementById("meeting-id-input-field").value
+    const nameInput = document.getElementById("meeting-name-input-field").value
+
     names = []
     var currentName = ""
     var currentCount = 0
     var shouldProceed = true;
+    if(idInput === "" || idInput == null){
+        document.getElementById("meeting-id-input-field").classList.add("input-error")
+        shouldProceed = false;
+    }
+    else{
+        document.getElementById("meeting-id-input-field").classList.remove("input-error")
+    }
+    if(nameInput === "" || idInput == null){
+        document.getElementById("meeting-name-input-field").classList.add("input-error")
+        shouldProceed = false;
+    }
+    else{
+        document.getElementById("meeting-name-input-field").classList.remove("input-error")
+    }
     $('.student-name').each(function(index,data) {
         const value = $(this).val().trim();
         if(currentCount % 2 === 0){
@@ -79,19 +96,33 @@ function check(){
             currentName = ""
         }
         if(value === "" || value == null){
-            this.classList.add("student-name-error")
+            this.classList.add("input-error")
             shouldProceed = false;
         }
         else{
-            this.classList.remove("student-name-error")
+            this.classList.remove("input-error")
         }
         currentCount += 1
     });
+    return shouldProceed
+}
+function checkID(){
+    const currID = document.getElementById("meeting-id-input-field").value
+    if(currID.length !== 11){
+        document.getElementById("meeting-id-input-field").classList.add("input-error")
+        return false
+    }
+    document.getElementById("meeting-id-input-field").classList.remove("input-error")
+    return true
+}
+
+function checkDuplicateID(){
     const meetingId = document.getElementById("meeting-id-input-field").value
     if(document.getElementById("delete-meeting-button").hasAttribute("disabled")){
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
                 console.log(1)
+                document.getElementById("meeting-id-input-field").classList.add("input-error")
                 return false;
             }
         }
@@ -100,41 +131,75 @@ function check(){
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId && i !== editingIndex-1){
                 console.log(2)
+                document.getElementById("meeting-id-input-field").classList.add("input-error")
                 return false;
             }
         }
     }
-
-
-    return shouldProceed
+    document.getElementById("meeting-id-input-field").classList.remove("input-error")
+    return true
 }
+
 function addMeeting(){
-    $("#save-meeting-button").innerHTML = "Add meeting"
+
     const shouldProceed = check()
     if(shouldProceed){
-        const user = auth.currentUser
-        const periodName = document.getElementById("meeting-name-input-field").value
-        const meetingId = document.getElementById("meeting-id-input-field").value
-        if(!document.getElementById("delete-meeting-button").hasAttribute("disabled")){
-            if(meetingId !== Meetings[editingIndex-1].id){
-                deleteMeeting()
+        if(checkID()){
+            if(checkDuplicateID()){
+                const user = auth.currentUser
+                const periodName = document.getElementById("meeting-name-input-field").value
+                const meetingId = document.getElementById("meeting-id-input-field").value
+                if(!document.getElementById("delete-meeting-button").hasAttribute("disabled")){
+                    if(meetingId !== Meetings[editingIndex-1].id){
+                        deleteMeeting()
+                    }
+                }
+                firestore.collection("Periods").doc(user.uid+meetingId).set({
+                    useruid : user.uid,
+                    periodName : periodName,
+                    meetingId : meetingId,
+                    studentsNames: names,
+                }).then(() => {
+                    $("#add-edit-meeting-modal").modal("hide")
+                }).catch((error)=>{
+                    console.log(error.message)
+                    $(".notify").addClass("notify-active");
+                    $("#notifyType").addClass("failureServer");
+
+                    setTimeout(function(){
+                        $(".notify").removeClass("notify-active");
+                        $("#notifyType").removeClass("failureServer");
+                    },2000);
+                })
+            }
+            else{
+                $(".notify").addClass("notify-active");
+                $("#notifyType").addClass("failureIDDup");
+
+                setTimeout(function(){
+                    $(".notify").removeClass("notify-active");
+                    $("#notifyType").removeClass("failureIDDup");
+                },2000);
             }
         }
-        firestore.collection("Periods").doc(user.uid+meetingId).set({
-            useruid : user.uid,
-            periodName : periodName,
-            meetingId : meetingId,
-            studentsNames: names,
-        }).then(() => {
-            $("#add-edit-meeting-modal").modal("hide")
-        }).catch((error)=>{
-            console.log(error.message)
-            //TODO: add alert
-        })
+        else{
+            $(".notify").addClass("notify-active");
+            $("#notifyType").addClass("failureID");
+
+            setTimeout(function(){
+                $(".notify").removeClass("notify-active");
+                $("#notifyType").removeClass("failureID");
+            },2000);
+        }
     }
     else{
-        console.log("check input vals")
-        //TODO: add alert
+        $(".notify").addClass("notify-active");
+        $("#notifyType").addClass("failure");
+
+        setTimeout(function(){
+            $(".notify").removeClass("notify-active");
+            $("#notifyType").removeClass("failure");
+        },2000);
     }
 
 }

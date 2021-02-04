@@ -1,6 +1,18 @@
-
-
-
+$("input").on("click", function(){
+    $(this).removeClass('input-error')
+})
+$(function() {
+    $('#meeting-id-input-field').on('keypress', function(e) {
+        if (e.which === 32 || document.getElementById("meeting-id-input-field").value.length >= 11){
+            return false;
+        }
+    });
+});
+$('#meeting-id-input-field').on('paste', function (event) {
+    if (event.originalEvent.clipboardData.getData('Text').match(/[^\d]/)) {
+        event.preventDefault();
+    }
+});
 
 document.getElementById("user-name").innerHTML = "Welcome " + localStorage.getItem("userDisplayName")
 
@@ -207,7 +219,8 @@ function addMeetingModal(){
     $("#delete-meeting-button").hide()
     $("#meeting-id-input-field").val("")
     $("#meeting-name-input-field").val("")
-
+    $("#meeting-id-input-field").removeClass("input-error")
+    $("#meeting-name-input-field").removeClass("input-error")
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
@@ -222,6 +235,19 @@ function addStudent(name){
         row.cells[0].children[0].value = res[0]
         row.cells[1].children[0].value = res[1]
     }
+    $("input").on("click", function(){
+        $(this).removeClass('input-error')
+    })
+    $('.student-name').on('keypress', function(e) {
+        if (e.which === 32){
+            return false;
+        }
+    });
+    $('.student-name').on('paste', function (event) {
+        if (event.originalEvent.clipboardData.getData('Text').match(/[^\w]/)) {
+            event.preventDefault();
+        }
+    });
 }
 function deleteStudent(e){
     const currentRow = e.parentNode.parentNode

@@ -334,7 +334,7 @@ hr{
      outline: none;
      border-color: #6483f5;
  }
-.student-name-error{
+.input-error{
     border-color: red;
 }
 .meeting-row:hover{
@@ -354,3 +354,39 @@ hr{
      outline: none;
      border-color: #ec3232;
  }
+.notify{
+    position:absolute;
+    top:0;
+    width:100%;
+    height:0;
+    box-sizing:border-box;
+    color:white;
+    text-align:center;
+    background: rgba(255, 82, 82,0.7);
+    overflow:hidden;
+    box-sizing:border-box;
+    transition:height .2s;
+}
+
+#notifyType:before{
+    display:block;
+    margin-top:15px;
+
+}
+
+.notify-active{
+    height:50px;
+}
+
+.failure:before{
+    Content:"Please check make sure that you filled out all the fields";
+}
+.failureID:before{
+    Content:"Please enter a valid Zoom meeting ID";
+}
+.failureIDDup:before{
+    Content:"You have already added a meeting with this ID";
+}
+.failureServer:before{
+    Content:"Sorry, we had some trouble connecting to the server;
+}
