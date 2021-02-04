@@ -3,7 +3,7 @@
 
 const auth = firebase.auth()
 const firestore = firebase.firestore()
-var names = []
+var periodReferences = []
 
 function authenticate(){
     const pass = document.getElementById("pass").value
@@ -30,7 +30,7 @@ function authenticate(){
                         firestore.collection("Users").doc(user.uid).set({
                             name: user.displayName,
                             email: user.email,
-                            periods: names
+                            periods: periodReferences
                         })
                             .then(function() {
                                 localStorage.setItem("userDisplayName",userDisplayName)
@@ -75,7 +75,7 @@ function addPeriod(){
     firestore.collection("Periods").doc(user.uid+periodName).set({
         periodName : periodName,
         meetingId : meetingId,
-        studentsNames: names,
+        studentsNames: periodReferences,
     })
 
     //adds reference to Period document in 'Period' array in User document
@@ -88,7 +88,7 @@ function addPeriod(){
 
     //resets array and visual aids that show array on dashboard
     document.getElementById("list").innerHTML = ''
-    names.splice(0,names.length)
+    periodReferences.splice(0,periodReferences.length)
     document.getElementById("list").value = ""
 }
 
@@ -109,7 +109,7 @@ function updateList() {
         '<h3>'+name+'</h3>' +
         '</div>';
 
-    names[names.length] = name
+    periodReferences.push(name);
     //appends codeblock into list
     document.getElementById("list").innerHTML = document.getElementById("list").innerHTML+codeBlock
 }
