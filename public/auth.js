@@ -29,8 +29,7 @@ function authenticate(){
                         const user = cred.user
                         firestore.collection("Users").doc(user.uid).set({
                             name: user.displayName,
-                            email: user.email,
-                            periods: []
+                            email: user.email
                         })
                             .then(function() {
                                 localStorage.setItem("userDisplayName",userDisplayName)
@@ -89,9 +88,20 @@ function check(){
         currentCount += 1
     });
     const meetingId = document.getElementById("meeting-id-input-field").value
-    for(i = 0; i < Meetings.length; i++){
-        if(Meetings[i].id === meetingId){
-            return false;
+    if(document.getElementById("delete-meeting-button").hasAttribute("disabled")){
+        for(i = 0; i < Meetings.length; i++){
+            if(Meetings[i].id === meetingId){
+                console.log(1)
+                return false;
+            }
+        }
+    }
+    else{
+        for(i = 0; i < Meetings.length; i++){
+            if(Meetings[i].id === meetingId && i !== editingIndex-1){
+                console.log(2)
+                return false;
+            }
         }
     }
 
@@ -111,41 +121,12 @@ function addMeeting(){
             }
         }
         firestore.collection("Periods").doc(user.uid+meetingId).set({
+            useruid : user.uid,
             periodName : periodName,
             meetingId : meetingId,
             studentsNames: names,
         }).then(() => {
-            firestore.collection("Users").doc(user.uid).get().then((doc) => {
-                if (doc.exists) {
-                    var currentPeriods = doc.data().periods
-                    const newPeriod = user.uid + meetingId
-                    currentPeriods.push(newPeriod)
-                    firestore.collection("Users").doc(user.uid).update({
-                        periods: currentPeriods
-                    }).then(() => {
-                        $("#add-edit-meeting-modal").modal("hide")
-                    }).catch((error) => {
-                        console.log(error.message)
-                        //TODO: add alert
-                    })
-                } else {
-                    const newPeriod = user.uid + meetingId
-                    var newPeriodArray = []
-                    newPeriodArray.push(newPeriod)
-                    firestore.collection("Users").doc(user.uid).update({
-                        periods: newPeriodArray
-                    }).then(() => {
-                        $("#add-edit-meeting-modal").modal("hide")
-                    }).catch((error) => {
-                        console.log(error.message)
-                        //TODO: add alert
-                    })
-                }
-            }).catch((error) => {
-                console.log("Error getting document:", error);
-                //TODO: add alert
-            });
-
+            $("#add-edit-meeting-modal").modal("hide")
         }).catch((error)=>{
             console.log(error.message)
             //TODO: add alert
@@ -164,27 +145,7 @@ function deleteMeeting(){
     const currentId = currentMeeting.id
     const reference = uid+currentId
     firestore.collection("Periods").doc(reference).delete().then(() => {
-        firestore.collection("Users").doc(uid).get().then((doc)=>{
-            if (doc.exists) {
-                var currentPeriods = doc.data().periods
-                if(currentPeriods.includes(reference)){
-                    var i = currentPeriods.indexOf(reference)
-                    if(i > -1){
-                        currentPeriods.splice(i,1)
-                    }
-                }
-                firestore.collection("Users").doc(uid).update({
-                    periods: currentPeriods
-                }).then(() => {
-                    $("#add-edit-meeting-modal").modal("hide")
-                }).catch((error) => {
-                    console.log(error.message)
-                    //TODO: add alert
-                })
-            }
-        }).catch((error)=>{
-            console.log(error.message)
-        })
+        $("#add-edit-meeting-modal").modal("hide")
     }).catch((error) => {
         console.error("Error removing document: ", error);
     });
@@ -247,53 +208,48 @@ function compareMeetings(a, b) {
     return 0;
 }
 
-firestore.collection("Users").doc(localStorage.getItem("uid"))
-    .onSnapshot((doc) => {
+firestore.collection("Periods").where("useruid", "==", localStorage.getItem("uid"))
+    .onSnapshot((querySnapshot) => {
         if(localStorage.getItem("uid") !== "null"){
-            const periods = doc.data().periods
+            Meetings = []
+            querySnapshot.forEach((doc) => {
+                const currData = doc.data()
+                Meetings.push(new Meeting(currData.periodName,currData.meetingId,currData.studentsNames))
+            })
             const meetingTable = document.getElementById("my-meetings-table")
+            Meetings.sort(compareMeetings)
             while(meetingTable.rows.length > 1){
                 meetingTable.deleteRow(1)
             }
-            firestore.collection("Periods").get().then((querySnapshot) => {
-                Meetings = []
-                querySnapshot.forEach((doc) => {
-                    if(periods.includes(doc.id)){
-                        const currData = doc.data()
-                        Meetings.push(new Meeting(currData.periodName,currData.meetingId,currData.studentsNames))
+            for(i = Meetings.length-1; i >= 0 ; i--){
+                var currentRow = meetingTable.insertRow(1)
+                currentRow.classList.add("meeting-row")
+                currentRow.addEventListener("click", function() {
+                    var index = this.rowIndex
+                    editingIndex = index
+                    $('#add-edit-meeting-modal').modal('show');
+                    const currentMeeting = Meetings[index-1]
+                    $("#meeting-id-input-field").val(currentMeeting.id)
+                    $("#meeting-name-input-field").val(currentMeeting.name)
+                    $("#delete-meeting-button").prop('disabled',false)
+                    $("#delete-meeting-button").show()
+                    $("#save-meeting-button").innerHTML = "Save changes"
+                    while(studentInputTable.rows.length !== 0){
+                        studentInputTable.deleteRow(0)
                     }
-                });
-                Meetings.sort(compareMeetings)
-                while(meetingTable.rows.length > 1){
-                    meetingTable.deleteRow(1)
-                }
-                for(i = Meetings.length-1; i >= 0 ; i--){
-                    var currentRow = meetingTable.insertRow(1)
-                    currentRow.classList.add("meeting-row")
-                    currentRow.addEventListener("click", function() {
-                        var index = this.rowIndex
-                        editingIndex = index
-                        $('#add-edit-meeting-modal').modal('show');
-                        const currentMeeting = Meetings[index-1]
-                        $("#meeting-id-input-field").val(currentMeeting.id)
-                        $("#meeting-name-input-field").val(currentMeeting.name)
-                        $("#delete-meeting-button").prop('disabled',false)
-                        $("#delete-meeting-button").show()
-                        $("#save-meeting-button").innerHTML = "Save changes"
-                        while(studentInputTable.rows.length !== 0){
-                            studentInputTable.deleteRow(0)
-                        }
-                        for(i = 0; i < currentMeeting.arr.length; i++){
-                            addStudent(currentMeeting.arr[i])
-                        }
-                    })
-                    var cell1 = currentRow.insertCell(0)
-                    var cell2 = currentRow.insertCell(1)
-                    cell1.innerHTML = Meetings[i].name
-                    cell2.innerHTML = Meetings[i].id
-                    cell2.classList.add("meeting-id-text")
-                }
-            })
+                    for(i = 0; i < currentMeeting.arr.length; i++){
+                        addStudent(currentMeeting.arr[i])
+                    }
+                })
+                var cell1 = currentRow.insertCell(0)
+                var cell2 = currentRow.insertCell(1)
+                cell1.innerHTML = Meetings[i].name
+                cell2.innerHTML = Meetings[i].id
+                cell2.classList.add("meeting-id-text")
+            }
+
+
+
         }
     });
 
