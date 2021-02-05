@@ -37,19 +37,20 @@ class Participant{
 
 
 try{
-    const socket = new WebSocket('ws://8fa46a4fbfff.ngrok.io');
+    const socket = new WebSocket('wss://8fa46a4fbfff.ngrok.io');
+    socket.onerror=function(event){
+        console.log("Connection to server has been refused");
+    }
+    socket.addEventListener("open", () => {
+        console.log("Connected to Server")
+        socket.send(localStorage.getItem("userEmail"))
+
+    })
 }
 catch(e){
     console.log("Connection to server has been refused");
 }
-socket.onerror=function(event){
-    console.log("Connection to server has been refused");
-}
-socket.addEventListener("open", () => {
-    console.log("Connected to Server")
-    socket.send(localStorage.getItem("userEmail"))
 
-})
 function clearTable(){
     const currentNumRows = participantTable.rows.length
     for(i = 0; i < currentNumRows-1; i++){
