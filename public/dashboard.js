@@ -1,3 +1,8 @@
+const studentInputTable = document.getElementById("student-input-table")
+Participants = []
+const participantTable = document.getElementById("participant-table")
+var meetingOccuring = false
+var CurrentMeeting = ""
 $("input").on("click", function(){
     $(this).removeClass('input-error')
 })
@@ -28,10 +33,7 @@ class Participant{
 }
 
 
-Participants = []
-const participantTable = document.getElementById("participant-table")
-var meetingOccuring = false
-var CurrentMeeting = ""
+
 
 const socket = new WebSocket('ws://8fa46a4fbfff.ngrok.io');
 
@@ -208,7 +210,6 @@ function filterClick(clicked_id){
         }
     }
 }
-const studentInputTable = document.getElementById("student-input-table")
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
@@ -227,7 +228,7 @@ function addMeetingModal(){
     addStudent()
 }
 function addStudent(name){
-    let row = studentInputTable.insertRow(studentInputTable.rows.length)
+    var row = studentInputTable.insertRow(studentInputTable.rows.length)
     row.innerHTML = studentTableBlock
     if(name){
         var res = name.split(" ")
