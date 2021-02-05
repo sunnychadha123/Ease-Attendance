@@ -36,7 +36,9 @@ class Participant{
 
 
 const socket = new WebSocket('ws://8fa46a4fbfff.ngrok.io');
-
+socket.onerror=function(event){
+    console.log("Connection to server has been refused");
+}
 socket.addEventListener("open", () => {
     console.log("Connected to Server")
     socket.send(localStorage.getItem("userEmail"))
