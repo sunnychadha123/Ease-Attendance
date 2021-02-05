@@ -1,6 +1,5 @@
-const studentInputTable = document.getElementById("student-input-table")
+
 Participants = []
-const participantTable = document.getElementById("participant-table")
 var meetingOccuring = false
 var CurrentMeeting = ""
 $("input").on("click", function(){
@@ -46,82 +45,86 @@ try{
         socket.send(localStorage.getItem("userEmail"))
 
     })
+    socket.addEventListener('message', function (event) {
+        const participantTable = document.getElementById("participant-table")
+        const data = event.data.split(" ");
+        const eventType = data[0]
+        if(eventType === "meeting.started"){
+            var meetingName = ""
+            for(i = 1; i < data.length;i++){
+                meetingName += data[i] + " "
+            }
+            CurrentMeeting = meetingName
+            meetingOccuring = true
+            document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
+            document.getElementById("status-dot").classList.remove("dot-danger")
+            document.getElementById("status-dot").classList.add("dot-success")
+        }
+        else if(eventType === "meeting.ended"){
+            document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + CurrentMeeting
+            meetingOccuring = false
+            CurrentMeeting = ""
+            document.getElementById("status-dot").classList.remove("dot-success")
+            document.getElementById("status-dot").classList.add("dot-danger")
+
+        }
+        else if(eventType === "participant.joined"){
+            var participantFirst = ""
+            var participantLast = ""
+            if(data.length === 2){
+                participantFirst = data[1]
+            }
+            else if(data.length > 2){
+                participantFirst = data[1]
+                participantLast = data[2]
+            }
+            Participants.unshift(new Participant(participantFirst, participantLast, "present"))
+            var row = participantTable.insertRow(1)
+            row.style.backgroundColor = "#ffffff"
+            row.style.color = "#000000"
+            var cell1 = row.insertCell(0)
+            var cell2 = row.insertCell(1)
+            var cell3 = row.insertCell(2)
+            cell1.innerHTML = participantFirst
+            cell2.innerHTML = participantLast
+            cell3.innerHTML = "present"
+        }
+        else if(eventType === "participant.left"){
+            var participantFirst = ""
+            var participantLast = ""
+            if(data.length === 2){
+                participantFirst = data[1]
+            }
+            else if(data.length > 2){
+                participantFirst = data[1]
+                participantLast = data[data.length-1]
+            }
+            for(i = 0; i < Participants.length; i++){
+                if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
+                    participantTable.deleteRow(i+1);
+                    Participants.splice(i,1)
+                    break
+                }
+            }
+        }
+    });
 }
 catch(e){
     console.log("Connection to server has been refused");
 }
 
 function clearTable(){
+    const participantTable = document.getElementById("participant-table")
     const currentNumRows = participantTable.rows.length
     for(i = 0; i < currentNumRows-1; i++){
         participantTable.deleteRow(1);
     }
 }
 
-socket.addEventListener('message', function (event) {
-    const data = event.data.split(" ");
-    const eventType = data[0]
-    if(eventType === "meeting.started"){
-        var meetingName = ""
-        for(i = 1; i < data.length;i++){
-            meetingName += data[i] + " "
-        }
-        CurrentMeeting = meetingName
-        meetingOccuring = true
-        document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
-        document.getElementById("status-dot").classList.remove("dot-danger")
-        document.getElementById("status-dot").classList.add("dot-success")
-    }
-    else if(eventType === "meeting.ended"){
-        document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + CurrentMeeting
-        meetingOccuring = false
-        CurrentMeeting = ""
-        document.getElementById("status-dot").classList.remove("dot-success")
-        document.getElementById("status-dot").classList.add("dot-danger")
 
-    }
-    else if(eventType === "participant.joined"){
-        var participantFirst = ""
-        var participantLast = ""
-        if(data.length === 2){
-            participantFirst = data[1]
-        }
-        else if(data.length > 2){
-            participantFirst = data[1]
-            participantLast = data[2]
-        }
-        Participants.unshift(new Participant(participantFirst, participantLast, "present"))
-        var row = participantTable.insertRow(1)
-        row.style.backgroundColor = "#ffffff"
-        row.style.color = "#000000"
-        var cell1 = row.insertCell(0)
-        var cell2 = row.insertCell(1)
-        var cell3 = row.insertCell(2)
-        cell1.innerHTML = participantFirst
-        cell2.innerHTML = participantLast
-        cell3.innerHTML = "present"
-    }
-    else if(eventType === "participant.left"){
-        var participantFirst = ""
-        var participantLast = ""
-        if(data.length === 2){
-            participantFirst = data[1]
-        }
-        else if(data.length > 2){
-            participantFirst = data[1]
-            participantLast = data[data.length-1]
-        }
-        for(i = 0; i < Participants.length; i++){
-            if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
-                participantTable.deleteRow(i+1);
-                Participants.splice(i,1)
-                break
-            }
-        }
-    }
-});
 
 $("#student-search-input-field").on('keyup', function (e) {
+    const participantTable = document.getElementById("participant-table")
     //TODO : base on current table not on participant list
     currValue = $("#student-search-input-field").val();
     if (e.key === 'Enter' || e.keyCode === 13) {
@@ -146,6 +149,7 @@ $("#student-search-input-field").on('keyup', function (e) {
 
 });
 function filterClick(clicked_id){
+    const participantTable = document.getElementById("participant-table")
     document.getElementById(clicked_id).classList.add("filter-active")
     clearTable()
     if(clicked_id === "all-filter"){
@@ -225,6 +229,7 @@ const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\
 
 
 function addMeetingModal(){
+    const studentInputTable = document.getElementById("student-input-table")
     $("#delete-meeting-button").prop('disabled',true)
     $("#delete-meeting-button").hide()
     $("#meeting-id-input-field").val("")
@@ -237,6 +242,7 @@ function addMeetingModal(){
     addStudent()
 }
 function addStudent(name){
+    const studentInputTable = document.getElementById("student-input-table")
     var row = studentInputTable.insertRow(studentInputTable.rows.length)
     row.innerHTML = studentTableBlock
     if(name){
