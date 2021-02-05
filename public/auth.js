@@ -286,6 +286,7 @@ firestore.collection("Periods").where("useruid", "==", localStorage.getItem("uid
             while(meetingTable.rows.length > 1){
                 meetingTable.deleteRow(1)
             }
+            const studentInputTable = document.getElementById("student-input-table")
             for(i = Meetings.length-1; i >= 0 ; i--){
                 var currentRow = meetingTable.insertRow(1)
                 currentRow.classList.add("meeting-row")
