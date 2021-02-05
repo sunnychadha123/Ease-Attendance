@@ -35,7 +35,13 @@ class Participant{
 
 
 
-const socket = new WebSocket('ws://8fa46a4fbfff.ngrok.io');
+
+try{
+    const socket = new WebSocket('ws://8fa46a4fbfff.ngrok.io');
+}
+catch(e){
+    console.log("Connection to server has been refused");
+}
 socket.onerror=function(event){
     console.log("Connection to server has been refused");
 }
