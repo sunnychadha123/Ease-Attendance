@@ -390,3 +390,6 @@ hr{
 .failureServer:before{
     Content:"Sorry, we had some trouble connecting to the server;
 }
+#meeting-id-attendance{
+    color: #bababa;
+}

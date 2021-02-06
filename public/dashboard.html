@@ -82,6 +82,7 @@
         <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active container col" id="attendance" role="tabpanel" aria-labelledby="home-tab">
                 <h1 id="currentMeeting-name">No meeting has started</h1>
+                <h5 id="meeting-id-attendance">ID:</h5>
                 <h5 id="status">Status:
                     <span id="status-dot" class='dot dot-danger'></span>
                 </h5>
@@ -95,14 +96,14 @@
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
                     <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
                     <a id="not-present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Present</a>
-                    <a id="tardy-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Tardy</a>
+                    <a id="not-registered-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Registered</a>
                 </div>
                 <table class="table" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
                         <th class="table-head-title" scope="col">First Name</th>
                         <th class="table-head-title" scope="col">Last Name</th>
-                        <th class="table-head-title" scope="col">Attendance</th>
+                        <th class="table-head-title" scope="col">Status</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -110,8 +111,6 @@
                 </table>
             </div>
             <div class="tab-pane fade container col justify-content-center" id="meetings" role="tabpanel" aria-labelledby="profile-tab">
-                <!-- TODO: Add hover effect for table rows-->
-                <!-- TODO: Add refresh meetings when clicked on my meetings -->
                 <h1 id="meeting-title" class="tab-title float-left">My Meetings</h1>
                 <table class="table" id="my-meetings-table">
                     <thead>
@@ -218,6 +217,5 @@
 
 </script>
 <script type="text/javascript" src="dashboard.js"></script>
-<script type="text/javascript" src="auth.js" ></script>
 </html>
 

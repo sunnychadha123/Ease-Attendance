@@ -22,7 +22,8 @@ const options = {
 const wsServer = new WebSocket.Server({noServer: true})
 
 class Meeting{
-  constructor(hostId,meetingName,hostEmail) {
+  constructor(hostId,meetingName,hostEmail, id) {
+    this.meetingId = id
     this.hostId = hostId
     this.meetingName = meetingName
     this.participantsToSend = []
@@ -101,6 +102,7 @@ app.post('/', (req, res) => {
     console.log("<====================================================>")
     if(body.event === "meeting.started"){
       Meetings[host_id].meetingName = body.payload.object.topic
+      Meetings[host_id].meetingId = body.payload.object.id
     }
     else if(body.event === "meeting.ended"){
       delete Meetings[host_id]
@@ -116,8 +118,10 @@ app.post('/', (req, res) => {
         console.log("<host email>")
         console.log(participantEmail)
         console.log("<host email>")
+        Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
         Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
         Meetings[host_id].messageLog.push("participant.joined " + participantName)
+        Clients[participantEmail].send("meeting.id " + Meetings[host_id].meetingId)
         Clients[participantEmail].send("meeting.started " + Meetings[host_id].meetingName)
         Clients[participantEmail].send("participant.joined " + participantName)
         for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
@@ -193,7 +197,7 @@ app.post('/deauthorize', (req, res) => {
     })
   } else {
     res.status(401)
-    res.send('Unauthorized request to Unsplash Chatbot for Zoom.')
+    res.send()
   }
 })
 
