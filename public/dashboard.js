@@ -23,8 +23,8 @@ class PastMeeting{
         this.docID = docID
     }
 }
-//TODO: fix status indicator
 //TODO: make sure to clear table at meeting end
+//TODO: add alert for save meeting
 var Meetings = []
 var PastMeetings
 var MeetingsdidLoad = false
@@ -37,6 +37,7 @@ var meetingIndex = -1
 var currentRecordIndex = -1
 const firestore = firebase.firestore()
 const auth = firebase.auth()
+
 document.getElementById("meeting-id-attendance").hidden = true
 $("input").on("click", function(){
     $(this).removeClass('input-error')
@@ -106,10 +107,11 @@ try{
                 document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 document.getElementById("status-dot").classList.remove("dot-danger")
                 if(meetingIndex === -1){
-                    document.getElementById("status-dot").classList.add("dot-success")
+                    document.getElementById("status-dot").classList.add("dot-warning")
                 }
                 else{
-                    document.getElementById("status-dot").classList.add("dot-warning")
+
+                    document.getElementById("status-dot").classList.add("dot-success")
                 }
 
 
@@ -766,3 +768,73 @@ function logout(){
         window.location.href = "index.html";
     }).catch(err => {console.log(err.message)});
 }
+function resetSettingInput(){
+    document.getElementById("displayName-input-field").value = ""
+    document.getElementById("old-email-input-field").value = ""
+    document.getElementById("current-password-input-field").value = ""
+    document.getElementById("email-input-field").value = ""
+    document.getElementById("pass-current-email-input-field").value = ""
+
+}
+function saveDisplayName(){
+    if(document.getElementById("displayName-input-field").value !== ""){
+        auth.currentUser.updateProfile({
+            displayName: document.getElementById("displayName-input-field").value
+        }).then(function() {
+            //TODO: add success alert
+            //TODO: update firestore
+            document.getElementById("user-name").innerHTML = "Welcome " + document.getElementById("displayName-input-field").value
+            localStorage.setItem("userDisplayName",document.getElementById("displayName-input-field").value)
+            document.getElementById("displayName-input-field").value = ""
+        }).catch(function(error) {
+            //TODO: add error alert
+            console.log(error)
+        });
+    }
+    else{
+        //TODO: add error alert
+        console.log("please enter in the input field")
+    }
+
+}
+function saveEmail(){
+    firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
+        .then((userCredential) => {
+            auth.currentUser.updateEmail(document.getElementById("email-input-field").value).then(function() {
+                console.log(auth.currentUser)
+                auth.currentUser.sendEmailVerification().then(function() {
+                    //TODO: say verification email has been sent
+                    //TODO: update firestore
+                }).catch(function(error) {
+                    console.log(error.message)
+                });
+            }).catch(function(error) {
+                console.log(error.message)
+            });
+        })
+        .catch((error) => {
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            console.log(error.message)
+        });
+    document.getElementById("old-email-input-field").value = ""
+    document.getElementById("current-password-input-field").value = ""
+    document.getElementById("email-input-field").value = ""
+}
+function resendVerificationEmail(){
+    auth.currentUser.sendEmailVerification().then(function() {
+        //TODO: say verification email has been sent
+    }).catch(function(error) {
+        console.log(error.message)
+    });
+}
+function resetPassword(){
+    auth.sendPasswordResetEmail(document.getElementById("pass-current-email-input-field").value).then(function() {
+        //TODO: say email has been sent
+    }).catch(function(error) {
+        console.log(error)
+    });
+}
+//TODO; fix input icons
+//TODO: disable functions when email is not entered
+//TODO: check meeting record update
