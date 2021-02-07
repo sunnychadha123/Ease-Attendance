@@ -148,7 +148,7 @@ auth.onAuthStateChanged((user) => {
                     }
                     socket.addEventListener("open", () => {
                         console.log("Connected to Server")
-                        socket.send(localStorage.getItem("userEmail"))
+                        socket.send(user.email)
 
                     })
                     socket.addEventListener('message', function (event) {
@@ -649,7 +649,7 @@ function deleteRecord(){
 
 function deleteMeeting(){
     const currentMeeting = Meetings[editingIndex-1]
-    const uid = localStorage.getItem("uid")
+    const uid = auth.currentUser.uid
     const currentId = currentMeeting.id
     const reference = uid+currentId
     firestore.collection("Periods").doc(reference).delete().then(() => {
@@ -804,9 +804,6 @@ function addMeeting(){
 function logout(){
     auth.signOut().then(r => {
         console.log("user has signed out")
-        localStorage.setItem("userDisplayName",null)
-        localStorage.setItem("userEmail",null)
-        localStorage.setItem("uid",null)
         window.location.href = "index.html";
     }).catch(err => {console.log(err.message)});
 }
