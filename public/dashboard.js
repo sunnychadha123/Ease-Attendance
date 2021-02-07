@@ -23,8 +23,7 @@ class PastMeeting{
         this.docID = docID
     }
 }
-//TODO: make sure to clear table at meeting end
-//TODO: add alert for save meeting
+
 var Meetings = []
 var PastMeetings
 var MeetingsdidLoad = false
@@ -48,7 +47,6 @@ auth.onAuthStateChanged((user) => {
     if (user) {
         console.log(user)
         if(user.emailVerified){
-            //TODO: update firestore
             document.getElementById("myTabContent").hidden = false
             document.getElementById("verifyEmail").hidden = true
             document.getElementById("settings-resend-verification-link-button").hidden = true
@@ -157,6 +155,11 @@ auth.onAuthStateChanged((user) => {
                         const data = event.data.split(" ");
                         const eventType = data[0]
                         if(eventType === "meeting.started"){
+                            const participantTable = document.getElementById("participant-table")
+                            while(participantTable.rows.length > 1){
+                                console.log("deleted")
+                                participantTable.deleteRow(1)
+                            }
                             document.getElementById("meeting-id-attendance").hidden = false
                             var meetingName = ""
                             for(i = 1; i < data.length;i++){
@@ -204,6 +207,7 @@ auth.onAuthStateChanged((user) => {
                             meetingOccuring = false
                             CurrentMeeting = ""
                             CurrentMeetingID = ""
+                            Participants = []
                         }
                         else if(eventType === "meeting.id"){
                             CurrentMeetingID = data[1]
@@ -343,11 +347,14 @@ function clearTable(){
         participantTable.deleteRow(1);
     }
 }
-
 $("#student-search-input-field").on('keyup', function (e) {
     const participantTable = document.getElementById("participant-table")
-    //TODO : base on current table not on participant list
     currValue = $("#student-search-input-field").val();
+    document.getElementById("all-filter").classList.add("filter-active")
+    document.getElementById("present-filter").classList.remove("filter-active")
+    document.getElementById("absent-filter").classList.remove("filter-active")
+    document.getElementById("not-registered-filter").classList.remove("filter-active")
+    document.getElementById("left-meeting-filter").classList.remove("filter-active")
     if (e.key === 'Enter' || e.keyCode === 13) {
         $("#student-search-input-field").blur()
     }
@@ -362,6 +369,19 @@ $("#student-search-input-field").on('keyup', function (e) {
             var cell1 = row.insertCell(0)
             var cell2 = row.insertCell(1)
             var cell3 = row.insertCell(2)
+            if(Participants[i].state === "Not Registered"){
+                row.style.backgroundColor = "#b8b8b8"
+                cell3.style.color = "#000000"
+            }
+            else if(Participants[i].state === "Absent"){
+                cell3.style.color = "#dd174d"
+            }
+            else if(Participants[i].state === "Left Meeting"){
+                cell3.style.color = "#ddb217"
+            }
+            else if(Participants[i].state === "Present"){
+                cell3.style.color = "#00bc50"
+            }
             cell3.innerHTML = Participants[i].state
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
@@ -370,7 +390,7 @@ $("#student-search-input-field").on('keyup', function (e) {
 
 });
 function filterClick(clicked_id){
-    // TODO: Clear search bar
+    $("#student-search-input-field").val("")
     const participantTable = document.getElementById("participant-table")
     document.getElementById(clicked_id).classList.add("filter-active")
     clearTable()
@@ -803,11 +823,17 @@ function saveDisplayName(){
         auth.currentUser.updateProfile({
             displayName: document.getElementById("displayName-input-field").value
         }).then(function() {
-            greenNotification("Your name has successfully been changed")
-            //TODO: update firestore
-            document.getElementById("user-name").innerHTML = "Welcome " + document.getElementById("displayName-input-field").value
-            localStorage.setItem("userDisplayName",document.getElementById("displayName-input-field").value)
-            document.getElementById("displayName-input-field").value = ""
+            firestore.collection("Users").doc(auth.currentUser).set({
+                name : document.getElementById("displayName-input-field").value,
+                email : auth.currentUser.email,
+            }).then(() => {
+                greenNotification("Your name has successfully been changed")
+                document.getElementById("user-name").innerHTML = "Welcome " + document.getElementById("displayName-input-field").value
+                document.getElementById("displayName-input-field").value = ""
+            }).catch((error)=>{
+                console.log(error.message)
+                redNotification(error.message)
+            })
         }).catch(function(error) {
             redNotification("Error changing name")
             console.log(error)
@@ -833,11 +859,18 @@ function saveEmail(){
                     document.getElementById("myTabContent").hidden = true
                     document.getElementById("verifyEmail").hidden = false
                     document.getElementById("settings-resend-verification-link-button").hidden = false
-                    yellowNotification("Your email has changed but is not verified")
-                    //TODO: update firestore
-                    document.getElementById("old-email-input-field").value = ""
-                    document.getElementById("current-password-input-field").value = ""
-                    document.getElementById("email-input-field").value = ""
+                    firestore.collection("Users").doc(auth.currentUser).set({
+                        name : auth.currentUser.displayName,
+                        email : document.getElementById("email-input-field").value,
+                    }).then(() => {
+                        document.getElementById("old-email-input-field").value = ""
+                        document.getElementById("current-password-input-field").value = ""
+                        document.getElementById("email-input-field").value = ""
+                        yellowNotification("Your email has changed but is not verified")
+                    }).catch((error)=>{
+                        console.log(error.message)
+                        redNotification(error.message)
+                    })
                     $("#settings-modal").modal('hide');
                 }).catch(function(error) {
                     console.log(error.message)
@@ -924,4 +957,3 @@ function yellowNotification(message){
         document.getElementById("notifyType").innerHTML = ""
     },2000);
 }
-//TODO: disable functions when email is not entered
