@@ -110,6 +110,7 @@ hr{
     border-radius: 0 20px 20px 0 !important;
     margin-left: 15px;
     min-width: 250px;
+    z-index: 100;
 }
 #user-name{
     color: white;
@@ -355,29 +356,45 @@ hr{
      border-color: #ec3232;
  }
 .notify{
+
     position:absolute;
     top:0;
-    width:100%;
+    width:110%;
     height:0;
     box-sizing:border-box;
     color:white;
-    text-align:center;
-    background: rgba(255, 82, 82,0.7);
+    text-align: center;;
+    background: rgb(198, 198, 198);
     overflow:hidden;
     box-sizing:border-box;
     transition:height .2s;
 }
-
+#notifyType{
+    font-size: 18px;
+}
 #notifyType:before{
     display:block;
     margin-top:15px;
-
 }
 
-.notify-active{
-    height:50px;
-}
+.notify-active-red{
+    padding-top:10px !important;
 
+    height:50px !important;
+    background: rgba(255, 82, 82,0.7);
+}
+.notify-active-green{
+    padding-top:10px !important;
+
+    height:50px !important;
+    background: rgba(37, 222, 104,0.7);
+}
+.notify-active-yellow{
+    padding-top:10px !important;
+
+    height:50px !important;
+    background: rgba(236, 183, 31,0.7);
+}
 .failure:before{
     Content:"Please check make sure that you filled out all the fields";
 }
@@ -448,4 +465,14 @@ hr{
 }
 #logout-button{
     cursor: pointer;
+}
+#verifyEmail{
+    margin-top: 300px;
+}
+#verifyEmailTitle{
+    margin-bottom: 15px;
+}
+#verifyEmailDescription{
+    color: #a9a9a9;
+    margin-bottom: 15px;
 }
