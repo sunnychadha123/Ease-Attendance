@@ -55,8 +55,11 @@ function updateParticipantTable(){
     else if( document.getElementById("all-filter").classList.contains("filter-active")){
         filterClick("all-filter")
     }
-    else if( document.getElementById("not-present-filter").classList.contains("filter-active")){
-        filterClick("not-present-filter")
+    else if( document.getElementById("absent-filter").classList.contains("filter-active")){
+        filterClick("absent-filter")
+    }
+    else if( document.getElementById("left-meeting-filter").classList.contains("filter-active")){
+        filterClick("not-registered-filter")
     }
     else if( document.getElementById("not-registered-filter").classList.contains("filter-active")){
         filterClick("not-registered-filter")
@@ -79,7 +82,6 @@ try{
         })
         socket.addEventListener('message', function (event) {
             const data = event.data.split(" ");
-            console.log(data)
             const eventType = data[0]
             if(eventType === "meeting.started"){
                 clearInterval(CurrentMeetingTimer)
@@ -127,7 +129,7 @@ try{
                         const name = Meetings[meetingIndex].arr[i].split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Not Present", true))
+                        Participants.unshift(new Participant(participantFirst, participantLast, "Absent", true))
 
                     }
                 }
@@ -149,16 +151,16 @@ try{
                             const toAdd = Participants[i]
                             isPartOfRoster = true
                             Participants.splice(i,1)
-                            Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true))
+                            Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true, toAdd.presentTime, toAdd.absentTime))
                             break
                         }
                     }
                     if(!isPartOfRoster){
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Present",false))
+                        Participants.unshift(new Participant(participantFirst, participantLast, "Present",false,0,0))
                     }
                 }
                 else{
-                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false, 0 ,0))
                 }
                 updateParticipantTable()
             }
@@ -177,7 +179,7 @@ try{
                         const currParticipant = Participants[i]
                         Participants.splice(i,1)
                         if(currParticipant.partOfRoster){
-                            Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Not Present", true))
+                            Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
                         }
                         break
                     }
@@ -235,10 +237,12 @@ function filterClick(clicked_id){
     clearTable()
     if(clicked_id === "all-filter"){
         document.getElementById("present-filter").classList.remove("filter-active")
-        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("absent-filter").classList.remove("filter-active")
         document.getElementById("not-registered-filter").classList.remove("filter-active")
+        document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             var row = participantTable.insertRow(1);
+            Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 row.style.backgroundColor = "#b8b8b8"
             }
@@ -253,8 +257,11 @@ function filterClick(clicked_id){
             if(Participants[i].state === "Present"){
                 cell3.style.color = "#00bc50"
             }
-            if(Participants[i].state === "Not Present"){
+            if(Participants[i].state === "Absent"){
                 cell3.style.color = "#dd174d"
+            }
+            if(Participants[i].state === "Left Meeting"){
+                cell3.style.color = "#ddb217"
             }
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
@@ -262,8 +269,9 @@ function filterClick(clicked_id){
     }
     else if(clicked_id === "present-filter"){
         document.getElementById("all-filter").classList.remove("filter-active")
-        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("absent-filter").classList.remove("filter-active")
         document.getElementById("not-registered-filter").classList.remove("filter-active")
+        document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 var row = participantTable.insertRow(1);
@@ -279,10 +287,11 @@ function filterClick(clicked_id){
             }
         }
     }
-    else if(clicked_id === "not-present-filter"){
+    else if(clicked_id === "absent-filter"){
         document.getElementById("all-filter").classList.remove("filter-active")
         document.getElementById("present-filter").classList.remove("filter-active")
         document.getElementById("not-registered-filter").classList.remove("filter-active")
+        document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Present"){
                 var row = participantTable.insertRow(1);
@@ -300,8 +309,9 @@ function filterClick(clicked_id){
     }
     else if(clicked_id === "not-registered-filter"){
         document.getElementById("all-filter").classList.remove("filter-active")
-        document.getElementById("not-present-filter").classList.remove("filter-active")
+        document.getElementById("absent-filter").classList.remove("filter-active")
         document.getElementById("present-filter").classList.remove("filter-active")
+        document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 var row = participantTable.insertRow(1);
@@ -311,6 +321,26 @@ function filterClick(clicked_id){
                 var cell2 = row.insertCell(1)
                 var cell3 = row.insertCell(2)
                 cell3.innerHTML = Participants[i].state
+                cell1.innerHTML = Participants[i].firstName
+                cell2.innerHTML = Participants[i].lastName
+            }
+        }
+    }
+    else if(clicked_id === "left-meeting-filter"){
+        document.getElementById("all-filter").classList.remove("filter-active")
+        document.getElementById("absent-filter").classList.remove("filter-active")
+        document.getElementById("present-filter").classList.remove("filter-active")
+        document.getElementById("not-registered-filter").classList.remove("filter-active")
+        for(let i = Participants.length-1; i >= 0; i--){
+            if(Participants[i].state === "Left Meeting"){
+                var row = participantTable.insertRow(1);
+                row.style.backgroundColor = "#ffffff"
+                cell3.style.color = "#000000"
+                var cell1 = row.insertCell(0)
+                var cell2 = row.insertCell(1)
+                var cell3 = row.insertCell(2)
+                cell3.innerHTML = Participants[i].state
+                cell3.style.color = "#ddb217"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
             }
