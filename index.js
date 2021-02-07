@@ -12,6 +12,16 @@ var firebase = require("firebase/app");
 require("firebase/auth");
 require("firebase/firestore");
 
+
+//serverside read and write Admin:
+const admin = require('firebase.admin')
+const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+})
+const db = admin.firestore();
+
+
 const options = {
   hostname: 'https://api.zoom.us/v2',
   port: 4000,
