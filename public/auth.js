@@ -1,9 +1,95 @@
 
 
-
 const auth = firebase.auth()
 const firestore = firebase.firestore()
 
+
+
+function authenticateWithGoogle(){
+    console.log("step one authenticate began")
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+            console.log("step two after sign up")
+
+            var credential = result.credential;
+
+
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+            var userUID = firebase.auth().currentUser.uid;
+
+            console.log(firebase.auth().currentUser.uid)
+            console.log(user.displayName)
+            console.log(user.email)
+
+
+            firestore.collection("Users").doc(userUID).set({
+                name: user.displayName,
+                email: user.email
+            })
+                .then(function() {
+                    console.log("step three after doc creation")
+                    localStorage.setItem("userDisplayName",user.name)
+                    localStorage.setItem("uid",user.displayName)
+                    localStorage.setItem("userEmail",user.email)
+                    window.location.href = "dashboard.html"
+                })
+                .catch(function(error) {
+                    document.getElementById("signUpMessage").innerHTML = error.message
+                });
+        }).catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        console.log(errorCode+" "+errorMessage+" "+email +" "+credential)
+    });
+}
+
+function loginWithGoogle(){
+    console.log("step one authenticate began")
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth()
+        .signInWithPopup(provider)
+        .then((result) => {
+            console.log("step two after sign up")
+
+            var credential = result.credential;
+
+            // This gives you a Google Access Token. You can use it to access the Google API.
+            var token = credential.accessToken;
+            // The signed-in user info.
+            var user = result.user;
+
+            console.log(firebase.auth().currentUser.uid)
+            console.log(user.displayName)
+            console.log(user.email)
+
+                .then(function() {
+                    console.log("step three after doc creation")
+                    window.location.href = "dashboard.html"
+                })
+                .catch(function(error) {
+                    document.getElementById("signUpMessage").innerHTML = error.message
+                });
+        }).catch((error) => {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // The email of the user's account used.
+        var email = error.email;
+        // The firebase.auth.AuthCredential type that was used.
+        var credential = error.credential;
+        console.log(errorCode+" "+errorMessage+" "+email +" "+credential)
+    });
+}
 
 function authenticate(){
     const pass = document.getElementById("pass").value
