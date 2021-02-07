@@ -13,8 +13,6 @@ class Participant{
         this.partOfRoster = roster
     }
 }
-var CurrentMeetingTimer
-var CurrentMeetingTime = 0
 var Meetings = []
 var MeetingsdidLoad = false
 var Participants = []
@@ -84,8 +82,6 @@ try{
             const data = event.data.split(" ");
             const eventType = data[0]
             if(eventType === "meeting.started"){
-                clearInterval(CurrentMeetingTimer)
-                CurrentMeetingTime = 0
                 document.getElementById("meeting-id-attendance").hidden = false
                 var meetingName = ""
                 for(i = 1; i < data.length;i++){
@@ -95,21 +91,40 @@ try{
                 meetingOccuring = true
                 document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 document.getElementById("status-dot").classList.remove("dot-danger")
-                document.getElementById("status-dot").classList.add("dot-success")
+                if(meetingIndex === -1){
+                    document.getElementById("status-dot").classList.add("dot-success")
+                }
+                else{
+                    document.getElementById("status-dot").classList.add("dot-warning")
+                }
+
 
             }
             else if(eventType === "meeting.ended"){
-                clearInterval(CurrentMeetingTimer)
-                console.log(CurrentMeetingTime)
+                document.getElementById("status-dot").classList.remove("dot-success")
+                document.getElementById("status-dot").classList.add("dot-danger")
                 document.getElementById("currentMeeting-name").innerHTML = "No meeting has started"
                 document.getElementById("meeting-id-attendance").value = ""
                 document.getElementById("meeting-id-attendance").hidden = true
+                if(meetingIndex === -1){
+                    $('#add-edit-meeting-modal').modal('show');
+                    $("#meeting-id-input-field").val(CurrentMeetingID)
+                    $("#meeting-name-input-field").val(CurrentMeeting)
+                    $("#delete-meeting-button").prop('disabled', true)
+                    $("#delete-meeting-button").hide()
+                    $("#save-meeting-button").innerHTML = "Add Meeting"
+                    const studentInputTable = document.getElementById("student-input-table")
+                    while (studentInputTable.rows.length !== 0) {
+                        studentInputTable.deleteRow(0)
+                    }
+                    for (i = 0; i < Participants.length; i++) {
+                        addStudent(Participants[i].firstName + " " + Participants[i].lastName)
+                    }
+                    document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
+                }
                 meetingOccuring = false
                 CurrentMeeting = ""
                 CurrentMeetingID = ""
-                document.getElementById("status-dot").classList.remove("dot-success")
-                document.getElementById("status-dot").classList.add("dot-danger")
-                //TODO: add save meeting options here
             }
             else if(eventType === "meeting.id"){
                 CurrentMeetingID = data[1]
@@ -335,7 +350,6 @@ function filterClick(clicked_id){
             if(Participants[i].state === "Left Meeting"){
                 var row = participantTable.insertRow(1);
                 row.style.backgroundColor = "#ffffff"
-                cell3.style.color = "#000000"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
                 var cell3 = row.insertCell(2)
@@ -364,6 +378,7 @@ function addMeetingModal(){
         studentInputTable.deleteRow(0)
     }
     addStudent()
+    document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
 }
 function addStudent(name){
     const studentInputTable = document.getElementById("student-input-table")
@@ -373,7 +388,7 @@ function addStudent(name){
         var res = name.split(" ")
 
         row.cells[0].children[0].value = res[0]
-        row.cells[1].children[0].value = res[1]
+        row.cells[1].children[0].value = res[res.length-1]
     }
     $("input").on("click", function(){
         $(this).removeClass('input-error')
@@ -413,6 +428,7 @@ if(localStorage.getItem("uid") !== "null") {
                     currentRow.classList.add("meeting-row")
                     currentRow.addEventListener("click", function () {
                         var index = this.rowIndex
+                        document.getElementById("meeting-modal-title").innerHTML = "Edit Meeting"
                         editingIndex = index
                         $('#add-edit-meeting-modal').modal('show');
                         const currentMeeting = Meetings[index - 1]
@@ -420,7 +436,6 @@ if(localStorage.getItem("uid") !== "null") {
                         $("#meeting-name-input-field").val(currentMeeting.name)
                         $("#delete-meeting-button").prop('disabled', false)
                         $("#delete-meeting-button").show()
-                        $("#save-meeting-button").innerHTML = "Save changes"
                         while (studentInputTable.rows.length !== 0) {
                             studentInputTable.deleteRow(0)
                         }
