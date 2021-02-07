@@ -34,7 +34,7 @@ function authenticateWithGoogle(){
                 .then(function() {
                     console.log("step three after doc creation")
                     localStorage.setItem("userDisplayName",user.name)
-                    localStorage.setItem("uid",user.uid+"G")
+                    localStorage.setItem("uid",user.displayName)
                     localStorage.setItem("userEmail",user.email)
                     window.location.href = "dashboard.html"
                 })
