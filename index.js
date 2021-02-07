@@ -14,7 +14,7 @@ require("firebase/firestore");
 
 
 //serverside read and write Admin:
-const admin = require('firebase.admin')
+const admin = require('firebase-admin')
 const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -40,6 +40,8 @@ class Meeting{
     this.hostEmail = hostEmail
     this.finishedTS = new Set()
     this.messageLog = []
+    this.recordLog = []
+    this.meetingStart = new Date()
   }
 }
 
@@ -105,7 +107,6 @@ app.post('/', (req, res) => {
   }
   if(!Meetings[host_id].finishedTS.has(body.event_ts)){
     Meetings[host_id].finishedTS.add(body.event_ts)
-    console.log(body.event_ts)
     console.log("<====================================================>")
     console.log(req.body)
     console.log(req.body.payload.object.participant)
@@ -113,15 +114,44 @@ app.post('/', (req, res) => {
     if(body.event === "meeting.started"){
       Meetings[host_id].meetingName = body.payload.object.topic
       Meetings[host_id].meetingId = body.payload.object.id
+      let currentDate = new Date()
+      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
     }
     else if(body.event === "meeting.ended"){
-      delete Meetings[host_id]
+      let currentDate = new Date()
+      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
+      db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
+          .get()
+          .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              db.collection("Records").add({
+                'Events': Meetings[host_id].recordLog,
+                'MeetingID': Meetings[host_id].meetingId,
+                'useruid': String(doc.id),
+                'MeetingName': Meetings[host_id].meetingName,
+                'MeetingStart': Meetings[host_id].meetingStart,
+                'MeetingEnd' : new Date()
+              })
+                  .then((docRef) => {
+                    console.log("Document written with ID: ", docRef.id);
+                  })
+                  .catch((error) => {
+                    console.error("Error adding document: ", error);
+                  });
+              return
+            });
+          })
+          .catch((error) => {
+            console.log("Error getting documents: ", error);
+          });
     }
     else if(body.event === "meeting.participant_joined"){
       const participant = body.payload.object.participant
       const participantID = participant.id
       const participantName = participant.user_name
       const participantEmail = participant.email
+      let currentDate = new Date()
+      Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
       if(participantID === host_id){
         EmailToID[participantEmail] = host_id;
         Meetings[host_id].hostEmail = participantEmail
@@ -156,6 +186,8 @@ app.post('/', (req, res) => {
       const participantID = participant.id
       const participantName = participant.user_name
       const participantEmail = participant.email
+      let currentDate = new Date()
+      Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
       if(Meetings[host_id].hostEmail == null){
         remove(Meetings[host_id].participantsToSend,participantName)
       }

@@ -13,6 +13,8 @@ class Participant{
         this.partOfRoster = roster
     }
 }
+//TODO: fix status indicator
+//TODO: make sure to clear table at meeting end
 var Meetings = []
 var MeetingsdidLoad = false
 var Participants = []
