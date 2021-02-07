@@ -134,6 +134,7 @@ app.post('/', (req, res) => {
               })
                   .then((docRef) => {
                     console.log("Document written with ID: ", docRef.id);
+                    delete Meeting[host_id]
                   })
                   .catch((error) => {
                     console.error("Error adding document: ", error);

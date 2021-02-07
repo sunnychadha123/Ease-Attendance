@@ -316,10 +316,10 @@ hr{
     border-color: #F5B364;
 
 }
-#close-meetings-modal{
+#close-meetings-modal, #close-records-modal{
     color: #ababab !important;
 }
-#close-meetings-modal:hover{
+#close-meetings-modal:hover, #close-records-modal:hover{
     color: #ff3131 !important;
 }
 #save-meeting-button{
@@ -338,10 +338,10 @@ hr{
     border-color: red;
 }
 .meeting-row:hover{
-    cursor: pointer;
-    margin-top: -5px;
-    margin-bottom: 5px;
-    box-shadow: 1px 3px 4px 1px #c3c3c3;
+    cursor: pointer!important;
+    margin-top: -5px!important;
+    margin-bottom: 5px!important;
+    box-shadow: 1px 3px 4px 1px #c3c3c3!important;
 }
 #delete-meeting-button{
     background: none;
@@ -393,3 +393,37 @@ hr{
 #meeting-id-attendance{
     color: #bababa;
 }
+#past-meeting-title{
+    color: black;
+}
+#records-search{
+    margin-top: 40px;
+    width: 225px;
+    margin-bottom: 15px;
+}
+#records-table-head{
+    background-color: #ee6165 !important;
+}
+#current-record-name, #current-record-date,#current-record-id{
+    margin-bottom: 15px;
+}
+.record-row:hover{
+    transform: scale(1);
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    cursor: pointer!important;
+    box-shadow: 1px 3px 4px 1px #c3c3c3!important;
+
+
+}
+#delete-record-button{
+    background: none;
+    outline: none;
+    border-color: #ec3232;
+    color: black;
+}#delete-record-button:hover{
+     background: #ec3232;
+     color: white;
+     outline: none;
+     border-color: #ec3232;
+ }

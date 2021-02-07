@@ -12,14 +12,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <!-- Bootstrap core CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- JQuery -->
     <!-- Bootstrap tooltips -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
     <!-- Bootstrap core JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="vendor/jquery.input-allow.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <link rel="stylesheet" href="modules/all.min.css">
     <link rel="stylesheet" type="text/css" href="modules/font-awesome.css">
@@ -52,8 +51,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="students-tab" href="#students" data-toggle="tab" role="tab" aria-controls="students" aria-selected="false">
-                    <span class="iconify" data-inline="false" data-icon="bi:person" style="font-size: 18px;"></span>
-                    Past Meetings
+                    <span class="iconify" data-inline="false" data-icon="ic:outline-access-time" style="font-size: 18px;"></span>
+                    Meeting Records
                 </a>
             </li>
         </ul>
@@ -118,7 +117,6 @@
                     <tr>
                         <th class="table-head-title meeting-table-title" scope="col">Meeting Name</th>
                         <th class="table-head-title meeting-table-title" scope="col" >Meeting ID</th>
-
                     </tr>
                     </thead>
                     <tbody id="meeting-table">
@@ -127,7 +125,57 @@
                 <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-meeting-button">Add Meeting</button>
 
             </div>
-            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1>Past Meetings</h1></div>
+            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1 id="past-meeting-title">Meeting Records</h1>
+                <div id="records-search" class="input-group flex-nowrap float-left">
+                    <div id="records-prepend" class="input-group-prepend">
+                        <span class="input-group-text" id="addon-wrapping-2"><span class="iconify" data-inline="false" data-icon="ant-design:search-outlined" style="font-size: 20px;"></span></span>
+                    </div>
+                    <input id="records-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Meeting Name" aria-label="Meeting Name" aria-describedby="addon-wrapping">
+                </div>
+                <table class="table" id="records-table">
+                    <thead id="records-table-head">
+                    <tr>
+                        <th class="table-head-title" scope="col">Meeting Name</th>
+                        <th class="table-head-title" scope="col">Meeting ID</th>
+                        <th class="table-head-title" scope="col">Time Started</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <!-- Meeting Record Modal -->
+                <div class="modal fade" id="meeting-record-modal" tabindex="-1" role="dialog" aria-labelledby="meeting-record=modal" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button id="close-records-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span class="iconify" data-inline="false" data-icon="cil:x" style="font-size: 35px;"></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 id="current-record-name">Meeting Name</h5>
+                                <h5 id="current-record-date">Date: </h5>
+                                <h5 id="current-record-id">Meeting ID</h5>
+                                <div id="current-record-search" class="input-group flex-nowrap float-left">
+                                    <div id="current-record-prepend" class="input-group-prepend">
+                                        <span class="input-group-text" id="addon-wrapping-3"><span class="iconify" data-inline="false" data-icon="ant-design:search-outlined" style="font-size: 20px;"></span></span>
+                                    </div>
+                                    <input id="current-record-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="" aria-label="" aria-describedby="addon-wrapping">
+                                </div>
+                                <table class="table" id="current-record-table">
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button onclick="deleteRecord()" id="delete-record-button" type="button" class="btn btn-primary">Delete record</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
             <!-- Add/Edit Meeting Modal -->
             <div class="modal fade meeting-modal" id="add-edit-meeting-modal" tabindex="-1" role="dialog" aria-labelledby="add-edit-meeting-modal" aria-hidden="true">
                 <div class="notify"><span id="notifyType" class=""></span></div>
@@ -142,17 +190,17 @@
                         <div class="modal-body">
                             <div class="col-5">
                                 <h5 class="modal-title">Meeting Details</h5>
-                                <div id="meeting-id" class="input-group flex-nowrap float-left">
-                                    <div id="meeting-id-prepend" class="input-group-prepend">
-                                        <span class="input-group-text">ID</span>
-                                    </div>
-                                    <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="XXX-XXXX-XXXX" aria-label="Meeting ID" aria-describedby="addon-wrapping">
-                                </div>
                                 <div id="meeting-name" class="input-group flex-nowrap float-left">
                                     <div id="meeting-name-prepend" class="input-group-prepend">
                                         <span class="input-group-text">Name</span>
                                     </div>
                                     <input id="meeting-name-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="Meeting Name" aria-label="Meeting Name" aria-describedby="addon-wrapping">
+                                </div>
+                                <div id="meeting-id" class="input-group flex-nowrap float-left">
+                                    <div id="meeting-id-prepend" class="input-group-prepend">
+                                        <span class="input-group-text">ID</span>
+                                    </div>
+                                    <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="XXX-XXXX-XXXX" aria-label="Meeting ID" aria-describedby="addon-wrapping">
                                 </div>
                                 <h5 class="modal-title">Students</h5>
                                 <table id="student-input-table">

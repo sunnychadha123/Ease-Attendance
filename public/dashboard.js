@@ -13,9 +13,20 @@ class Participant{
         this.partOfRoster = roster
     }
 }
+class PastMeeting{
+    constructor(MeetingName, MeetingID, MeetingStart,MeetingEnd,events,docID) {
+        this.MeetingName = MeetingName
+        this.MeetingID = MeetingID
+        this.MeetingStart = MeetingStart
+        this.MeetingEnd = MeetingEnd
+        this.events = events
+        this.docID = docID
+    }
+}
 //TODO: fix status indicator
 //TODO: make sure to clear table at meeting end
 var Meetings = []
+var PastMeetings
 var MeetingsdidLoad = false
 var Participants = []
 var names = []
@@ -23,6 +34,7 @@ var meetingOccuring = false
 var CurrentMeeting = ""
 var CurrentMeetingID = ""
 var meetingIndex = -1
+var currentRecordIndex = -1
 const firestore = firebase.firestore()
 const auth = firebase.auth()
 document.getElementById("meeting-id-attendance").hidden = true
@@ -430,6 +442,7 @@ if(localStorage.getItem("uid") !== "null") {
                     currentRow.classList.add("meeting-row")
                     currentRow.addEventListener("click", function () {
                         var index = this.rowIndex
+                        currentRecordIndex = index-1
                         document.getElementById("meeting-modal-title").innerHTML = "Edit Meeting"
                         editingIndex = index
                         $('#add-edit-meeting-modal').modal('show');
@@ -462,7 +475,135 @@ function compareMeetings(a, b) {
     if(a.id < b.id) return -1
     return 0;
 }
+function comparePastMeetings(a, b) {
+    if (a.MeetingStart > b.MeetingEnd) return -1
+    return 1;
+}
+if(localStorage.getItem("uid") !== "null") {
+    firestore.collection("Records").where("useruid", "==", localStorage.getItem("uid"))
+        .onSnapshot((querySnapshot) => {
+            if (localStorage.getItem("uid") !== "null") {
+                PastMeetings = []
+                querySnapshot.forEach((doc) => {
+                    const currData = doc.data()
+                    PastMeetings.push(new PastMeeting(currData.MeetingName, currData.MeetingID, currData.MeetingStart, currData.MeetingEnd, currData.Events,doc.id))
+                })
+                const recordTable = document.getElementById("records-table")
+                PastMeetings.sort(comparePastMeetings)
+                while (recordTable.rows.length > 1) {
+                    recordTable.deleteRow(1)
+                }
+                console.log(PastMeetings)
+                const currentRecordTable = document.getElementById("current-record-table")
+                for (i = PastMeetings.length - 1; i >= 0; i--) {
+                    var currentRow = recordTable.insertRow(1)
+                    currentRow.classList.add("record-row");
+                    currentRow.addEventListener("click", function () {
+                        var index = this.rowIndex
+                        currentRecordIndex = index-1
+                        const currentMeeting = PastMeetings[index - 1]
+                        document.getElementById("current-record-name").innerHTML = "Meeting Name: " + currentMeeting.MeetingName
+                        document.getElementById("current-record-id").innerHTML = "Meeting ID: " + currentMeeting.MeetingID
+                        document.getElementById("current-record-date").innerHTML = "Date: " + currentMeeting.MeetingStart.toDate().toLocaleString() + " - " + currentMeeting.MeetingEnd.toDate().toLocaleString()
+                        $('#meeting-record-modal').modal('show');
+                        while (currentRecordTable.rows.length !== 0) {
+                            currentRecordTable.deleteRow(0)
+                        }
+                        for (i = 0; i < currentMeeting.events.length; i++) {
+                            var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
+                            var cell1 = row.insertCell(0)
+                            cell1.innerHTML = currentMeeting.events[i]
+                        }
+                    })
+                    var cell1 = currentRow.insertCell(0)
+                    var cell2 = currentRow.insertCell(1)
+                    var cell3 = currentRow.insertCell(2)
+                    currentRow.style.backgroundColor = "#ffffff"
+                    cell1.innerHTML = PastMeetings[i].MeetingName
+                    cell2.innerHTML = PastMeetings[i].MeetingID
+                    cell3.innerHTML = PastMeetings[i].MeetingStart.toDate().toLocaleString()
+                    cell2.classList.add("meeting-id-text")
+                }
+            }
+        });
+}
+$("#records-search-input-field").on('keyup', function (e) {
+    const recordTable = document.getElementById("records-table")
+    currValue = $(this).val();
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        $("#records-search-input-field").blur()
+    }
+    while(recordTable.rows.length > 1){
+        recordTable.deleteRow(1)
+    }
+    for(let i = PastMeetings.length-1; i >= 0; i--){
+        const name = PastMeetings[i].MeetingName
+        const currentRecordTable = document.getElementById("current-record-table")
+        if(name.includes(currValue)){
+            var currentRow = recordTable.insertRow(1)
+            currentRow.addEventListener("click", function () {
+                var index = this.rowIndex
+                currentRecordIndex = index-1
+                const currentMeeting = PastMeetings[index - 1]
+                document.getElementById("current-record-name").innerHTML = "Meeting Name: " + currentMeeting.MeetingName
+                document.getElementById("current-record-id").innerHTML = "Meeting ID: " + currentMeeting.MeetingID
+                document.getElementById("current-record-date").innerHTML = "Date: " + currentMeeting.MeetingStart.toDate().toLocaleString() + " - " + currentMeeting.MeetingEnd.toDate().toLocaleString()
+                $('#meeting-record-modal').modal('show');
 
+                while (currentRecordTable.rows.length !== 0) {
+                    currentRecordTable.deleteRow(0)
+                }
+                for (i = 0; i < currentMeeting.events.length; i++) {
+                    var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
+                    var cell1 = row.insertCell(0)
+                    cell1.innerHTML = currentMeeting.events[i]
+                }
+            })
+            var cell1 = currentRow.insertCell(0)
+            var cell2 = currentRow.insertCell(1)
+            var cell3 = currentRow.insertCell(2)
+            currentRow.style.backgroundColor = "#ffffff"
+            cell1.innerHTML = PastMeetings[i].MeetingName
+            cell2.innerHTML = PastMeetings[i].MeetingID
+            cell3.innerHTML = PastMeetings[i].MeetingStart.toDate().toLocaleString()
+            cell2.classList.add("meeting-id-text")
+            currentRow.classList.add("record-row")
+        }
+    }
+
+});
+$("#current-record-search-input-field").on('keyup', function (e) {
+    const currentRecordTable = document.getElementById("current-record-table")
+    currValue = $("#current-record-search-input-field").val();
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        $("#current-record-search-input-field").blur()
+    }
+
+    while(currentRecordTable.rows.length > 0){
+        currentRecordTable.deleteRow(0)
+    }
+    for(let i = PastMeetings[currentRecordIndex].events.length-1; i >= 0; i--){
+        const currString = PastMeetings[currentRecordIndex].events[i]
+        if(currString.includes(currValue)){
+            var row = currentRecordTable.insertRow(0);
+            row.style.backgroundColor = "#ffffff"
+            row.style.color = "#000000"
+            var cell1 = row.insertCell(0)
+            cell1.innerHTML = PastMeetings[currentRecordIndex].events[i]
+
+        }
+    }
+
+});
+
+function deleteRecord(){
+    const currentRecord = PastMeetings[currentRecordIndex]
+    firestore.collection("Records").doc(currentRecord.docID).delete().then(() => {
+        $("#meeting-record-modal").modal("hide")
+    }).catch((error) => {
+        console.error("Error removing document: ", error);
+    });
+}
 
 var editingIndex = 1
 function deleteMeeting(){
