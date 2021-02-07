@@ -53,7 +53,7 @@
             <li class="nav-item">
                 <a class="nav-link" id="students-tab" href="#students" data-toggle="tab" role="tab" aria-controls="students" aria-selected="false">
                     <span class="iconify" data-inline="false" data-icon="bi:person" style="font-size: 18px;"></span>
-                    My Students
+                    Past Meetings
                 </a>
             </li>
         </ul>
@@ -126,38 +126,41 @@
                 </table>
                 <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-meeting-button">Add Meeting</button>
 
-                <!-- Add/Edit Meeting Modal -->
-                <div class="modal fade meeting-modal" id="add-edit-meeting-modal" tabindex="-1" role="dialog" aria-labelledby="add-edit-meeting-modal" aria-hidden="true">
-                    <div class="notify"><span id="notifyType" class=""></span></div>
-                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button id="close-meetings-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span class="iconify" data-inline="false" data-icon="cil:x" style="font-size: 35px;"></span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="col-5">
-                                    <h5 class="modal-title">Meeting Details</h5>
-                                    <div id="meeting-id" class="input-group flex-nowrap float-left">
-                                        <div id="meeting-id-prepend" class="input-group-prepend">
-                                            <span class="input-group-text">ID</span>
-                                        </div>
-                                        <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="XXX-XXXX-XXXX" aria-label="Meeting ID" aria-describedby="addon-wrapping">
+            </div>
+            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1>Past Meetings</h1></div>
+            <!-- Add/Edit Meeting Modal -->
+            <div class="modal fade meeting-modal" id="add-edit-meeting-modal" tabindex="-1" role="dialog" aria-labelledby="add-edit-meeting-modal" aria-hidden="true">
+                <div class="notify"><span id="notifyType" class=""></span></div>
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2 id="meeting-modal-title" class="float-left"></h2>
+                            <button id="close-meetings-modal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span class="iconify" data-inline="false" data-icon="cil:x" style="font-size: 35px;"></span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-5">
+                                <h5 class="modal-title">Meeting Details</h5>
+                                <div id="meeting-id" class="input-group flex-nowrap float-left">
+                                    <div id="meeting-id-prepend" class="input-group-prepend">
+                                        <span class="input-group-text">ID</span>
                                     </div>
-                                    <div id="meeting-name" class="input-group flex-nowrap float-left">
-                                        <div id="meeting-name-prepend" class="input-group-prepend">
-                                            <span class="input-group-text">Name</span>
-                                        </div>
-                                        <input id="meeting-name-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="Meeting Name" aria-label="Meeting Name" aria-describedby="addon-wrapping">
+                                    <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="XXX-XXXX-XXXX" aria-label="Meeting ID" aria-describedby="addon-wrapping">
+                                </div>
+                                <div id="meeting-name" class="input-group flex-nowrap float-left">
+                                    <div id="meeting-name-prepend" class="input-group-prepend">
+                                        <span class="input-group-text">Name</span>
                                     </div>
-                                    <h5 class="modal-title">Students</h5>
+                                    <input id="meeting-name-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="Meeting Name" aria-label="Meeting Name" aria-describedby="addon-wrapping">
+                                </div>
+                                <h5 class="modal-title">Students</h5>
                                 <table id="student-input-table">
                                     <tbody id="student-input-table-body">
                                     <tr>
-                                            <th scope="col"> <input type="text" placeholder="First name" class="form-control student-name modal-input student-first-name"></th>
-                                            <th scope="col"> <input type="text" placeholder="Last name" class="form-control student-name modal-input"></th>
-                                            <th scope="col"> <button onclick="deleteStudent(this)" class="btn trash-btn" type="button"><span class="iconify" data-inline="false" data-icon="ei:trash" style="font-size: 30px;"></span></button></th>
+                                        <th scope="col"> <input type="text" placeholder="First name" class="form-control student-name modal-input student-first-name"></th>
+                                        <th scope="col"> <input type="text" placeholder="Last name" class="form-control student-name modal-input"></th>
+                                        <th scope="col"> <button onclick="deleteStudent(this)" class="btn trash-btn" type="button"><span class="iconify" data-inline="false" data-icon="ei:trash" style="font-size: 30px;"></span></button></th>
 
                                     </tr>
                                     <tr>
@@ -174,18 +177,16 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                </div>
-                                <button onclick="addStudent()" class="float-right btn" type="button" id="add-student-button">Add Student</button>
                             </div>
-                            <div class="modal-footer">
-                                <button onclick="deleteMeeting()" id="delete-meeting-button" type="button" class="btn btn-primary">Delete Meeting</button>
-                                <button onclick="addMeeting()" id="save-meeting-button" type="button" class="btn btn-primary">Finish</button>
-                            </div>
+                            <button onclick="addStudent()" class="float-right btn" type="button" id="add-student-button">Add Student</button>
+                        </div>
+                        <div class="modal-footer">
+                            <button onclick="deleteMeeting()" id="delete-meeting-button" type="button" class="btn btn-primary">Delete Meeting</button>
+                            <button onclick="addMeeting()" id="save-meeting-button" type="button" class="btn btn-primary">Finish</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="students" role="tabpanel" aria-labelledby="contact-tab"><h1>asdfasdfasdf</h1></div>
         </div>
     </div>
 
