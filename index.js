@@ -14,7 +14,7 @@ require("firebase/firestore");
 
 
 //serverside read and write Admin:
-const admin = require('firebase.admin')
+const admin = require('firebase-admin')
 const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
