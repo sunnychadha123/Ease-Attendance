@@ -21,5 +21,6 @@
     <orderEntry type="library" name="firebase-analytics" level="application" />
     <orderEntry type="library" name="iconify" level="application" />
     <orderEntry type="library" name="@lottiefiles/lottie-player" level="application" />
+    <orderEntry type="library" name="@lottiefiles/lottie-interactivity" level="application" />
   </component>
 </module>

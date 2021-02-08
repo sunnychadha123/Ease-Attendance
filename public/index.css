@@ -96,6 +96,7 @@
   margin-top: 20px;
 }
 .sign-up-text{
+  margin-left: 10px;
   margin-top: 15px;
   width: 100px;
   color: #ee6165;
@@ -110,6 +111,43 @@
   background-color: #ee6165;
   color: white;
 }
+.footer-container{
+  background-color: #ee6165;
+  color: white;
+  margin-top: 200px
+}
+.footer-link{
+  color: white;
+  width: 300px!important;
+  margin: 2px;
+}
+.footer-link:hover{
+  color: #e0e0e0;
+}
+.footer-link-row{
+  padding: 30px;
+}
+
+.copyright-row{
+  padding: 30px;
+  background-color: #b5484b;
+}
+.learn-more-page-link{
+  margin-top: 15px;
+  margin-left: 15px;
+  width: 120px;
+  color: #ee6165;
+  background-color: white;
+  border: 1px solid #ee6165;
+  padding-right: 10px !important;
+  padding-left: 20px !important;
+  border-radius: 20px;
+  box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+.learn-more-page-link:hover{
+  background-color: #ee6165;
+  color: white;
+}
 
 @media (max-width: 991px){
   .landing-page-text{
@@ -120,3 +158,8 @@
 
 }
 
+@media (max-width: 1199px) and (min-width: 992px){
+  #landing-page-animation{
+    margin-top: 50px;
+  }
+}
