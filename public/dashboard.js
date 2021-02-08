@@ -823,12 +823,12 @@ function resetSettingInput(){
 
 }
 function saveDisplayName(){
-    if(document.getElementById("displayName-input-field").value !== ""){
+    if(document.getElementById("displayName-input-field").value !== "" && (document.getElementById("displayName-input-field").value.trim()).length < 35){
         auth.currentUser.updateProfile({
-            displayName: document.getElementById("displayName-input-field").value
+            displayName: document.getElementById("displayName-input-field").value.trim()
         }).then(function() {
-            firestore.collection("Users").doc(auth.currentUser).set({
-                name : document.getElementById("displayName-input-field").value,
+            firestore.collection("Users").doc(auth.currentUser.uid).set({
+                name : document.getElementById("displayName-input-field").value.trim(),
                 email : auth.currentUser.email,
             }).then(() => {
                 greenNotification("Your name has successfully been changed")
@@ -843,16 +843,17 @@ function saveDisplayName(){
             console.log(error)
         });
     }
+    else if((document.getElementById("displayName-input-field").value.trim()).length >= 35){
+        redNotification("Please choose a shorter display name")
+        console.log("Please choose a shorter display name")
+    }
     else{
         redNotification("Please make sure you entered in a name")
         console.log("please enter in the input field")
     }
-
+    $("#settings-modal").modal('hide');
 }
 function saveEmail(){
-    console.log(document.getElementById("old-email-input-field").value)
-    console.log(document.getElementById("current-password-input-field").value)
-    console.log(document.getElementById("email-input-field").value)
     firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
         .then((userCredential) => {
             const email = String(document.getElementById("email-input-field").value).trim()
@@ -863,7 +864,7 @@ function saveEmail(){
                     document.getElementById("myTabContent").hidden = true
                     document.getElementById("verifyEmail").hidden = false
                     document.getElementById("settings-resend-verification-link-button").hidden = false
-                    firestore.collection("Users").doc(auth.currentUser).set({
+                    firestore.collection("Users").doc(auth.currentUser.uid).set({
                         name : auth.currentUser.displayName,
                         email : document.getElementById("email-input-field").value,
                     }).then(() => {
@@ -875,7 +876,6 @@ function saveEmail(){
                         console.log(error.message)
                         redNotification(error.message)
                     })
-                    $("#settings-modal").modal('hide');
                 }).catch(function(error) {
                     console.log(error.message)
 
@@ -883,7 +883,6 @@ function saveEmail(){
             }).catch(function(error) {
                 console.log(error.message)
             });
-            $("#settings-modal").modal('hide');
         })
         .catch((error) => {
             var errorCode = error.code;
@@ -891,6 +890,7 @@ function saveEmail(){
             console.log(error.message)
             redNotification(error.message)
         });
+    $("#settings-modal").modal('hide');
 }
 function resendVerificationEmail(){
     auth.currentUser.sendEmailVerification().then(function() {
@@ -919,6 +919,7 @@ function resetPassword(){
         console.log(error)
         redNotification(error.message)
     });
+    $("#settings-modal").modal('hide');
 }
 function checkVerificationStatus(){
     clearInterval(checkVerificationTimer)

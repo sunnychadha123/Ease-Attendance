@@ -7,12 +7,14 @@
     <title>Ease Attendance | Sign Up</title>
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="signup.css">
+    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
 </head>
 <body>
 
 <div class="main">
     <section class="signup">
         <div class="container">
+            <a href="index.html" id="back-button"><span class="iconify" data-inline="false" data-icon="eva:arrow-back-outline" style="font-size: 24px;"></span></a>
             <div class="signup-content">
                 <div class="signup-form">
                     <h2 class="form-title">Sign up</h2>
@@ -33,7 +35,7 @@
                             <label for="re_pass"><i class="zmdi zmdi-lock-outline"></i></label>
                             <input type="password" name="re_pass" id="re_pass" placeholder="Confirm your password"/>
                         </div>
-                        <h6 id="signUpMessage"></h6>
+                        <h5 id="signUpMessage"></h5>
                         <div class="form-group form-button">
                             <button onclick="authenticate()" type="button" name="signup" id="signup" class="form-submit" value="Sign Up">Sign Up</button>
                         </div>

@@ -110,7 +110,6 @@ hr{
     border-radius: 0 20px 20px 0 !important;
     margin-left: 15px;
     min-width: 250px;
-    z-index: 100;
 }
 #user-name{
     color: white;
@@ -381,19 +380,19 @@ hr{
     padding-top:10px !important;
 
     height:50px !important;
-    background: rgba(255, 82, 82,0.7);
+    background: rgb(226, 89, 89);
 }
 .notify-active-green{
     padding-top:10px !important;
 
     height:50px !important;
-    background: rgba(37, 222, 104,0.7);
+    background: rgb(64, 207, 116);
 }
 .notify-active-yellow{
     padding-top:10px !important;
 
     height:50px !important;
-    background: rgba(236, 183, 31,0.7);
+    background: rgb(236, 183, 31);
 }
 .failure:before{
     Content:"Please check make sure that you filled out all the fields";

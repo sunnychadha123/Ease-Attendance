@@ -5,16 +5,20 @@
     <title>Ease Attendance | Login</title>
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="login.css">
+    <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
 </head>
 
 <body>
 <section class="sign-in" id="signin-section">
     <div class="container">
+        <a href="index.html" id="back-button"><span class="iconify" data-inline="false" data-icon="eva:arrow-back-outline" style="font-size: 24px;"></span></a>
         <div class="signin-content">
+
             <div class="signin-image">
                 <figure><img src="Images/teacherImage2.png" ></figure>
                 <a href="signup.html" class="signup-image-link">Create an account</a>
                 <a href="forgotpass.html" class="signup-image-link">Forgot password</a>
+
             </div>
 
             <div class="signin-form">
@@ -28,14 +32,14 @@
                         <label for="login-pass"><i class="zmdi zmdi-lock"></i></label>
                         <input type="password" name="your_pass" id="login-pass" placeholder="Password"/>
                     </div>
-                    <h6 id="loginMessage"></h6>
+                    <h5 id="loginMessage"></h5>
                     <div class="form-group">
                         <input type="checkbox" name="remember-me" id="remember-me" class="agree-term" />
                         <label for="remember-me" class="label-agree-term"><span><span></span></span>Remember me</label>
                     </div>
 
                     <div class="form-group form-button">
-                        <button type="button" onclick="login()" name="signin" id="signin" class="form-submit" value="Log in">Log in</button>
+                        <button type="button" onclick="login()" name="signin" id="signin" class="form-submit" value="Log in">Log In</button>
                     </div>
 
                 </div>
