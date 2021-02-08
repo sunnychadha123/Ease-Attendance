@@ -54,17 +54,26 @@ EmailToID = {}
 
 
 wsServer.on("connection", socket => {
-  socket.on("message", email => {
-    console.log(email)
-    if(email.includes("@")){
-      Clients[email] = socket
-      socket.id = email
-      if(email in EmailToID){
-        for(i = 0; i < Meetings[EmailToID[email]].messageLog.length;i++){
-          socket.send(Meetings[EmailToID[email]].messageLog[i])
+  socket.on("message", uid => {
+    console.log(uid)
+      var docRef = db.collection("Users").doc(uid)
+      docRef.get().then((doc) => {
+        if(doc.exists){
+          const email = doc.data().email
+          Clients[email] = socket
+          socket.id = email
+          if(email in EmailToID){
+            for(i = 0; i < Meetings[EmailToID[email]].messageLog.length;i++){
+              socket.send(Meetings[EmailToID[email]].messageLog[i])
+            }
+          }
         }
-      }
-    }
+      }).catch((error) => {
+        console.log(error)
+      })
+
+
+
   });
   socket.on("close", () => {
     console.log(socket.id + " has disconnected");
@@ -100,115 +109,124 @@ function remove(array, element) {
 app.post('/', (req, res) => {
   res.status(200)
   res.send()
-  const body = req.body
-  const host_id = body.payload.object.host_id
-  if(Meetings[host_id] == null){
-    Meetings[host_id] = new Meeting(host_id, null,null)
-  }
-  if(!Meetings[host_id].finishedTS.has(body.event_ts)){
-    Meetings[host_id].finishedTS.add(body.event_ts)
-    console.log("<====================================================>")
-    console.log(req.body)
-    console.log(req.body.payload.object.participant)
-    console.log("<====================================================>")
-    if(body.event === "meeting.started"){
-      Meetings[host_id].meetingName = body.payload.object.topic
-      Meetings[host_id].meetingId = body.payload.object.id
-      let currentDate = new Date()
-      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+  //TODO: make the authorization code a github secret
+  if(req.headers.authorization === "N2jq0IiHTl61mAEcaS9j0A"){
+    const body = req.body
+    const host_id = body.payload.object.host_id
+    if(Meetings[host_id] == null){
+      Meetings[host_id] = new Meeting(host_id, null,null)
     }
-    else if(body.event === "meeting.ended"){
-      let currentDate = new Date()
-      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
-      db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
-          .get()
-          .then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              db.collection("Records").add({
-                'Events': Meetings[host_id].recordLog,
-                'MeetingID': Meetings[host_id].meetingId,
-                'useruid': String(doc.id),
-                'MeetingName': Meetings[host_id].meetingName,
-                'MeetingStart': Meetings[host_id].meetingStart,
-                'MeetingEnd' : new Date()
-              })
-                  .then((docRef) => {
-                    console.log("Document written with ID: ", docRef.id);
-                    delete Meetings[host_id]
-                  })
-                  .catch((error) => {
-                    console.error("Error adding document: ", error);
-                  });
-              return
-            });
-          })
-          .catch((error) => {
-            console.log("Error getting documents: ", error);
-          });
-    }
-    else if(body.event === "meeting.participant_joined"){
-      const participant = body.payload.object.participant
-      const participantID = participant.id
-      const participantName = participant.user_name
-      const participantEmail = participant.email
-      let currentDate = new Date()
-      Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-      if(participantID === host_id){
-        EmailToID[participantEmail] = host_id;
-        Meetings[host_id].hostEmail = participantEmail
-        console.log("<host email>")
-        console.log(participantEmail)
-        console.log("<host email>")
-        Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
-        Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
-        Meetings[host_id].messageLog.push("participant.joined " + participantName)
-        Clients[participantEmail].send("meeting.id " + Meetings[host_id].meetingId)
-        Clients[participantEmail].send("meeting.started " + Meetings[host_id].meetingName)
-        Clients[participantEmail].send("participant.joined " + participantName)
-        for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
-          Meetings[host_id].messageLog.push("participant.joined " + Meetings[host_id].participantsToSend[i])
-          Clients[participantEmail].send("participant.joined " + Meetings[host_id].participantsToSend[i])
-        }
-        Meetings[host_id].participantsToSend.splice(0,Meetings[host_id].participantsToSend.length)
+    if(!Meetings[host_id].finishedTS.has(body.event_ts)){
+      Meetings[host_id].finishedTS.add(body.event_ts)
+      console.log("<====================================================>")
+      console.log(req.body)
+      console.log(req.body.payload.object.participant)
+      console.log("<====================================================>")
+      if(body.event === "meeting.started"){
+        Meetings[host_id].meetingName = body.payload.object.topic
+        Meetings[host_id].meetingId = body.payload.object.id
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
       }
-      else{
-        if(Meetings[host_id].hostEmail == null){
-          Meetings[host_id].participantsToSend.push(participantName)
+      else if(body.event === "meeting.ended"){
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
+        db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
+            .get()
+            .then((querySnapshot) => {
+              querySnapshot.forEach((doc) => {
+                db.collection("Records").add({
+                  'Events': Meetings[host_id].recordLog,
+                  'MeetingID': Meetings[host_id].meetingId,
+                  'useruid': String(doc.id),
+                  'MeetingName': Meetings[host_id].meetingName,
+                  'MeetingStart': Meetings[host_id].meetingStart,
+                  'MeetingEnd' : new Date()
+                })
+                    .then((docRef) => {
+                      console.log("Document written with ID: ", docRef.id);
+                      delete Meetings[host_id]
+                    })
+                    .catch((error) => {
+                      console.error("Error adding document: ", error);
+                    });
+                return
+              });
+            })
+            .catch((error) => {
+              console.log("Error getting documents: ", error);
+            });
+      }
+      else if(body.event === "meeting.participant_joined"){
+        const participant = body.payload.object.participant
+        const participantID = participant.id
+        const participantName = participant.user_name
+        const participantEmail = participant.email
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+        if(participantID === host_id){
+          EmailToID[participantEmail] = host_id;
+          Meetings[host_id].hostEmail = participantEmail
+          console.log("<host email>")
+          console.log(participantEmail)
+          console.log("<host email>")
+          Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
+          Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
+          Meetings[host_id].messageLog.push("participant.joined " + participantName)
+          if(Clients[participantEmail] != null){
+            Clients[participantEmail].send("meeting.id " + Meetings[host_id].meetingId)
+            Clients[participantEmail].send("meeting.started " + Meetings[host_id].meetingName)
+            Clients[participantEmail].send("participant.joined " + participantName)
+          }
+          for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
+            Meetings[host_id].messageLog.push("participant.joined " + Meetings[host_id].participantsToSend[i])
+            if(Clients[participantEmail] != null){
+              Clients[participantEmail].send("participant.joined " + Meetings[host_id].participantsToSend[i])
+            }
+
+          }
+          Meetings[host_id].participantsToSend.splice(0,Meetings[host_id].participantsToSend.length)
         }
         else{
-          Meetings[host_id].messageLog.push("participant.joined " + participantName)
-          Clients[Meetings[host_id].hostEmail].send("participant.joined " + participantName)
+          if(Meetings[host_id].hostEmail == null){
+            Meetings[host_id].participantsToSend.push(participantName)
+          }
+          else{
+            Meetings[host_id].messageLog.push("participant.joined " + participantName)
+            if(Clients[Meetings[host_id].hostEmail] != null){
+              Clients[Meetings[host_id].hostEmail].send("participant.joined " + participantName)
+            }
+
+          }
+        }
+
+      }
+      else if(body.event === "meeting.participant_left"){
+        const participant = body.payload.object.participant
+        const participantID = participant.id
+        const participantName = participant.user_name
+        const participantEmail = participant.email
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+        if(Meetings[host_id].hostEmail == null){
+          remove(Meetings[host_id].participantsToSend,participantName)
+        }
+        else{
+          if(participantEmail === Meetings[host_id].hostEmail){
+            delete EmailToID[participantEmail]
+            Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
+            if(Clients[participantEmail] != null){
+              Clients[participantEmail].send("meeting.ended " + Meetings[host_id].meetingName)
+            }
+          }
+          Meetings[host_id].messageLog.push("participant.left " + participantName)
+          if(Clients[Meetings[host_id].hostEmail] != null){
+            Clients[Meetings[host_id].hostEmail].send("participant.left " + participantName)
+          }
         }
       }
-
     }
-    else if(body.event === "meeting.participant_left"){
-      const participant = body.payload.object.participant
-      const participantID = participant.id
-      const participantName = participant.user_name
-      const participantEmail = participant.email
-      let currentDate = new Date()
-      Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-      if(Meetings[host_id].hostEmail == null){
-        remove(Meetings[host_id].participantsToSend,participantName)
-      }
-      else{
-        if(participantEmail === Meetings[host_id].hostEmail){
-          delete EmailToID[participantEmail]
-          Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
-          Clients[participantEmail].send("meeting.ended " + Meetings[host_id].meetingName)
-        }
-        Meetings[host_id].messageLog.push("participant.left " + participantName)
-        Clients[Meetings[host_id].hostEmail].send("participant.left " + participantName)
-      }
-
-    }
-
-
   }
-
-
-
 })
 
 app.post('/deauthorize', (req, res) => {
