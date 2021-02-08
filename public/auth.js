@@ -65,6 +65,7 @@ function authenticate(){
 function login(){
     const email = document.getElementById("login-email").value
     const pass = document.getElementById("login-pass").value
+    const remember = document.getElementById("remember-me").checked
     auth.signInWithEmailAndPassword(email,pass).then(cred => {
         var userEmail = cred.user.email
         var userDisplayName = cred.user.displayName
@@ -74,7 +75,22 @@ function login(){
         if(userEmail == null){
             userEmail = ""
         }
-        window.location.href = "dashboard.html";
+        if(remember === true){
+            auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
+                window.location.href = "dashboard.html";
+            }).catch((error) =>{
+                document.getElementById("loginMessage").innerHTML = error.message;
+            })
+        }
+        else{
+            auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).then(() => {
+                window.location.href = "dashboard.html";
+            }).catch((error) => {
+                document.getElementById("loginMessage").innerHTML = error.message;
+            })
+        }
+
+
 
     }).catch(err => {
         document.getElementById("loginMessage").innerHTML = err.message;
