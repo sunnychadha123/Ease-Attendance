@@ -1,5 +1,6 @@
 body {
     font-size: .875rem;
+    -webkit-appearance: none !important;
 }
 
 .feather {
@@ -474,4 +475,14 @@ hr{
 #verifyEmailDescription{
     color: #a9a9a9;
     margin-bottom: 15px;
+}
+#settings-link{
+    -webkit-appearance: none;
+    outline: none;
+    border: none
+}
+#settings-link:focus{
+    -webkit-appearance: none;
+    outline: none;
+    border: none
 }

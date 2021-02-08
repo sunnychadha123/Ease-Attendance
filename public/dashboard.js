@@ -856,32 +856,39 @@ function saveDisplayName(){
 function saveEmail(){
     firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
         .then((userCredential) => {
+            const currEmail = auth.currentUser.email
             const email = String(document.getElementById("email-input-field").value).trim()
             auth.currentUser.updateEmail(email).then(function() {
-                console.log(auth.currentUser)
                 auth.currentUser.sendEmailVerification().then(function() {
                     checkVerificationStatus()
                     document.getElementById("myTabContent").hidden = true
                     document.getElementById("verifyEmail").hidden = false
                     document.getElementById("settings-resend-verification-link-button").hidden = false
-                    firestore.collection("Users").doc(auth.currentUser.uid).set({
-                        name : auth.currentUser.displayName,
-                        email : document.getElementById("email-input-field").value,
-                    }).then(() => {
-                        document.getElementById("old-email-input-field").value = ""
-                        document.getElementById("current-password-input-field").value = ""
-                        document.getElementById("email-input-field").value = ""
-                        yellowNotification("Your email has changed but is not verified")
-                    }).catch((error)=>{
+                    yellowNotification("Your email has changed but is not verified")
+                    document.getElementById("old-email-input-field").value = ""
+                    document.getElementById("current-password-input-field").value = ""
+                    document.getElementById("email-input-field").value = ""
+                }).catch(function(error) {
+                    auth.currentUser.updateEmail(currEmail).then(function() {
+                        auth.currentUser.sendEmailVerification().then(() => {
+                            checkVerificationStatus()
+                            document.getElementById("myTabContent").hidden = true
+                            document.getElementById("verifyEmail").hidden = false
+                            document.getElementById("settings-resend-verification-link-button").hidden = false
+                        }).catch((error) => {
+                            console.log(error.message)
+                            redNotification(error.message)
+                        })
+                    }).catch(function(error) {
                         console.log(error.message)
                         redNotification(error.message)
-                    })
-                }).catch(function(error) {
+                    });
                     console.log(error.message)
-
+                    redNotification(error.message)
                 });
             }).catch(function(error) {
                 console.log(error.message)
+                redNotification(error.message)
             });
         })
         .catch((error) => {
@@ -912,12 +919,12 @@ function settingsResendVerificationEmail(){
     });
 }
 function resetPassword(){
-    auth.sendPasswordResetEmail(document.getElementById("pass-current-email-input-field").value).then(function() {
+    auth.sendPasswordResetEmail(document.getElementById("pass-current-email-input-field").value.trim()).then(function() {
         document.getElementById("pass-current-email-input-field").value = ""
         greenNotification("A password reset email has been sent")
     }).catch(function(error) {
         console.log(error)
-        redNotification(error.message)
+        redNotification("Incorrect email entered")
     });
     $("#settings-modal").modal('hide');
 }
@@ -926,8 +933,16 @@ function checkVerificationStatus(){
     checkVerificationTimer = setInterval(() => {
         auth.currentUser.reload().then(load => {
             if(auth.currentUser.emailVerified){
-                window.location.href = "dashboard.html"
-                clearInterval(checkVerificationTimer)
+                firestore.collection("Users").doc(auth.currentUser.uid).set({
+                    name : auth.currentUser.displayName,
+                    email : auth.currentUser.email
+                }).then(() => {
+                    window.location.href = "dashboard.html"
+                    clearInterval(checkVerificationTimer)
+                }).catch((error)=>{
+                    console.log(error.message)
+                    redNotification(error.message)
+                })
             }
         })
     },1000)
