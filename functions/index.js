@@ -1,33 +1,32 @@
 require('dotenv').config()
+console.log("env loaded")
 const express = require('express')
+console.log("express loaded")
 const bodyParser = require('body-parser')
+console.log("body-parser loaded")
 const request = require('request')
+console.log("request loaded")
 const path = require('path')
+console.log("path loaded")
 const app = express()
-const http = require("http")
-const https = require("https")
-const port = process.env.PORT || 4000
+console.log("app created")
 const WebSocket = require("ws");
-var firebase = require("firebase/app");
-require("firebase/auth");
-require("firebase/firestore");
+console.log("ws loaded")
+const functions = require("firebase-functions")
+console.log("firebase-functions loaded")
 //serverside read and write Admin:
 const admin = require('firebase-admin')
+console.log("firebase-admin loaded")
 const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
+console.log("service account configuration loaded")
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
+console.log("admin app created")
 const db = admin.firestore();
-
-
-const options = {
-  hostname: 'https://api.zoom.us/v2',
-  port: 4000,
-  path: '/past_meetings/',
-  method: 'GET'
-}
-
+console.log("db loaded")
 const wsServer = new WebSocket.Server({noServer: true})
+console.log("wsServer created")
 
 class Meeting{
   constructor(hostId,meetingName,hostEmail, id) {
@@ -108,8 +107,6 @@ function remove(array, element) {
 app.post('/api/requests', (req, res) => {
   res.status(200)
   res.send()
-  //TODO: make the authorization code a github secret
-
   if(req.headers.authorization === process.env.zoom_verification_token){
     const body = req.body
     const host_id = body.payload.object.host_id
@@ -261,8 +258,9 @@ app.post('/deauthorize', (req, res) => {
     res.send()
   }
 })
+exports.app = functions.https.onRequest(app)
 
-const server = app.listen(port, () => console.log(`Server Up and Running on ${port}!`))
+const server = app.listen(4000, () => console.log(`Server Up and Running on 4000!`))
 server.on('upgrade', (request, socket, head) => {
   wsServer.handleUpgrade(request, socket, head, socket => {
     wsServer.emit('connection', socket, request);

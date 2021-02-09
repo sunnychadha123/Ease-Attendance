@@ -2,10 +2,11 @@
   "hosting": {
     "public": "public",
     "cleanUrls": true,
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+    "rewrites": [
+      {
+        "source": "**",
+        "function": "app"
+      }
     ]
   },
   "emulators": {
@@ -15,5 +16,9 @@
     "ui": {
       "enabled": true
     }
+  },
+  "functions": {
+    "runtime": "nodejs14",
+    "source": "functions"
   }
 }

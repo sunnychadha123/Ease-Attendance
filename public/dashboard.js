@@ -143,7 +143,7 @@ auth.onAuthStateChanged((user) => {
                 var connectionToServer = setInterval(()=> {
                     clearInterval(connectionToServer)
                     function createSocket(){
-                        this.socket = new WebSocket('wss://easeattendance.com/api/requests');
+                        this.socket = new WebSocket('wss://easeattendance.com/');
                         this.socket.onerror=function(event){
                             console.log("Connection to server has been refused");
                         }
