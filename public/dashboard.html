@@ -258,7 +258,7 @@
                         <div id="displayName-prepend" class="input-group-prepend">
                             <span class="input-group-text" id="addon-wrapping-4"><span class="iconify" data-inline="false" data-icon="ant-design:user-outlined" style="font-size: 20px;"></span></span>
                         </div>
-                        <input id="displayName-input-field" onclick="this.select()" type="text" class="form-control " placeholder="Enter a new name" aria-label="New Name" aria-describedby="addon-wrapping">
+                        <input autocomplete="off" id="displayName-input-field" onclick="this.select()" type="text" class="form-control " placeholder="Enter a new name" aria-label="New Name" aria-describedby="addon-wrapping">
                     </div>
                     <button type="button" onclick="saveDisplayName()" class="btn save-setting-button">Save changes</button>
 
@@ -267,19 +267,19 @@
                         <div id="old-email-prepend" class="input-group-prepend">
                             <span class="input-group-text" ><span class="iconify" data-inline="false" data-icon="carbon:email" style="font-size: 20px;"></span></span>
                         </div>
-                        <input id="old-email-input-field" onclick="this.select()" type="email" class="form-control " placeholder="Enter email" aria-label="Current Email" aria-describedby="addon-wrapping">
+                        <input autocomplete="off" id="old-email-input-field" onclick="this.select()" type="email" class="form-control " placeholder="Enter email" aria-label="Current Email" aria-describedby="addon-wrapping">
                     </div>
                     <div id="current-password" class="input-group flex-nowrap float-left">
                         <div id="current-password-prepend" class="input-group-prepend">
                              <span class="input-group-text" ><span class="iconify" data-inline="false" data-icon="codicon:lock" style="font-size: 20px;"></span></span>
                         </div>
-                        <input id="current-password-input-field" onclick="this.select()" type="password" class="form-control " placeholder="Enter password" aria-label="Current pass" aria-describedby="addon-wrapping">
+                        <input autocomplete="off" id="current-password-input-field" onclick="this.select()" type="password" class="form-control " placeholder="Enter password" aria-label="Current pass" aria-describedby="addon-wrapping">
                     </div>
                     <div id="email" class="input-group flex-nowrap float-left">
                         <div id="email-prepend" class="input-group-prepend">
                             <span class="input-group-text" id="addon-wrapping-5"><span class="iconify" data-inline="false" data-icon="carbon:email" style="font-size: 20px;"></span></span></span>
                         </div>
-                        <input id="email-input-field" onclick="this.select()" type="email" class="form-control" placeholder="Enter a new email" aria-label="New Email" aria-describedby="addon-wrapping">
+                        <input autocomplete="off" id="email-input-field" onclick="this.select()" type="email" class="form-control" placeholder="Enter a new email" aria-label="New Email" aria-describedby="addon-wrapping">
                     </div>
                     <button type="button" onclick="saveEmail()" class="btn save-setting-button">Save changes</button>
                     <button hidden id="settings-resend-verification-link-button" type="button" onclick="settingsResendVerificationEmail()" class="btn save-setting-button">Resend verification email</button>
@@ -288,7 +288,7 @@
                         <div id="pass-current-email-prepend" class="input-group-prepend">
                             <span class="input-group-text" id="addon-wrapping-6"><span class="iconify" data-inline="false" data-icon="carbon:email" style="font-size: 20px;"></span></span></span>
                         </div>
-                        <input id="pass-current-email-input-field" onclick="this.select()" type="email" class="form-control " placeholder="Enter email" aria-label="Old pass" aria-describedby="addon-wrapping">
+                        <input autocomplete="off" id="pass-current-email-input-field" onclick="this.select()" type="email" class="form-control " placeholder="Enter email" aria-label="Old pass" aria-describedby="addon-wrapping">
                     </div>
                     <button type="button" onclick="resetPassword()" class="btn save-setting-button">Send reset link</button>
                 </div>

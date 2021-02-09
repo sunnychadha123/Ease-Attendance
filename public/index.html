@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" id="doc">
 <head>
     <meta charset="UTF-8">
     <meta name="google-site-verification" content="wQoo3KBz6LqoRVewKLq7UTli7M8KRzfFrZzRBfdMkU0" />
@@ -62,8 +62,8 @@
         </ul>
     </div>
 </nav>
-<body class="text-center">
-    <div class="container landing-page-container">
+<body class="text-center" id="body-container">
+    <div class="container landing-page-container" id="landing-page-container">
         <div class="row justify-content-center">
             <div class="col landing-page-image">
 
@@ -91,6 +91,8 @@
                 <a href="index.html" class="footer-link"><h6>Home</h6></a>
                 <a href="how-it-works.html" class="footer-link"><h6>Learn</h6></a>
                 <a href="aboutus.html" class="footer-link"><h6>About Us</h6></a>
+                <a href="login.html" class="footer-link"><h6>Log In</h6></a>
+                <a href="signup.html" class="footer-link"><h6>Sign Up</h6></a>
 
             </div>
             <div class="col-md-4  mr-auto my-md-4 my-0 mt-4 mb-1 footer-col">
@@ -121,9 +123,10 @@
     LottieInteractivity.create({
         mode: 'cursor',
         player: '#landing-page-animation',
+        container: "#doc",
         actions: [
             {
-                position: { x: [0, 1], y: [-1, 2] },
+                position: { x: [0, 1], y: [0,1] },
                 type: 'seek',
                 frames: [0, 100],
             },

@@ -11,8 +11,6 @@ const WebSocket = require("ws");
 var firebase = require("firebase/app");
 require("firebase/auth");
 require("firebase/firestore");
-
-
 //serverside read and write Admin:
 const admin = require('firebase-admin')
 const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
@@ -106,11 +104,13 @@ function remove(array, element) {
     array.splice(index, 1);
   }
 }
-app.post('/', (req, res) => {
+
+app.post('/api/requests', (req, res) => {
   res.status(200)
   res.send()
   //TODO: make the authorization code a github secret
-  if(req.headers.authorization === "N2jq0IiHTl61mAEcaS9j0A"){
+
+  if(req.headers.authorization === process.env.zoom_verification_token){
     const body = req.body
     const host_id = body.payload.object.host_id
     if(Meetings[host_id] == null){
