@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{@lottiefiles/lottie-interactivity, @lottiefiles/lottie-player, bootstrap, firebase-analytics, firebase-app, firebase-auth, firebase-firestore, firebase-ui-auth, iconify, jquery, popper.js, react, react-dom, twitter-bootstrap}" />
+    <file url="PROJECT" libraries="{@lottiefiles/lottie-interactivity, @lottiefiles/lottie-player, bootstrap, firebase-analytics, firebase-app, firebase-auth, firebase-firestore, firebase-ui-auth, iconify, jquery, lodash, popper.js, react, react-dom, twitter-bootstrap}" />
     <includedPredefinedLibrary name="Node.js Core" />
   </component>
 </project>

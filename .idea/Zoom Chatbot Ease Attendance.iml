@@ -22,5 +22,6 @@
     <orderEntry type="library" name="iconify" level="application" />
     <orderEntry type="library" name="@lottiefiles/lottie-player" level="application" />
     <orderEntry type="library" name="@lottiefiles/lottie-interactivity" level="application" />
+    <orderEntry type="library" name="lodash" level="application" />
   </component>
 </module>

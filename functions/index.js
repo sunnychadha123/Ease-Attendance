@@ -10,8 +10,6 @@ const path = require('path')
 console.log("path loaded")
 const app = express()
 console.log("app created")
-const WebSocket = require("ws");
-console.log("ws loaded")
 const functions = require("firebase-functions")
 console.log("firebase-functions loaded")
 //serverside read and write Admin:
@@ -25,59 +23,26 @@ admin.initializeApp({
 console.log("admin app created")
 const db = admin.firestore();
 console.log("db loaded")
-const wsServer = new WebSocket.Server({noServer: true})
-console.log("wsServer created")
 
 class Meeting{
   constructor(hostId,meetingName,hostEmail, id) {
     this.meetingId = id
     this.hostId = hostId
     this.meetingName = meetingName
-    this.participantsToSend = []
     this.hostEmail = hostEmail
+    this.hostUID = null
     this.finishedTS = new Set()
     this.messageLog = []
     this.recordLog = []
     this.meetingStart = new Date()
   }
 }
+//TODO: test for host change
+//TODO: remove occurrences of client
+//TODO: only keep errors
 
-// Client Websockets
-Clients = {}
 // current meetings going on
 Meetings = {}
-// Email to host id references
-EmailToID = {}
-
-
-wsServer.on("connection", socket => {
-  socket.on("message", uid => {
-    console.log(uid)
-      var docRef = db.collection("Users").doc(uid)
-      docRef.get().then((doc) => {
-        if(doc.exists){
-          const email = doc.data().email
-          Clients[email] = socket
-          socket.id = email
-          if(email in EmailToID){
-            for(i = 0; i < Meetings[EmailToID[email]].messageLog.length;i++){
-              socket.send(Meetings[EmailToID[email]].messageLog[i])
-            }
-          }
-        }
-      }).catch((error) => {
-        console.log(error)
-      })
-
-
-
-  });
-  socket.on("close", () => {
-    console.log(socket.id + " has disconnected");
-    delete Clients[socket.id]
-  })
-})
-
 
 
 
@@ -103,29 +68,26 @@ function remove(array, element) {
     array.splice(index, 1);
   }
 }
-
-app.post('/api/requests', (req, res) => {
-  res.status(200)
-  res.send()
-  if(req.headers.authorization === process.env.zoom_verification_token){
-    const body = req.body
-    const host_id = body.payload.object.host_id
-    if(Meetings[host_id] == null){
-      Meetings[host_id] = new Meeting(host_id, null,null)
+function handleZoomPost(req){
+  const body = req.body
+  const host_id = body.payload.object.host_id
+  if(Meetings[host_id] == null){
+    Meetings[host_id] = new Meeting(host_id, null,null)
+  }
+  if(!Meetings[host_id].finishedTS.has(body.event_ts)){
+    Meetings[host_id].finishedTS.add(body.event_ts)
+    console.log("<====================================================>")
+    console.log(req.body)
+    console.log(req.body.payload.object.participant)
+    console.log("<====================================================>")
+    if(body.event === "meeting.started"){
+      Meetings[host_id].meetingName = body.payload.object.topic
+      Meetings[host_id].meetingId = body.payload.object.id
+      let currentDate = new Date()
+      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
     }
-    if(!Meetings[host_id].finishedTS.has(body.event_ts)){
-      Meetings[host_id].finishedTS.add(body.event_ts)
-      console.log("<====================================================>")
-      console.log(req.body)
-      console.log(req.body.payload.object.participant)
-      console.log("<====================================================>")
-      if(body.event === "meeting.started"){
-        Meetings[host_id].meetingName = body.payload.object.topic
-        Meetings[host_id].meetingId = body.payload.object.id
-        let currentDate = new Date()
-        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
-      }
-      else if(body.event === "meeting.ended"){
+    else if(body.event === "meeting.ended"){
+      if(Meetings[host_id]){
         let currentDate = new Date()
         Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
         db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
@@ -142,7 +104,6 @@ app.post('/api/requests', (req, res) => {
                 })
                     .then((docRef) => {
                       console.log("Document written with ID: ", docRef.id);
-                      delete Meetings[host_id]
                     })
                     .catch((error) => {
                       console.error("Error adding document: ", error);
@@ -153,76 +114,77 @@ app.post('/api/requests', (req, res) => {
             .catch((error) => {
               console.log("Error getting documents: ", error);
             });
-      }
-      else if(body.event === "meeting.participant_joined"){
-        const participant = body.payload.object.participant
-        const participantID = participant.id
-        const participantName = participant.user_name
-        const participantEmail = participant.email
-        let currentDate = new Date()
-        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-        if(participantID === host_id){
-          EmailToID[participantEmail] = host_id;
-          Meetings[host_id].hostEmail = participantEmail
-          console.log("<host email>")
-          console.log(participantEmail)
-          console.log("<host email>")
-          Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
-          Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
-          Meetings[host_id].messageLog.push("participant.joined " + participantName)
-          if(Clients[participantEmail] != null){
-            Clients[participantEmail].send("meeting.id " + Meetings[host_id].meetingId)
-            Clients[participantEmail].send("meeting.started " + Meetings[host_id].meetingName)
-            Clients[participantEmail].send("participant.joined " + participantName)
-          }
-          for(i = 0; i <  Meetings[host_id].participantsToSend.length;i++){
-            Meetings[host_id].messageLog.push("participant.joined " + Meetings[host_id].participantsToSend[i])
-            if(Clients[participantEmail] != null){
-              Clients[participantEmail].send("participant.joined " + Meetings[host_id].participantsToSend[i])
-            }
-
-          }
-          Meetings[host_id].participantsToSend.splice(0,Meetings[host_id].participantsToSend.length)
-        }
-        else{
-          if(Meetings[host_id].hostEmail == null){
-            Meetings[host_id].participantsToSend.push(participantName)
-          }
-          else{
-            Meetings[host_id].messageLog.push("participant.joined " + participantName)
-            if(Clients[Meetings[host_id].hostEmail] != null){
-              Clients[Meetings[host_id].hostEmail].send("participant.joined " + participantName)
-            }
-
-          }
-        }
-
-      }
-      else if(body.event === "meeting.participant_left"){
-        const participant = body.payload.object.participant
-        const participantID = participant.id
-        const participantName = participant.user_name
-        const participantEmail = participant.email
-        let currentDate = new Date()
-        Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-        if(Meetings[host_id].hostEmail == null){
-          remove(Meetings[host_id].participantsToSend,participantName)
-        }
-        else{
-          if(participantEmail === Meetings[host_id].hostEmail){
-            delete EmailToID[participantEmail]
-            Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
-            if(Clients[participantEmail] != null){
-              Clients[participantEmail].send("meeting.ended " + Meetings[host_id].meetingName)
-            }
-          }
-          Meetings[host_id].messageLog.push("participant.left " + participantName)
-          if(Clients[Meetings[host_id].hostEmail] != null){
-            Clients[Meetings[host_id].hostEmail].send("participant.left " + participantName)
-          }
-        }
+        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).delete().then(() => {
+          delete Meetings[host_id]
+        }).catch((error) => {
+          console.error("error deleting document")
+        });
       }
     }
+    else if(body.event === "meeting.participant_joined"){
+      const participant = body.payload.object.participant
+      const participantID = participant.id
+      const participantName = participant.user_name
+      const participantEmail = participant.email
+      if(Meetings[host_id]){
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+        if(participantID === host_id || Meetings[host_id].hostEmail != null){
+          Meetings[host_id].hostEmail = participantEmail
+          db.collection("Users").where("email","==",participantEmail).get().then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+              Meetings[host_id].hostUID = doc.id
+              console.log("doc.id is " + doc.id)
+              Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
+              Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
+              Meetings[host_id].messageLog.push("participant.joined " + participantName)
+              db.collection("CurrentMeetings").doc(doc.id).set({
+                messages: Meetings[host_id].messageLog
+              }).then(()=>{
+
+              }).catch((error)=>{
+                console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+              })
+            })
+          }).catch((error) => {
+            console.error("error getting user uid from collection based on email" + " email: " + participantEmail)
+          })
+        }
+        else if(Meetings[host_id].hostEmail == null){
+          Meetings[host_id].messageLog.push("participant.joined " + participantName)
+        }
+      }
+
+    }
+    else if(body.event === "meeting.participant_left"){
+      const participant = body.payload.object.participant
+      const participantID = participant.id
+      const participantName = participant.user_name
+      const participantEmail = participant.email
+      let currentDate = new Date()
+      if(Meetings[host_id]){
+        Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+        Meetings[host_id].messageLog.push("participant.left " + participantName)
+        if(participantEmail === Meetings[host_id].hostEmail){
+          Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
+          db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+            messages: Meetings[host_id].messageLog
+          }).then(()=>{
+
+          }).catch((error)=>{
+            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+          })
+        }
+      }
+
+    }
+  }
+}
+app.post('/api/requests', (req, res) => {
+  res.status(200)
+  res.send()
+  if(req.headers.authorization === process.env.zoom_verification_token){
+    handleZoomPost(req)
   }
 })
 
@@ -260,9 +222,3 @@ app.post('/deauthorize', (req, res) => {
 })
 exports.app = functions.https.onRequest(app)
 
-const server = app.listen(4000, () => console.log(`Server Up and Running on 4000!`))
-server.on('upgrade', (request, socket, head) => {
-  wsServer.handleUpgrade(request, socket, head, socket => {
-    wsServer.emit('connection', socket, request);
-  });
-});
