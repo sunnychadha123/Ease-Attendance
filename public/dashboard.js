@@ -23,7 +23,7 @@ class PastMeeting{
         this.docID = docID
     }
 }
-
+//TODO: only get from verified emails
 //TODO: change edit meeting message
 var Meetings = []
 var PastMeetings
