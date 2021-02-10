@@ -23,7 +23,6 @@ class PastMeeting{
         this.docID = docID
     }
 }
-//TODO: only get from verified emails
 //TODO: change edit meeting message
 var Meetings = []
 var PastMeetings
@@ -320,6 +319,7 @@ auth.onAuthStateChanged((user) => {
             document.getElementById("myTabContent").hidden = true
             document.getElementById("verifyEmail").hidden = false
             document.getElementById("settings-resend-verification-link-button").hidden = false
+            document.getElementById("verifyEmailDescription").innerHTML = "Your current email is now " + auth.currentUser.email + " and a verification email has been sent. If you did not receive it, resend the verification link or change your email in settings."
         }
     } else {
         //user not signed in
@@ -779,7 +779,7 @@ function addMeeting(){
                     studentsNames: names,
                 }).then(() => {
                     $("#add-edit-meeting-modal").modal("hide")
-                    greenNotification("Meeting Created")
+                    greenNotification("Meetings Updated")
                 }).catch((error)=>{
                     console.log(error.message)
                     $(".notify").addClass("notify-active");
@@ -868,49 +868,55 @@ function saveDisplayName(){
     $("#settings-modal").modal('hide');
 }
 function saveEmail(){
-    firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
-        .then((userCredential) => {
-            const currEmail = auth.currentUser.email
-            const email = String(document.getElementById("email-input-field").value).trim()
-            auth.currentUser.updateEmail(email).then(function() {
-                auth.currentUser.sendEmailVerification().then(function() {
-                    checkVerificationStatus()
-                    document.getElementById("myTabContent").hidden = true
-                    document.getElementById("verifyEmail").hidden = false
-                    document.getElementById("settings-resend-verification-link-button").hidden = false
-                    yellowNotification("Your email has changed but is not verified")
-                    document.getElementById("old-email-input-field").value = ""
-                    document.getElementById("current-password-input-field").value = ""
-                    document.getElementById("email-input-field").value = ""
-                }).catch(function(error) {
-                    auth.currentUser.updateEmail(currEmail).then(function() {
-                        auth.currentUser.sendEmailVerification().then(() => {
-                            checkVerificationStatus()
-                            document.getElementById("myTabContent").hidden = true
-                            document.getElementById("verifyEmail").hidden = false
-                            document.getElementById("settings-resend-verification-link-button").hidden = false
-                        }).catch((error) => {
+    if(document.getElementById("old-email-input-field").value === auth.currentUser.email){
+        firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
+            .then((userCredential) => {
+                const currEmail = auth.currentUser.email
+                const email = String(document.getElementById("email-input-field").value).trim()
+                auth.currentUser.updateEmail(email).then(function() {
+                    auth.currentUser.sendEmailVerification().then(function() {
+                        checkVerificationStatus()
+                        document.getElementById("myTabContent").hidden = true
+                        document.getElementById("verifyEmail").hidden = false
+                        document.getElementById("settings-resend-verification-link-button").hidden = false
+                        yellowNotification("Your email has changed but is not verified")
+                        document.getElementById("old-email-input-field").value = ""
+                        document.getElementById("current-password-input-field").value = ""
+                        document.getElementById("email-input-field").value = ""
+                    }).catch(function(error) {
+                        auth.currentUser.updateEmail(currEmail).then(function() {
+                            auth.currentUser.sendEmailVerification().then(() => {
+                                checkVerificationStatus()
+                                document.getElementById("myTabContent").hidden = true
+                                document.getElementById("verifyEmail").hidden = false
+                                document.getElementById("settings-resend-verification-link-button").hidden = false
+                            }).catch((error) => {
+                                console.log(error.message)
+                                redNotification(error.message)
+                            })
+                        }).catch(function(error) {
                             console.log(error.message)
                             redNotification(error.message)
-                        })
-                    }).catch(function(error) {
+                        });
                         console.log(error.message)
                         redNotification(error.message)
                     });
+                }).catch(function(error) {
                     console.log(error.message)
                     redNotification(error.message)
                 });
-            }).catch(function(error) {
+            })
+            .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
                 console.log(error.message)
                 redNotification(error.message)
             });
-        })
-        .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            console.log(error.message)
-            redNotification(error.message)
-        });
+    }
+    else{
+        redNotification("Please enter the correct email of the current user")
+    }
+
     $("#settings-modal").modal('hide');
 }
 function resendVerificationEmail(){
