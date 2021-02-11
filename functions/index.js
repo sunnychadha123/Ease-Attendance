@@ -858,7 +858,7 @@ app.post('/support-message', (req,res) => {
   }
 
   res.status(200);
-  res.sendFile(path.join(__dirname + '/../public/support.html'));
+  res.send()
 
 })
 app.get('/zoomverify/verifyzoom.html', (req, res) => {

@@ -2,6 +2,7 @@
     margin-top: 200px;
 }
 textarea {
+    height: 100px!important;
     resize: none;
 }
 .fluid-row{
@@ -13,13 +14,13 @@ textarea {
 }
 .main-row{
     width: 850px;
-    height: 400px;
+    height: 600px;
     box-shadow: 2px 3px 6px 2px #e3e3e3;
     border-radius: 20px;
     padding-right: 0;
 }
 .message-input{
-    margin-top: 30px;
+    margin-top: 50px;
 }
 .second-col{
     background-image: url("Images/mountain-back.jpg");
@@ -35,13 +36,13 @@ textarea {
     color: grey;
 }
 .contact{
-    margin-bottom: 30px;
+    margin-bottom: 55px;
 }
 .col input, .col textarea{
     width: 300px;
 }
 .submit-message{
-    margin-top: 20px;
+    margin-top: 40px;
     width: 100px;
     height: 45px;
     background-color: white;
@@ -57,11 +58,45 @@ textarea {
     color: white;
 }
 .message-title{
-    margin-top: 20px;
+    margin-top: 40px;
 }
 .first-col{
     min-width: 410px !important;
     padding-left: 30px;
+}
+.notify{
+    z-index: 1000;
+    position:fixed;
+    top:90px;
+    width:100%;
+    height:0;
+    box-sizing:border-box;
+    color:white;
+    text-align: center;;
+    background: rgb(198, 198, 198);
+    overflow:hidden;
+    box-sizing:border-box;
+    transition:height .2s;
+}
+#notifyType{
+    font-size: 18px;
+}
+#notifyType:before{
+    display:block;
+    margin-top:15px;
+}
+
+.notify-active-red{
+    padding-top:10px !important;
+
+    height:50px !important;
+    background: rgb(226, 89, 89);
+}
+.notify-active-green{
+    padding-top:10px !important;
+
+    height:50px !important;
+    background: rgb(64, 207, 116);
 }
 @media (max-width: 991px) {
     .second-col{
@@ -71,7 +106,7 @@ textarea {
     }
     .main-row{
         width: 500px;
-        height: 800px;
+        height: 1100px;
 
     }
     .first-col{

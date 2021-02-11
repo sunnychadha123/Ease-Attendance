@@ -34,7 +34,9 @@
 </head>
 <div id="nav"></div>
 <body>
+
     <div id="main-fluid" class="container-fluid row fluid-row justify-content-center">
+        <div class="notify"><span id="notifyType"></span></div>
         <div class="container row main-row">
             <div class="col second-col justify-content-center">
 
@@ -45,12 +47,12 @@
                 <h6 class="contact text-white"><i class="fa fa-clock-o"></i>&nbsp;&nbsp;Max response time: 24 hrs</h6>
             </div>
             <div class="col first-col">
-                <form method="post" action="/support-message">
+                <form id="message-form" method="post" action="/support-message">
                     <h4 class="message-title">Send a message</h4>
                     <h6 class="secondary">We will try to get back to you as soon as possible.</h6>
-                    <input class="form-control message-input" type="text" placeholder="Name" name="Name">
-                    <input class="form-control message-input" type="email" placeholder="Email address" name="email">
-                    <textarea class="form-control message-input" placeholder="Message" name="message" aria-label="With textarea"></textarea>
+                    <input id="name-input" class="form-control message-input" type="text" placeholder="Name" name="Name">
+                    <input id="email-input" class="form-control message-input" type="email" placeholder="Email address" name="email">
+                    <textarea id="text-input" class="form-control message-input" placeholder="Message" name="message" aria-label="With textarea"></textarea>
                     <button type="submit" class="btn submit-message">Send</button>
                 </form>
             </div>
@@ -60,4 +62,5 @@
 </body>
 <div id="footer"></div>
 <script src="nav-footer.js"></script>
+<script type="text/javascript" src="message.js"></script>
 </html>
