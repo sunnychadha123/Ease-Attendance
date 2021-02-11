@@ -15,6 +15,9 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "                <a class=\"nav-link middle\" href=\"getting-started.html\">Getting Started </a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
+    "                <a class=\"nav-link middle\" href=\"support.html\">Support</a>\n" +
+    "            </li>\n" +
+    "            <li class=\"nav-item nav-right\">\n" +
     "                <a class=\"nav-link middle\" href=\"aboutus.html\">About Us</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\" id=\"login-button\">\n" +
@@ -36,9 +39,9 @@ const footerBlock = "<footer>\n" +
     "                <a href=\"getting-started.html\" class=\"footer-link\"><h6>Getting Started</h6></a>\n" +
     "                <a href=\"features.html\" class=\"footer-link\"><h6>Features</h6></a>\n" +
     "                <a href=\"aboutus.html\" class=\"footer-link\"><h6>About Us</h6></a>\n" +
+    "                <a href=\"support.html\" class=\"footer-link\"><h6>Support</h6></a>\n" +
     "                <a href=\"login.html\" class=\"footer-link\"><h6>Log In</h6></a>\n" +
     "                <a href=\"signup.html\" class=\"footer-link\"><h6>Sign Up</h6></a>\n" +
-    "                <a href=\"support.html\" class=\"footer-link\"><h6>Support</h6></a>\n" +
     "\n" +
     "            </div>\n" +
     "            <div class=\"text-center justify-content-center col-md-4  mr-auto my-md-4 my-0 mt-4 mb-1 footer-col\">\n" +
