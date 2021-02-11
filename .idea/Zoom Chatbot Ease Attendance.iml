@@ -8,20 +8,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="react" level="application" />
-    <orderEntry type="library" name="react-dom" level="application" />
     <orderEntry type="library" name="twitter-bootstrap" level="application" />
-    <orderEntry type="library" name="popper.js" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="bootstrap" level="application" />
-    <orderEntry type="library" name="firebase-ui-auth" level="application" />
-    <orderEntry type="library" name="firebase-app" level="application" />
-    <orderEntry type="library" name="firebase-auth" level="application" />
-    <orderEntry type="library" name="firebase-firestore" level="application" />
-    <orderEntry type="library" name="firebase-analytics" level="application" />
-    <orderEntry type="library" name="iconify" level="application" />
-    <orderEntry type="library" name="@lottiefiles/lottie-player" level="application" />
-    <orderEntry type="library" name="@lottiefiles/lottie-interactivity" level="application" />
-    <orderEntry type="library" name="lodash" level="application" />
   </component>
 </module>

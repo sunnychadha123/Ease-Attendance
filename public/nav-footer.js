@@ -1,4 +1,4 @@
-const navBlock = "<nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
+const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "    <a class=\"navbar-brand\" href=\"index.html\"><img  class=\"logo\" src=\"Images/Ease%20Attendance%20Header%20Logo.png\"></a>\n" +
     "\n" +
     "    <button class=\"navbar-toggler navbar-light collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#main-navigation\">\n" +
@@ -60,5 +60,11 @@ const footerBlock = "<footer>\n" +
     "        </div>\n" +
     "    </div>\n" +
     "</footer>"
-document.getElementById("nav").innerHTML = navBlock
-document.getElementById("footer").innerHTML = footerBlock
+if(document.getElementById("nav")){
+    document.getElementById("nav").innerHTML = navBlock
+
+}
+
+if(document.getElementById("footer")){
+    document.getElementById("footer").innerHTML = footerBlock
+}

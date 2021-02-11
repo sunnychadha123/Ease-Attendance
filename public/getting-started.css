@@ -27,12 +27,12 @@ header{
 }
 
 .sidebar1 {
-    padding: 20px;
+    padding: 30px;
     background: #ffffff;
 
     top:60px;
     bottom:30px;
-    width: 250px;
+    width: 300px;
     position:absolute;
     -moz-box-sizing:border-box;
     -webkit-box-sizing:border-box;
@@ -72,12 +72,11 @@ header{
     color: grey;
 }
 #scrollable2 {
-    padding: 50px;
+    padding: 50px 50px 50px 10%;
     background: #ffffff;
     height: 100%;
-    min-width: 300px;
-    margin-left: 250px;
-
+    min-width: 400px;
+    margin-left: 300px;
     overflow:auto;
     -moz-box-sizing:border-box;
     -webkit-box-sizing:border-box;
@@ -90,7 +89,4 @@ header{
     margin-bottom: 20px;
     box-shadow: 2px 2px 4px 2px #cdcdcd;
     border-radius: 10px;
-}
-#footer{
-    margin-top: -230px;
 }
