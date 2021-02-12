@@ -77,3 +77,8 @@
     transform: rotate(0);
     background-color: black;
 }
+@media (max-width: 1047px){
+    .nav-right{
+        margin-left: 10px;
+    }
+}

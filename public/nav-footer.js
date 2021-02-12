@@ -9,22 +9,22 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "    <div class=\"collapse navbar-collapse justify-content-end\" id=\"main-navigation\">\n" +
     "        <ul class=\"navbar-nav\">\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a class=\"nav-link middle\" href=\"features.html\">Features</a>\n" +
+    "                <a id=\"#features\" class=\"nav-link middle\" href=\"features.html\">Features</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a class=\"nav-link middle\" href=\"getting-started.html\">Getting Started </a>\n" +
+    "                <a id=\"#get-start\" class=\"nav-link middle\" href=\"getting-started.html\">Getting Started </a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a class=\"nav-link middle\" href=\"support.html\">Support</a>\n" +
+    "                <a id=\"#support\" class=\"nav-link middle\" href=\"support.html\">Support</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a class=\"nav-link middle\" href=\"aboutus.html\">About Us</a>\n" +
+    "                <a id=\"#aboutus\" class=\"nav-link middle\" href=\"aboutus.html\">About Us</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\" id=\"login-button\">\n" +
-    "                <a class=\"nav-link middle\" id=\"login-link\" href=\"login.html\">Log In</a>\n" +
+    "                <a id=\"#log-in\" class=\"nav-link middle\" id=\"login-link\" href=\"login.html\">Log In</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a class=\"nav-link sign-up\" href=\"signup.html\">Sign Up</a>\n" +
+    "                <a id=\"#sign-up\" class=\"nav-link sign-up\" href=\"signup.html\">Sign Up</a>\n" +
     "            </li>\n" +
     "        </ul>\n" +
     "    </div>\n" +

@@ -1,7 +1,12 @@
+html{
+ overflow-x: hidden;
+}
 #main-fluid{
     margin-top: 10px;
+    width: 100vw;
 
 }
+
 #main-banner{
 
     padding: 60px;
@@ -29,12 +34,13 @@
     color: #4f4f4f;
 }
 .banner-img{
-    width: 850px;
+    width: 650px;
+    margin-left: 20%;
 }
 .description-img{
     width: 800px;
 
-    overflow: visible;
+    overflow: hidden!important;
     z-index: 100;
 
 }
@@ -47,6 +53,7 @@
 #sign-up-img{
     margin-top: 50px;
     width: 1000px;
+    overflow: hidden;
 }
 .caption, .caption-title{
     margin-top: 20px;
@@ -68,4 +75,202 @@
 }
 #paragraph-title-1{
     margin-top: 100px;
+}
+.feature-icon{
+    box-shadow: 2px 4px 4px 2px #d4575a;
+    color: white;
+    margin-bottom: 30px;
+    border-radius: 50%;
+    padding: 10px;
+    border: 3px dashed #ecb141;
+}
+.feature-icon-row{
+
+    margin-top: 60px;
+    padding: 100px 50px;
+    background-color: #ee6165;
+}
+.feature-title{
+    color: #ecb141;
+}
+.feature-description{
+    color: white;
+}
+.ui-row{
+    margin-top: 60px;
+}
+#ui-title{
+    margin-left: 0;
+}
+#start-title{
+    margin-top: 80px!important;
+    margin-bottom: 40px;
+}
+.sign-up-text:hover{
+    background-color: #ee6165;
+    color: white;
+}
+.sign-up-text{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 100px;
+    color: #000000;
+    background-color: white;
+    border: 1px solid #ee6165;
+    padding-right: 23px !important;
+    padding-left: 23px !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+#title-black{
+    color: black;
+    margin-bottom: 50px;
+}
+
+.copyright-row{
+    padding: 30px;
+    margin: 0px;
+}
+.feature-icon{
+    font-size: 60px;
+}
+#ui-caption{
+    margin-left: 0;
+}
+#gear-animation{
+    margin-top: -600px;
+    margin-bottom: -200px;
+}
+.attendance-img{
+    box-shadow: 2px 4px 6px 2px #e5e5e5;
+    border-radius: 15px;
+}
+.hidden{
+    visibility: hidden;
+}
+@media (max-width: 1650px) {
+    .banner-img {
+        width: 650px;
+    }
+
+    .description-img {
+        width: 600px;
+    }
+    #meetings-started{
+        margin-top: 100px;
+        width: 700px;
+    }
+    #sign-up-img{
+        width: 800px;
+    }
+    #ui-img{
+        width: 1300px;
+    }
+    #take-attendance-title{
+        margin-top: -50px!important;
+
+    }
+    #take-attendance-caption{
+        margin-bottom: 100px;
+    }
+}
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.fadeInUp {
+    animation-name: fadeInUp;
+}
+
+@media (max-width: 1250px) {
+    .banner-img {
+        width: 500px;
+        margin-top: 80px;
+        margin-left: 100px;
+
+    }
+
+    .description-img {
+        width: 450px;
+    }
+    #meetings-started{
+        margin-top: 100px;
+        width: 600px;
+    }
+    #sign-up-img{
+
+        width: 650px;
+    }
+    #ui-img{
+        width: 1150px;
+    }
+    #take-attendance-title{
+        margin-top: -300px!important;
+    }
+    #gear-animation{
+        margin-top: -500px;
+        margin-bottom: -200px;
+        width: 500px;
+    }
+}
+@media (max-width: 991px) {
+    #take-attendance-title{
+        margin-top: 100px!important;
+    }
+    #gear-animation{
+        margin-top: -200px;
+        margin-bottom: -200px;
+        width: 90%;
+        margin-left: 5%;
+    }
+    #paragraph-title-1, #paragraph-1-text{
+        margin-left: 0;
+    }
+    #ui-caption{
+        margin-left: 0;
+    }
+    .banner-img {
+        width: 0;
+        margin-top: 0;
+        margin-left: 0;
+
+    }
+    .quick-start-text{
+        margin-top: 40%;
+    }
+    .description-img {
+        width: 450px;
+    }
+    #meetings-started{
+        margin-top: 70px;
+        margin-left: 0;
+        width: 80%;
+    }
+    #sign-up-img{
+        margin-left: 5%;
+        margin-right: 0;
+        width: 90%;
+    }
+    #ui-img{
+        width: 100%;
+    }
+    .quick-start-text{
+        padding: 30px;
+    }
+    .feature-col{
+        margin-top: 50px;
+
+    }
+    .feature-icon-row{
+        margin-right: 0;
+        margin-left: 0;
+    }
 }
