@@ -820,7 +820,6 @@ app.get('/', (req, res) => {
 
 app.get('/authorize', (req, res) => {
 
-  res.redirect('https://zoom.us/launch/chat?jid=robot_' + process.env.zoom_bot_jid)
 })
 
 app.post('/support-message', (req,res) => {
@@ -829,7 +828,7 @@ app.post('/support-message', (req,res) => {
   const message = "email from: " + req.body.email + " with name: " + req.body.Name + " with message: " + req.body.message
   var mailOptions = {
     from: process.env.admin_email,
-    to: "varunchitturi@easeattendance.com",
+    to: process.env.admin_email,
     subject: 'Support Email from Ease Attendance: ' + req.body.email,
     text: message
   };
