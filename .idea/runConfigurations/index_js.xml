@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="index.js" type="NodeJSConfigurationType" node-parameters="index.js" path-to-js-file="$PROJECT_DIR$/functions/index.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="index.js" type="NodeJSConfigurationType" node-parameters="index.js" path-to-js-file="$PROJECT_DIR$/index.js" working-dir="$PROJECT_DIR$">
     <envs>
       <env name="DEBUG" value="zoom-chatbot-ease-attendance:*" />
     </envs>
