@@ -753,6 +753,7 @@ const email = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional //EN\"
     "    </table>\n" +
     "\n" +
     "</body>\n"
+const port = process.env.PORT || 4000
 require('dotenv').config()
 console.log("env loaded")
 const express = require('express')
@@ -765,8 +766,6 @@ const path = require('path')
 console.log("path loaded")
 const app = express()
 console.log("app created")
-const functions = require("firebase-functions")
-console.log("firebase-functions loaded")
 //serverside read and write Admin:
 const admin = require('firebase-admin')
 console.log("firebase-admin loaded")
@@ -1023,5 +1022,11 @@ app.post('/deauthorize', (req, res) => {
     res.send()
   }
 })
-exports.app = functions.https.onRequest(app)
 
+
+const server = app.listen(port, () => console.log(`Server Up and Running on ${port}!`))
+server.on('upgrade', (request, socket, head) => {
+    wsServer.handleUpgrade(request, socket, head, socket => {
+        wsServer.emit('connection', socket, request);
+    });
+});
