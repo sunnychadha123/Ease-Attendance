@@ -42,11 +42,11 @@ body{
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    box-shadow: 2px 5px 3px 1px #9f9f9f;
+    box-shadow: 2px 5px 5px 1px #dddddd;
 
 }
 .member-role{
-    color: #a5a5a5;
+    color: #fa6060;
     margin-bottom: 20px;
 }
 
@@ -80,7 +80,7 @@ body{
     background-color: #111111;
 }
 .member-social{
-    box-shadow: 0 1px 4px 1px #868686;
+    box-shadow: 0 2px 3px 1px #d0d0d0;
     border: white 1px solid;
     width: 50px;
     height: 50px;
@@ -91,7 +91,7 @@ body{
     font-size: 30px;
 }
 .member-social-git{
-    box-shadow: 0 1px 4px 1px #868686;
+    box-shadow: 0 2px 3px 1px #d0d0d0;
     border: #000000 1px solid;
     width: 50px;
     height: 50px;
@@ -103,11 +103,11 @@ body{
 }
 .member-social-git:hover{
     margin-top: -3px;
-    box-shadow: 0 4px 4px 1px #868686;
+    box-shadow: 0 5px 4px 1px #d0d0d0;
 }
 .member-social:hover{
     margin-top: -3px;
-    box-shadow: 0 4px 4px 1px #868686;
+    box-shadow: 0 5px 4px 1px #d0d0d0;
 }
 .iconify-social{
     position: relative;
