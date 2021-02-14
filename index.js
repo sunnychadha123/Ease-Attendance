@@ -773,6 +773,8 @@ const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
 console.log("service account configuration loaded")
 const nodemailer = require("nodemailer")
 console.log("nodemailer loaded")
+const favicon = require('serve-favicon')
+console.log("favicon module loaded")
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
 })
@@ -807,7 +809,7 @@ const transporter = nodemailer.createTransport({
 });
 
 
-
+app.use(favicon(path.join(__dirname, 'favicon.ico')))
 app.use(express.urlencoded({
   extended: true
 }))
