@@ -724,7 +724,7 @@ const email = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional //EN\"
     "\n" +
     "                                    <div style=\"Margin-left: 20px;Margin-right: 20px;\">\n" +
     "                                        <div style=\"mso-line-height-rule: exactly;mso-text-raise: 11px;vertical-align: middle;\">\n" +
-    "                                            <p style=\"Margin-top: 0;Margin-bottom: 0;\">Thank you for your patience,</p>\n" +
+    "                                            <p style=\"Margin-top: 0;Margin-bottom: 0;\">We appreciate your patience,</p>\n" +
     "                                            <p style=\"Margin-top: 20px;Margin-bottom: 20px;\">Ease Attendance</p>\n" +
     "                                        </div>\n" +
     "                                    </div>\n" +
