@@ -43,22 +43,12 @@ const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\
 
 const firestore = firebase.firestore()
 const auth = firebase.auth()
-function arr_diff (a1, a2) {
-    var a = [], diff = [];
-    for (var i = 0; i < a1.length; i++) {
-        a[a1[i]] = true;
+function arr_diff (newMess, oldMess) {
+    var diff = []
+    for(let i = oldMess.length; i < newMess.length;i++){
+        diff.push(newMess[i])
     }
-    for (var i = 0; i < a2.length; i++) {
-        if (a[a2[i]]) {
-            delete a[a2[i]];
-        } else {
-            a[a2[i]] = true;
-        }
-    }
-    for (var k in a) {
-        diff.push(k);
-    }
-    return diff;
+    return diff
 }
 
 auth.onAuthStateChanged((user) => {
@@ -161,7 +151,12 @@ auth.onAuthStateChanged((user) => {
             firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
                 if(doc.data()){
                     const meetingMessages = doc.data().messages
-                    const newMessages = arr_diff(meetingMessages,CurrentMessages)
+                    // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
+                    const newCalculated = arr_diff(meetingMessages,CurrentMessages)
+                    var newMessages = []
+                    for(let i = 0; i < newCalculated.length; i++){
+                        newMessages.push(newCalculated[i])
+                    }
                     console.log(meetingMessages)
                     console.log(CurrentMessages)
                     console.log(newMessages)
@@ -223,6 +218,7 @@ auth.onAuthStateChanged((user) => {
                             meetingOccuring = false
                             CurrentMeeting = ""
                             CurrentMeetingID = ""
+                            CurrentMessages = []
                             Participants = []
                             clearTable()
                         }
@@ -472,7 +468,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            if(Participants[i].state === "Not Present"){
+            if(Participants[i].state === "Absent"){
                 var row = participantTable.insertRow(1);
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
