@@ -787,7 +787,6 @@ class Meeting{
     this.meetingName = meetingName
     this.hostEmail = hostEmail
     this.hostUID = null
-    this.finishedTS = new Set()
     this.messageLog = []
     this.recordLog = []
     this.meetingStart = new Date()
@@ -870,31 +869,104 @@ function remove(array, element) {
   }
 }
 function handleZoomPost(req){
-  const body = req.body
-  const host_id = body.payload.object.host_id
-  if(Meetings[host_id] == null){
-    Meetings[host_id] = new Meeting(host_id, null,null)
-  }
-  if(!Meetings[host_id].finishedTS.has(body.event_ts)){
-    Meetings[host_id].finishedTS.add(body.event_ts)
+    const body = req.body
+    const host_id = body.payload.object.host_id
     console.log("<====================================================>")
     console.log(req.body)
     console.log(req.body.payload.object.participant)
     console.log("<====================================================>")
+
+
     if(body.event === "meeting.started"){
-      Meetings[host_id].meetingName = body.payload.object.topic
-      Meetings[host_id].meetingId = body.payload.object.id
-      let currentDate = new Date()
-      Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+        // note: do not update firebase current meetings since we do not know who started the meeting yet
+        // Create meeting in meeting dictionary
+        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, null, body.payload.object.id)
+        // Add meeting started to record log
+        let currentDate = new Date()
+        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+        // push messages that set meeting ID and meeting Name in front end
+        Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
+        Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+    }
+    else if(body.event === "meeting.participant_joined"){
+        const participant = body.payload.object.participant
+        const participantID = participant.id
+        const participantName = participant.user_name
+        const participantEmail = participant.email
+        if(Meetings[host_id]){
+            let currentDate = new Date()
+            if(participantID === host_id){
+                db.collection("Users").where("email","==",participantEmail).get().then((querySnapshot) => {
+                    querySnapshot.forEach((doc) => {
+                        Meetings[host_id].hostUID = doc.id
+                        console.log("host uid is " + doc.id)
+                        Meetings[host_id].hostEmail = participantEmail
+                        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+                        Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                            messages: Meetings[host_id].messageLog
+                        }).then(()=>{
+                        }).catch((error)=>{
+                            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                        })
+                    })
+                }).catch((error) => {
+                    console.error("error getting user uid from collection based on email" + " email: " + participantEmail)
+                })
+            }
+            else{
+                if(Meetings[host_id].hostEmail == null || Meetings[host_id].hostEmail === ""){
+                    Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+                    Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                }
+                else{
+                    Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+                    Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                    db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                        messages: Meetings[host_id].messageLog
+                    }).then(()=>{
+                    }).catch((error)=>{
+                        console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                    })
+                }
+            }
+        }
+    }
+    else if(body.event === "meeting.participant_left"){
+        const participant = body.payload.object.participant
+        const participantID = participant.id
+        const participantName = participant.user_name
+        const participantEmail = participant.email
+        let currentDate = new Date()
+        if(Meetings[host_id]){
+            if(Meetings[host_id].hostEmail){
+                Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+                Meetings[host_id].messageLog.push("participant.left " + participantName)
+                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                    messages: Meetings[host_id].messageLog
+                }).then(()=>{
+                }).catch((error)=>{
+                    console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                })
+            }
+            else{
+                Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+                Meetings[host_id].messageLog.push("participant.left " + participantName)
+            }
+        }
     }
     else if(body.event === "meeting.ended"){
-      if(Meetings[host_id]){
+      // If meeting exists and participant is know
+      if(Meetings[host_id] && Meetings[host_id].hostEmail){
+          // Add meeting end to record log
         let currentDate = new Date()
         Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
+        // find the host id based on host email
         db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
             .get()
             .then((querySnapshot) => {
               querySnapshot.forEach((doc) => {
+                  // save record to data base
                 db.collection("Records").add({
                   'Events': Meetings[host_id].recordLog,
                   'MeetingID': Meetings[host_id].meetingId,
@@ -904,83 +976,39 @@ function handleZoomPost(req){
                   'MeetingEnd' : new Date()
                 })
                     .then((docRef) => {
-                      console.log("Document written with ID: ", docRef.id);
+                        console.log("Document written with ID: ", docRef.id);
+                        // add meeting end to message log
+                        Meetings[host_id].messageLog.push("meeting.ended");
+                        // update firebase messages after meeting end to let client know that meeting has ended
+                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                            messages: Meetings[host_id].messageLog
+                        }).then(()=>{
+                            //delete the current meeting when meeting has ended
+                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).delete().then(() => {
+                                // delete local dictionary values of meeting
+                                delete Meetings[host_id]
+                            }).catch((error) => {
+                                console.error("error deleting Current Meeting document")
+                            });
+                        }).catch((error)=>{
+                            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                        })
                     })
                     .catch((error) => {
                       console.error("Error adding document: ", error);
                     });
-                return
               });
             })
             .catch((error) => {
               console.log("Error getting documents: ", error);
             });
-        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).delete().then(() => {
+      }
+      else if(Meetings[host_id]){
           delete Meetings[host_id]
-        }).catch((error) => {
-          console.error("error deleting document")
-        });
       }
     }
-    else if(body.event === "meeting.participant_joined"){
-      const participant = body.payload.object.participant
-      const participantID = participant.id
-      const participantName = participant.user_name
-      const participantEmail = participant.email
-      if(Meetings[host_id]){
-        let currentDate = new Date()
-        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-        if(participantID === host_id || Meetings[host_id].hostEmail != null){
-          Meetings[host_id].hostEmail = participantEmail
-          db.collection("Users").where("email","==",participantEmail).get().then((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-              Meetings[host_id].hostUID = doc.id
-              console.log("doc.id is " + doc.id)
-              Meetings[host_id].messageLog.push("meeting.id " + Meetings[host_id].meetingId)
-              Meetings[host_id].messageLog.push("meeting.started " + Meetings[host_id].meetingName)
-              Meetings[host_id].messageLog.push("participant.joined " + participantName)
-              db.collection("CurrentMeetings").doc(doc.id).set({
-                messages: Meetings[host_id].messageLog
-              }).then(()=>{
-
-              }).catch((error)=>{
-                console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
-              })
-            })
-          }).catch((error) => {
-            console.error("error getting user uid from collection based on email" + " email: " + participantEmail)
-          })
-        }
-        else if(Meetings[host_id].hostEmail == null){
-          Meetings[host_id].messageLog.push("participant.joined " + participantName)
-        }
-      }
-
-    }
-    else if(body.event === "meeting.participant_left"){
-      const participant = body.payload.object.participant
-      const participantID = participant.id
-      const participantName = participant.user_name
-      const participantEmail = participant.email
-      let currentDate = new Date()
-      if(Meetings[host_id]){
-        Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-        Meetings[host_id].messageLog.push("participant.left " + participantName)
-        if(participantEmail === Meetings[host_id].hostEmail){
-          Meetings[host_id].messageLog.push("meeting.ended " + Meetings[host_id].meetingName)
-          db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-            messages: Meetings[host_id].messageLog
-          }).then(()=>{
-
-          }).catch((error)=>{
-            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
-          })
-        }
-      }
-
-    }
-  }
 }
+
 app.post('/api/requests', (req, res) => {
   res.status(200)
   res.send()

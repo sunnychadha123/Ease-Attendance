@@ -201,7 +201,6 @@ auth.onAuthStateChanged((user) => {
                             document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
                             document.getElementById("meeting-id-attendance").value = ""
                             document.getElementById("meeting-id-attendance").hidden = true
-
                             if(meetingIndex === -1){
                                 $('#add-edit-meeting-modal').modal('show');
                                 $("#meeting-id-input-field").val(CurrentMeetingID)
@@ -241,7 +240,7 @@ auth.onAuthStateChanged((user) => {
                                 }
                             }
                             if(meetingIndex !== -1){
-                                for(i = 0 ; i < Meetings[meetingIndex].arr.length; i++){
+                                for(let i = 0 ; i < Meetings[meetingIndex].arr.length; i++){
                                     const name = Meetings[meetingIndex].arr[i].split(" ")
                                     const participantFirst = name[0]
                                     const participantLast = name[name.length-1]
@@ -258,25 +257,25 @@ auth.onAuthStateChanged((user) => {
                             }
                             else if(data.length > 2){
                                 participantFirst = data[1]
-                                participantLast = data[2]
+                                participantLast = data[data.length-1]
                             }
                             if(meetingIndex !== -1){
                                 var isPartOfRoster = false
-                                for(i = 0 ; i < Participants.length; i++){
+                                for(var i = 0 ; i < Participants.length; i++){
                                     if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
                                         const toAdd = Participants[i]
                                         isPartOfRoster = true
                                         Participants.splice(i,1)
-                                        Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true, toAdd.presentTime, toAdd.absentTime))
+                                        Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true))
                                         break
                                     }
                                 }
                                 if(!isPartOfRoster){
-                                    Participants.unshift(new Participant(participantFirst, participantLast, "Present",false,0,0))
+                                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
                                 }
                             }
                             else{
-                                Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false, 0 ,0))
+                                Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
                             }
                             console.log(Participants)
                             updateParticipantTable()
