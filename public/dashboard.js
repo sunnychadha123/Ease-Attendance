@@ -990,7 +990,7 @@ function greenNotification(message){
     },2000);
 }
 function yellowNotification(message){
-    $(".notify").addClass("notify-active-yello");
+    $(".notify").addClass("notify-active-yellow");
     document.getElementById("notifyType").innerHTML = message
 
     setTimeout(function(){

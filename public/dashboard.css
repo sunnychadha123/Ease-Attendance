@@ -356,7 +356,7 @@ hr{
      border-color: #ec3232;
  }
 .notify{
-
+    z-index: 10;
     position:absolute;
     top:0;
     width:110%;
@@ -385,7 +385,6 @@ hr{
 }
 .notify-active-green{
     padding-top:10px !important;
-
     height:50px !important;
     background: rgb(64, 207, 116);
 }
