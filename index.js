@@ -1,25 +1,15 @@
 var email = require("./email.js").email
 const port = process.env.PORT || 4000
 require('dotenv').config()
-console.log("env loaded")
 const express = require('express')
-console.log("express loaded")
 const bodyParser = require('body-parser')
-console.log("body-parser loaded")
 const request = require('request')
-console.log("request loaded")
 const path = require('path')
-console.log("path loaded")
 const app = express()
-console.log("app created")
-//serverside read and write Admin:
 const admin = require('firebase-admin')
-console.log("firebase-admin loaded")
-console.log("service account configuration loaded")
 const nodemailer = require("nodemailer")
-console.log("nodemailer loaded")
 const favicon = require('serve-favicon')
-console.log("favicon module loaded")
+// Initialize admin credentials for db
 admin.initializeApp({
   credential: admin.credential.cert({
           "type": "service_account",
@@ -35,9 +25,9 @@ admin.initializeApp({
       }
   )
 })
-console.log("admin app created")
+// Create connection to cloud firestore
 const db = admin.firestore();
-console.log("db loaded")
+// Holds information about current Meeting
 class Meeting{
   constructor(hostId,meetingName,hostEmail, id) {
     this.meetingId = id
@@ -51,10 +41,10 @@ class Meeting{
   }
 }
 
-//TODO: only keep errors
-
-// current meetings going on
+// Dictionary of current meetings
 Meetings = {}
+
+// Initialize nodemailer to send messages for support
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -63,6 +53,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Initialize app config
 
 app.use(favicon(path.join(__dirname, 'favicon.ico')))
 app.use(express.urlencoded({
@@ -70,6 +61,9 @@ app.use(express.urlencoded({
 }))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '/public')));
+
+// Initialize URL paths
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 })
@@ -110,14 +104,23 @@ app.get('/support', (req, res) => {
 app.get('/verify', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/verify.html'));
 })
-
-
 app.get('/authorize', (req, res) => {
 
 })
+app.get('/zoomverify/verifyzoom.html', (req, res) => {
+    res.send(process.env.zoom_verification_code)
+})
+function remove(array, element) {
+    const index = array.indexOf(element);
 
+    if (index !== -1) {
+        array.splice(index, 1);
+    }
+}
+
+// function to send messages for https://www.easeattendance.com/support
 app.post('/support-message', (req,res) => {
-
+    //TODO: verify email
   console.log(req.body)
   const message = "email from: " + req.body.email + " with name: " + req.body.Name + " with message: " + req.body.message
   var mailOptions = {
@@ -151,27 +154,13 @@ app.post('/support-message', (req,res) => {
 
   res.status(200);
   res.send()
-
 })
-app.get('/zoomverify/verifyzoom.html', (req, res) => {
-  res.send(process.env.zoom_verification_code)
-})
-function remove(array, element) {
-  const index = array.indexOf(element);
 
-  if (index !== -1) {
-    array.splice(index, 1);
-  }
-}
+// Function to handle zoom webhooks
+
 function handleZoomPost(req){
     const body = req.body
     const host_id = body.payload.object.host_id
-    console.log("<====================================================>")
-    console.log(req.body)
-    console.log(req.body.payload.object.participant)
-    console.log("<====================================================>")
-
-
     if(body.event === "meeting.started"){
         // note: do not update firebase current meetings since we do not know who started the meeting yet
         // Create meeting in meeting dictionary
@@ -188,42 +177,38 @@ function handleZoomPost(req){
         const participantID = participant.id
         const participantName = participant.user_name
         const participantEmail = participant.email
+        // If the meeting is in the dictionary (meeting exists on our server)
         if(Meetings[host_id]){
             let currentDate = new Date()
+            Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+            Meetings[host_id].messageLog.push("participant.joined " + participantName)
             if(participantID === host_id){
+                // Get the user uid from the user
                 db.collection("Users").where("email","==",participantEmail).get().then((querySnapshot) => {
                     querySnapshot.forEach((doc) => {
                         Meetings[host_id].hostUID = doc.id
-                        console.log("host uid is " + doc.id)
                         Meetings[host_id].hostEmail = participantEmail
-                        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-                        Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                         db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                             messages: Meetings[host_id].messageLog
                         }).then(()=>{
                         }).catch((error)=>{
-                            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                            console.error(error.message)
                         })
                     })
                 }).catch((error) => {
-                    console.error("error getting user uid from collection based on email" + " email: " + participantEmail)
+                    console.error(error.message)
                 })
             }
-            else{
-                if(Meetings[host_id].hostEmail == null || Meetings[host_id].hostEmail === ""){
-                    Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-                    Meetings[host_id].messageLog.push("participant.joined " + participantName)
-                }
-                else{
-                    Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-                    Meetings[host_id].messageLog.push("participant.joined " + participantName)
-                    db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                        messages: Meetings[host_id].messageLog
-                    }).then(()=>{
-                    }).catch((error)=>{
-                        console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
-                    })
-                }
+        // If participant that joined is not host but the host information is know
+            else if(Meetings[host_id].hostEmail != null && Meetings[host_id].hostEmail !== ""){
+                // update currentMeetings on firebase
+                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                    messages: Meetings[host_id].messageLog
+                }).then(()=>{
+                }).catch((error)=>{
+                    console.error(error.message)
+                })
             }
         }
     }
@@ -233,28 +218,27 @@ function handleZoomPost(req){
         const participantName = participant.user_name
         const participantEmail = participant.email
         let currentDate = new Date()
+        // If meeting exists on server
         if(Meetings[host_id]){
+            Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+            Meetings[host_id].messageLog.push("participant.left " + participantName)
+            // If host information is known
             if(Meetings[host_id].hostEmail){
-                Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-                Meetings[host_id].messageLog.push("participant.left " + participantName)
+                // update current meetings on firebase
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                     messages: Meetings[host_id].messageLog
                 }).then(()=>{
                 }).catch((error)=>{
-                    console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                    console.error(error.message)
                 })
-            }
-            else{
-                Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-                Meetings[host_id].messageLog.push("participant.left " + participantName)
             }
         }
     }
     else if(body.event === "meeting.ended"){
-      // If meeting exists and participant is know
+      // If meeting exists and participant is known
       if(Meetings[host_id] && Meetings[host_id].hostEmail){
-          // Add meeting end to record log
         let currentDate = new Date()
+        // Add meeting end to record log
         Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
         // find the host id based on host email
         db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
@@ -271,7 +255,6 @@ function handleZoomPost(req){
                   'MeetingEnd' : new Date()
                 })
                     .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
                         // add meeting end to message log
                         Meetings[host_id].messageLog.push("meeting.ended");
                         // update firebase messages after meeting end to let client know that meeting has ended
@@ -283,21 +266,22 @@ function handleZoomPost(req){
                                 // delete local dictionary values of meeting
                                 delete Meetings[host_id]
                             }).catch((error) => {
-                                console.error("error deleting Current Meeting document")
+                                console.error(error.message)
                             });
                         }).catch((error)=>{
-                            console.error("error updating current meeting" + " email: " + participantEmail + " in meeting participant joined")
+                            console.error(error.message)
                         })
                     })
                     .catch((error) => {
-                      console.error("Error adding document: ", error);
+                      console.error(error.message);
                     });
               });
             })
             .catch((error) => {
-              console.log("Error getting documents: ", error);
+              console.error(error.message);
             });
       }
+      // If host information is now known and meeting exists on server
       else if(Meetings[host_id]){
           delete Meetings[host_id]
       }
@@ -334,9 +318,8 @@ app.post('/deauthorize', (req, res) => {
       }
     }, (error, httpResponse, body) => {
       if (error) {
-        console.log(error)
+        console.error(error)
       } else {
-        console.log(body)
       }
     })
   } else {
@@ -346,4 +329,4 @@ app.post('/deauthorize', (req, res) => {
 })
 
 
-const server = app.listen(port, () => console.log(`Server Up and Running on ${port}!`))
+const server = app.listen(port, () => console.log(`Ease Attendance running on server on ${port}!`))
