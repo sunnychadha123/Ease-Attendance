@@ -325,7 +325,7 @@ auth.onAuthStateChanged((user) => {
         }
     } else {
         //user not signed in
-        window.location.href = "index.html";
+        window.location.href = "/";
     }
 });
 document.getElementById("meeting-id-attendance").hidden = true
@@ -827,7 +827,7 @@ function addMeeting(){
 function logout(){
     auth.signOut().then(r => {
         console.log("user has signed out")
-        window.location.href = "index.html";
+        window.location.href = "/";
     }).catch(err => {console.log(err.message)});
 }
 function resetSettingInput(){

@@ -1,5 +1,5 @@
 const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
-    "    <a class=\"navbar-brand\" href=\"index.html\"><img  class=\"logo\" src=\"Images/Ease%20Attendance%20Header%20Logo.png\"></a>\n" +
+    "    <a class=\"navbar-brand\" href=\"/\"><img  class=\"logo\" src=\"Images/Ease%20Attendance%20Header%20Logo.png\"></a>\n" +
     "\n" +
     "    <button class=\"navbar-toggler navbar-light collapsed\" type=\"button\" data-toggle=\"collapse\" data-target=\"#main-navigation\">\n" +
     "        <span class=\"icon-bar top-bar\"></span>\n" +
@@ -35,7 +35,7 @@ const footerBlock = "<footer>\n" +
     "        <div class=\"text-center footer-link-row row justify-content-center\">\n" +
     "            <div class=\"text-center justify-content-center col-md-4  mr-auto my-md-4 my-0 mt-4 mb-1 footer-col\">\n" +
     "                <h5 class=\"footer-title\">Pages</h5>\n" +
-    "                <a href=\"index.html\" class=\"footer-link\"><h6>Home</h6></a>\n" +
+    "                <a href=\"/\" class=\"footer-link\"><h6>Home</h6></a>\n" +
     "                <a href=\"getting-started.html\" class=\"footer-link\"><h6>Getting Started</h6></a>\n" +
     "                <a href=\"features.html\" class=\"footer-link\"><h6>Features</h6></a>\n" +
     "                <a href=\"aboutus.html\" class=\"footer-link\"><h6>About Us</h6></a>\n" +
