@@ -29,6 +29,7 @@ var PastMeetings
 var MeetingsdidLoad = false
 var Participants = []
 var CurrentMessages = []
+var EncounteredParticipants = new Set()
 var names = []
 var meetingOccuring = false
 var CurrentMeeting = ""
@@ -211,9 +212,9 @@ auth.onAuthStateChanged((user) => {
                                 while (studentInputTable.rows.length !== 0) {
                                     studentInputTable.deleteRow(0)
                                 }
-                                for (i = 0; i < Participants.length; i++) {
-                                    addStudent(Participants[i].firstName + " " + Participants[i].lastName)
-                                }
+                                EncounteredParticipants.forEach(participant => {
+                                    addStudent(participant)
+                                })
                                 document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
                             }
                             else{
@@ -259,6 +260,8 @@ auth.onAuthStateChanged((user) => {
                                 participantFirst = data[1]
                                 participantLast = data[data.length-1]
                             }
+                            let fullName = participantFirst + " " + participantLast
+                            EncounteredParticipants.add(fullName.trim())
                             if(meetingIndex !== -1){
                                 var isPartOfRoster = false
                                 for(var i = 0 ; i < Participants.length; i++){
