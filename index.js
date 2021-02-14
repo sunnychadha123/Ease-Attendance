@@ -1,14 +1,25 @@
 var email = require("./email.js").email
+console.log("email html loaded")
 const port = process.env.PORT || 4000
+console.log("port selected = " + port)
 require('dotenv').config()
+console.log("env vars loaded")
 const express = require('express')
+console.log("express loaded")
 const bodyParser = require('body-parser')
+console.log("body-parser loaded")
 const request = require('request')
+console.log("request loaded")
 const path = require('path')
+console.log("path loaded")
 const app = express()
+console.log("app created from express")
 const admin = require('firebase-admin')
+console.log("firebase admin loaded")
 const nodemailer = require("nodemailer")
+console.log("email client loaded for support")
 const favicon = require('serve-favicon')
+console.log("favicon loaded")
 // Initialize admin credentials for db
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -25,8 +36,10 @@ admin.initializeApp({
       }
   )
 })
+console.log("admin app initialized")
 // Create connection to cloud firestore
 const db = admin.firestore();
+console.log("cloud firestore initialized")
 // Holds information about current Meeting
 class Meeting{
   constructor(hostId,meetingName,hostEmail, id) {
@@ -43,7 +56,7 @@ class Meeting{
 
 // Dictionary of current meetings
 Meetings = {}
-
+console.log("dictionary of current meetings created")
 // Initialize nodemailer to send messages for support
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -52,16 +65,17 @@ const transporter = nodemailer.createTransport({
     pass: process.env.admin_pass
   }
 });
-
+console.log("nodemailer transport initialized")
 // Initialize app config
 
 app.use(favicon(path.join(__dirname, 'favicon.ico')))
+console.log("favicon initialized")
 app.use(express.urlencoded({
   extended: true
 }))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '/public')));
-
+console.log("express app preferences loaded")
 // Initialize URL paths
 
 app.get('/', (req, res) => {
@@ -110,18 +124,9 @@ app.get('/authorize', (req, res) => {
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
     res.send(process.env.zoom_verification_code)
 })
-function remove(array, element) {
-    const index = array.indexOf(element);
-
-    if (index !== -1) {
-        array.splice(index, 1);
-    }
-}
 
 // function to send messages for https://www.easeattendance.com/support
 app.post('/support-message', (req,res) => {
-    //TODO: verify email
-  console.log(req.body)
   const message = "email from: " + req.body.email + " with name: " + req.body.Name + " with message: " + req.body.message
   var mailOptions = {
     from: process.env.admin_email,
@@ -138,20 +143,19 @@ app.post('/support-message', (req,res) => {
   if(req.body.email){
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
-        console.log(error);
+        console.error(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        console.info('Email sent: ' + info.response);
       }
     });
     transporter.sendMail(mailOptionsUser, function(error, info){
       if (error) {
-        console.log(error);
+        console.error(error);
       } else {
-        console.log('Email sent: ' + info.response);
+        console.info('Email sent: ' + info.response);
       }
     });
   }
-
   res.status(200);
   res.send()
 })
@@ -171,12 +175,14 @@ function handleZoomPost(req){
         // push messages that set meeting ID and meeting Name in front end
         Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
         Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+        console.log("Meeting started: " + body.payload.object.topic)
     }
     else if(body.event === "meeting.participant_joined"){
         const participant = body.payload.object.participant
         const participantID = participant.id
         const participantName = participant.user_name
         const participantEmail = participant.email
+        console.log("Participant " + participantName + " has joined")
         // If the meeting is in the dictionary (meeting exists on our server)
         if(Meetings[host_id]){
             let currentDate = new Date()
@@ -218,6 +224,7 @@ function handleZoomPost(req){
         const participantName = participant.user_name
         const participantEmail = participant.email
         let currentDate = new Date()
+        console.log("Participant " + participantName + " has left")
         // If meeting exists on server
         if(Meetings[host_id]){
             Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
@@ -236,6 +243,7 @@ function handleZoomPost(req){
     }
     else if(body.event === "meeting.ended"){
       // If meeting exists and participant is known
+        console.log("Meeting ended: " + body.payload.object.topic)
       if(Meetings[host_id] && Meetings[host_id].hostEmail){
         let currentDate = new Date()
         // Add meeting end to record log
@@ -291,12 +299,14 @@ function handleZoomPost(req){
 app.post('/api/requests', (req, res) => {
   res.status(200)
   res.send()
+    console.log("post request to /api/requests sent " + req.body)
   if(req.headers.authorization === process.env.zoom_verification_token){
-    handleZoomPost(req)
+      handleZoomPost(req)
   }
 })
 
 app.post('/deauthorize', (req, res) => {
+    console.log("post request to /deauthorize sent " + req.body)
   if (req.headers.authorization === process.env.zoom_verification_token) {
     res.status(200)
     res.send()

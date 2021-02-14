@@ -8,7 +8,6 @@ function sendReset(){
         document.getElementById("resend-description").value = "If there is an account under this email, a reset link has been sent"
     }).catch(function(error) {
         document.getElementById("resend-description").hidden = false
-        console.log(error.message)
         document.getElementById("resend-description").value = "If there is an account under this email, a reset link has been sent"
     });
 }

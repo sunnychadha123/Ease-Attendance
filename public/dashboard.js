@@ -23,7 +23,6 @@ class PastMeeting{
         this.docID = docID
     }
 }
-//TODO: change edit meeting message
 var Meetings = []
 var PastMeetings
 var MeetingsdidLoad = false
@@ -54,7 +53,6 @@ function arr_diff (newMess, oldMess) {
 
 auth.onAuthStateChanged((user) => {
     if (user) {
-        console.log(user)
         if(user.emailVerified){
             document.getElementById("myTabContent").hidden = false
             document.getElementById("verifyEmail").hidden = true
@@ -115,7 +113,6 @@ auth.onAuthStateChanged((user) => {
                     while (recordTable.rows.length > 1) {
                         recordTable.deleteRow(1)
                     }
-                    console.log(PastMeetings)
                     const currentRecordTable = document.getElementById("current-record-table")
                     for (i = PastMeetings.length - 1; i >= 0; i--) {
                         var currentRow = recordTable.insertRow(1)
@@ -148,27 +145,19 @@ auth.onAuthStateChanged((user) => {
                     }
 
                 });
-            console.log(auth.currentUser.uid)
             firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
                 if(doc.data()){
                     const meetingMessages = doc.data().messages
                     // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
                     const newCalculated = arr_diff(meetingMessages,CurrentMessages)
                     var newMessages = []
-                    console.log(CurrentMessages)
                     for(let i = 0; i < newCalculated.length; i++){
                         CurrentMessages.push(newCalculated[i])
                         newMessages.push(newCalculated[i])
                     }
-                    console.log(CurrentMessages)
-                    console.log(meetingMessages)
-                    console.log(newMessages)
-                    console.log(newMessages.length)
-
                     // add new messages to current messages
                     for(var j = 0; j < newMessages.length; j++){
                         const currentMessage = newMessages[j]
-                        console.log(currentMessage)
                         const data = currentMessage.split(" ")
                         const eventType = data[0]
                         if(eventType === "meeting.started"){
@@ -280,7 +269,6 @@ auth.onAuthStateChanged((user) => {
                             else{
                                 Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
                             }
-                            console.log(Participants)
                             updateParticipantTable()
                         }
                         else if(eventType === "participant.left"){
@@ -311,7 +299,6 @@ auth.onAuthStateChanged((user) => {
                     CurrentMessages = []
                 }
             }, (error) => {
-                console.log("Error connecting to server");
                 redNotification("Problem connecting to server")
             })
         }
@@ -664,7 +651,6 @@ function deleteRecord(){
         $("#meeting-record-modal").modal("hide")
         greenNotification("Meeting record deleted")
     }).catch((error) => {
-        console.error("Error removing document: ", error);
         redNotification("Error deleting record")
     });
 }
@@ -679,7 +665,6 @@ function deleteMeeting(){
         greenNotification("Meeting deleted")
         $("#add-edit-meeting-modal").modal("hide")
     }).catch((error) => {
-        console.error("Error removing document: ", error);
         redNotification("Error deleting meeting")
     });
 }
@@ -742,7 +727,6 @@ function checkDuplicateID(){
     if(document.getElementById("delete-meeting-button").hasAttribute("disabled")){
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
-                console.log(1)
                 document.getElementById("meeting-id-input-field").classList.add("input-error")
                 return false;
             }
@@ -751,7 +735,6 @@ function checkDuplicateID(){
     else{
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId && i !== editingIndex-1){
-                console.log(2)
                 document.getElementById("meeting-id-input-field").classList.add("input-error")
                 return false;
             }
@@ -783,7 +766,6 @@ function addMeeting(){
                     $("#add-edit-meeting-modal").modal("hide")
                     greenNotification("Meetings Updated")
                 }).catch((error)=>{
-                    console.log(error.message)
                     $(".notify").addClass("notify-active");
                     $("#notifyType").addClass("failureServer");
 
@@ -826,9 +808,8 @@ function addMeeting(){
 }
 function logout(){
     auth.signOut().then(r => {
-        console.log("user has signed out")
         window.location.href = "/";
-    }).catch(err => {console.log(err.message)});
+    }).catch(err => {redNotification(err.message)});
 }
 function resetSettingInput(){
     document.getElementById("displayName-input-field").value = ""
@@ -851,21 +832,17 @@ function saveDisplayName(){
                 document.getElementById("user-name").innerHTML = "Welcome " + document.getElementById("displayName-input-field").value
                 document.getElementById("displayName-input-field").value = ""
             }).catch((error)=>{
-                console.log(error.message)
                 redNotification(error.message)
             })
         }).catch(function(error) {
             redNotification("Error changing name")
-            console.log(error)
         });
     }
     else if((document.getElementById("displayName-input-field").value.trim()).length >= 35){
         redNotification("Please choose a shorter display name")
-        console.log("Please choose a shorter display name")
     }
     else{
         redNotification("Please make sure you entered in a name")
-        console.log("please enter in the input field")
     }
     $("#settings-modal").modal('hide');
 }
@@ -893,25 +870,18 @@ function saveEmail(){
                                 document.getElementById("verifyEmail").hidden = false
                                 document.getElementById("settings-resend-verification-link-button").hidden = false
                             }).catch((error) => {
-                                console.log(error.message)
                                 redNotification(error.message)
                             })
                         }).catch(function(error) {
-                            console.log(error.message)
                             redNotification(error.message)
                         });
-                        console.log(error.message)
                         redNotification(error.message)
                     });
                 }).catch(function(error) {
-                    console.log(error.message)
                     redNotification(error.message)
                 });
             })
             .catch((error) => {
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                console.log(error.message)
                 redNotification(error.message)
             });
     }
@@ -926,7 +896,6 @@ function resendVerificationEmail(){
         greenNotification("A verification email has been sent")
         checkVerificationStatus()
     }).catch(function(error) {
-        console.log(error.message)
         redNotification(error.message)
     });
 }
@@ -936,7 +905,6 @@ function settingsResendVerificationEmail(){
         checkVerificationStatus()
         greenNotification("A verification email has been sent")
     }).catch(function(error) {
-        console.log(error.message)
         redNotification(error.message)
     });
 }
@@ -945,7 +913,6 @@ function resetPassword(){
         document.getElementById("pass-current-email-input-field").value = ""
         greenNotification("A password reset email has been sent")
     }).catch(function(error) {
-        console.log(error)
         redNotification("Incorrect email entered")
     });
     $("#settings-modal").modal('hide');
@@ -962,7 +929,6 @@ function checkVerificationStatus(){
                     window.location.href = "dashboard"
                     clearInterval(checkVerificationTimer)
                 }).catch((error)=>{
-                    console.log(error.message)
                     redNotification(error.message)
                 })
             }

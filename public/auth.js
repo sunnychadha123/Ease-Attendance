@@ -102,7 +102,6 @@ function login(){
 
 
         }).catch(err => {
-            console.log(err)
             if(err.code === "auth/user-not-found"){
                 document.getElementById("loginMessage").innerHTML = "There is no user with that email address";
             }
