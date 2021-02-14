@@ -154,13 +154,17 @@ auth.onAuthStateChanged((user) => {
                     // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
                     const newCalculated = arr_diff(meetingMessages,CurrentMessages)
                     var newMessages = []
+                    console.log(CurrentMessages)
                     for(let i = 0; i < newCalculated.length; i++){
+                        CurrentMessages.push(newCalculated[i])
                         newMessages.push(newCalculated[i])
                     }
-                    console.log(meetingMessages)
                     console.log(CurrentMessages)
+                    console.log(meetingMessages)
                     console.log(newMessages)
                     console.log(newMessages.length)
+
+                    // add new messages to current messages
                     for(var j = 0; j < newMessages.length; j++){
                         const currentMessage = newMessages[j]
                         console.log(currentMessage)
