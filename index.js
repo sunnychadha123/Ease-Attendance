@@ -769,14 +769,25 @@ console.log("app created")
 //serverside read and write Admin:
 const admin = require('firebase-admin')
 console.log("firebase-admin loaded")
-const serviceAccount = require('./easeattendance-c68ed-10bfc6103416.json')
 console.log("service account configuration loaded")
 const nodemailer = require("nodemailer")
 console.log("nodemailer loaded")
 const favicon = require('serve-favicon')
 console.log("favicon module loaded")
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert({
+          "type": "service_account",
+          "project_id": "easeattendance-c68ed",
+          "private_key_id": process.env.firebase_admin_key_id,
+          "private_key": process.env.firebase_admin_key,
+          "client_email": "easeattendance-c68ed@appspot.gserviceaccount.com",
+          "client_id": process.env.firebase_admin_client_id,
+          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+          "token_uri": "https://oauth2.googleapis.com/token",
+          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+          "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/easeattendance-c68ed%40appspot.gserviceaccount.com"
+      }
+  )
 })
 console.log("admin app created")
 const db = admin.firestore();
