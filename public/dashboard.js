@@ -959,7 +959,7 @@ function checkVerificationStatus(){
                     name : auth.currentUser.displayName,
                     email : auth.currentUser.email
                 }).then(() => {
-                    window.location.href = "dashboard.html"
+                    window.location.href = "dashboard"
                     clearInterval(checkVerificationTimer)
                 }).catch((error)=>{
                     console.log(error.message)

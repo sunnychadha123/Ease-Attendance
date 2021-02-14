@@ -37,7 +37,7 @@ function authenticate(){
                                 email: user.email
                             })
                                 .then(function() {
-                                    window.location.href = "verify.html"
+                                    window.location.href = "verify"
                                 })
                                 .catch(function(error) {
                                     document.getElementById("signUpMessage").innerHTML = error.message
@@ -86,14 +86,14 @@ function login(){
             }
             if(remember === true){
                 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-                    window.location.href = "dashboard.html"
+                    window.location.href = "dashboard"
                 }).catch((error) =>{
                     document.getElementById("loginMessage").innerHTML = error.message;
                 })
             }
             else{
                 auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).then(() => {
-                    window.location.href = "dashboard.html"
+                    window.location.href = "dashboard"
                 }).catch((error) => {
                     document.getElementById("loginMessage").innerHTML = error.message;
                 })

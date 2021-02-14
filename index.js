@@ -816,6 +816,44 @@ app.use(express.static(path.join(__dirname, '/public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname + '/index.html'));
 })
+app.get('/features', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/features.html'));
+})
+
+app.get('/about-us', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/about-us.html'));
+})
+
+app.get('/privacy', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/privacy.html'));
+})
+
+app.get('/terms', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/terms.html'));
+})
+
+app.get('/getting-started', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/getting-started.html'));
+})
+app.get('/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/dashboard.html'));
+})
+app.get('/forgotpass', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/forgotpass.html'));
+})
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/login.html'));
+})
+app.get('/signup', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/signup.html'));
+})
+app.get('/support', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/support.html'));
+})
+app.get('/verify', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/verify.html'));
+})
+
 
 app.get('/authorize', (req, res) => {
 

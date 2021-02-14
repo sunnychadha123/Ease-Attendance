@@ -1,4 +1,2 @@
 .env
 node_modules
-/functions/.env
-/functions/node_modules
