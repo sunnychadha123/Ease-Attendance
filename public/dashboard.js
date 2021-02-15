@@ -259,7 +259,7 @@ auth.onAuthStateChanged((user) => {
                             if(meetingIndex !== -1){
                                 var isPartOfRoster = false
                                 for(var i = 0 ; i < Participants.length; i++){
-                                    if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
+                                    if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                                         const toAdd = Participants[i]
                                         isPartOfRoster = true
                                         Participants.splice(i,1)
@@ -287,7 +287,7 @@ auth.onAuthStateChanged((user) => {
                                 participantLast = data[data.length-1]
                             }
                             for(i = 0 ; i < Participants.length; i++){
-                                if(Participants[i].firstName === participantFirst && Participants[i].lastName === participantLast){
+                                if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                                     const currParticipant = Participants[i]
                                     Participants.splice(i,1)
                                     if(currParticipant.partOfRoster){
