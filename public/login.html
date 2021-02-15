@@ -6,6 +6,8 @@
     <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
     <link rel="stylesheet" href="login.css">
     <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="vendor/ldbtn.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/loading.min.css">
 </head>
 
 <body>
@@ -39,7 +41,10 @@
                     </div>
 
                     <div class="form-group form-button">
-                        <button type="button" onclick="login()" name="signin" id="signin" class="form-submit" value="Log in">Log In</button>
+                        <div id="signin-cover" class="ld ld-over-full">
+                            <button type="button" onclick="login()" name="signin" id="signin" class="form-submit" value="Log in">Log In</button>
+                            <div class="ld ld-ring ld-spin"></div>
+                        </div>
                     </div>
 
                 </div>

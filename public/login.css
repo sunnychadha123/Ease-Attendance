@@ -398,6 +398,13 @@ label.valid:after {
 #loginMessage{
     color: #bc0b0b !important;
 }
+#signin:disabled{
+    cursor: default;
+}
+.ld-ring{
+    color: #ee6165!important;
+    font-size: 20px;
+}
 @media screen and (max-width: 1200px) {
     .container {
         width: calc( 100% - 30px);
