@@ -184,7 +184,9 @@ figure {
     margin-left: 75px;
     margin-right: 75px;
     padding-left: 34px; }
-
+label i{
+    margin-left: 2px;
+}
 .register-form {
     width: 100%; }
 
