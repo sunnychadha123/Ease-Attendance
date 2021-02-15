@@ -34,7 +34,7 @@ function authenticate(){
                                 if(userEmail == null){
                                     userEmail = ""
                                 }
-                                firestore.collection("ZoomOAuth").get(Authdoc.id).update({
+                                firestore.collection("ZoomOAuth").doc(Authdoc.id).update({
                                     firebaseID: cred.user.uid
                                 }).then(()=>{
                                     auth.currentUser.sendEmailVerification().then(() => {
