@@ -239,9 +239,6 @@ function handleZoomPost(req){
         }).catch((error)=>{
             console.error(error.message)
         })
-
-
-
     }
     else if(body.event === "meeting.participant_joined"){
         const participant = body.payload.object.participant
@@ -285,57 +282,50 @@ function handleZoomPost(req){
         }
     }
     else if(body.event === "meeting.ended"){
-      // If meeting exists and participant is known
+        // If meeting exists and participant is known
         console.log("Meeting ended: " + body.payload.object.topic)
-      if(Meetings[host_id] && Meetings[host_id].hostEmail){
-        let currentDate = new Date()
-        // Add meeting end to record log
-        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
-        // find the host id based on host email
-        db.collection("Users").where("email", "==", Meetings[host_id].hostEmail)
-            .get()
-            .then((querySnapshot) => {
-              querySnapshot.forEach((doc) => {
-                  // save record to data base
-                db.collection("Records").add({
-                  'Events': Meetings[host_id].recordLog,
-                  'MeetingID': Meetings[host_id].meetingId,
-                  'useruid': String(doc.id),
-                  'MeetingName': Meetings[host_id].meetingName,
-                  'MeetingStart': Meetings[host_id].meetingStart,
+          if(Meetings[host_id] && Meetings[host_id].hostEmail){
+            let currentDate = new Date()
+            // Add meeting end to record log
+            Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
+            Meetings[host_id].messageLog.push("meeting.ended");
+            // save record to data base
+              let currentMessages = Meetings[host_id].messageLog
+              let currentRecords = Meetings[host_id].recordLog
+              let meetingID = Meetings[host_id].meetingId
+              let hostUID = Meetings[host_id].hostUID
+              let meetingName = Meetings[host_id].meetingName
+              let meetingStart = Meetings[host_id].meetingStart
+              delete Meetings[host_id]
+              db.collection("Records").add({
+                  'Events': currentRecords,
+                  'MeetingID': meetingID,
+                  'useruid': hostUID,
+                  'MeetingName': meetingName,
+                  'MeetingStart': meetingStart,
                   'MeetingEnd' : new Date()
-                })
-                    .then((docRef) => {
-                        // add meeting end to message log
-                        Meetings[host_id].messageLog.push("meeting.ended");
-                        // update firebase messages after meeting end to let client know that meeting has ended
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                            //delete the current meeting when meeting has ended
-                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).delete().then(() => {
-                                // delete local dictionary values of meeting
-                                delete Meetings[host_id]
-                            }).catch((error) => {
-                                console.error(error.message)
-                            });
-                        }).catch((error)=>{
-                            console.error(error.message)
-                        })
-                    })
-                    .catch((error) => {
-                      console.error(error.message);
-                    });
+              })
+              .then(() => {
+              })
+              .catch((error) => {
+                  console.error(error.message);
               });
-            })
-            .catch((error) => {
-              console.error(error.message);
-            });
-      }
-      // If host information is now known and meeting exists on server
-      else if(Meetings[host_id]){
-          delete Meetings[host_id]
-      }
+              db.collection("CurrentMeetings").doc(hostUID).set({
+                  messages: currentMessages
+              }).then(()=>{
+                  //delete the current meeting when meeting has ended
+                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                  }).catch((error) => {
+                      console.error(error.message)
+                  });
+              }).catch((error)=>{
+                  console.error(error.message)
+              })
+          }
+          // If host information is now known and meeting exists on server
+          else if(Meetings[host_id]){
+              delete Meetings[host_id]
+          }
     }
 }
 
@@ -379,45 +369,46 @@ app.post('/deauthorize', (req, res) => {
           db.collection("ZoomOAuth").doc(userID).get().then((Authdoc) => {
               if(Authdoc.exists){
                   const email = Authdoc.data().email
+                  db.collection("ZoomOAuth").doc(userID).delete().then(()=>{
+                      console.info("Zoom auth info for user with email: " + email + " deleted")
+                  }).catch((error) => {
+                      console.error(error.message)
+                  })
                   db.collection("Users").where("email", "==",email).get().then((querySnapshot) => {
                       querySnapshot.forEach((Userdoc) => {
                           const firebaseUserID = Userdoc.id
                           auth.deleteUser(firebaseUserID).then(() => {
-                              db.collection("Users").doc(firebaseUserID).delete().then(() => {
-                                  db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
-                                      querySnapshot.forEach((Perioddoc) => {
-                                          db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
-                                              console.log("Period deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
-                                          }).catch((error) => {
-                                              console.error(error.message)
-                                          })
-                                      })
+                              console.info("User deleted from firebase auth for user with email: " + email + " and firebase id: " + firebaseUserID)
+                          }).catch((error) => {
+                              console.error(error.message)
+                          })
+                          db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
+                              querySnapshot.forEach((Perioddoc) => {
+                                  db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
+                                      console.log("Period deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
                                   }).catch((error) => {
                                       console.error(error.message)
                                   })
-                                  db.collection("Records").where("useruid","==",firebaseUserID).get().then((querySnapshot) => {
-                                      querySnapshot.forEach((Recorddoc) => {
-                                          db.collection("Records").doc(Recorddoc.id).delete().then(() => {
-                                              db.collection("ZoomOAuth").doc(userID).delete().then(() => {
-                                                  console.log("Record deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
-                                              }).catch((error) => {
-                                                  console.error(error.message)
-                                              })
-                                          }).catch((error) => {
-                                              console.error(error.message)
-                                          })
-                                      })
-                                  }).catch((error) => {
-                                      console.error(error.message)
-                                  })
-                                  db.collection("ZoomOAuth").doc(userID).delete().then(()=>{
-                                      console.info("All user information deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
-                                  }).catch((error) => {
-                                      console.error(error.message)
-                                  })
-                              }).catch((error) => {
-                                  console.error(error.message)
                               })
+                          }).catch((error) => {
+                              console.error(error.message)
+                          })
+                          db.collection("Records").where("useruid","==",firebaseUserID).get().then((querySnapshot) => {
+                              querySnapshot.forEach((Recorddoc) => {
+                                  db.collection("Records").doc(Recorddoc.id).delete().then(() => {
+                                      db.collection("ZoomOAuth").doc(userID).delete().then(() => {
+                                          console.log("Record deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
+                                      }).catch((error) => {
+                                          console.error(error.message)
+                                      })
+                                  }).catch((error) => {
+                                      console.error(error.message)
+                                  })
+                              })
+                          }).catch((error) => {
+                              console.error(error.message)
+                          })
+                          db.collection("Users").doc(firebaseUserID).delete().then(() => {
                           }).catch((error) => {
                               console.error(error.message)
                           })
