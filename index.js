@@ -218,17 +218,30 @@ function handleZoomPost(req){
     const body = req.body
     const host_id = body.payload.object.host_id
     if(body.event === "meeting.started"){
-        // TODO: use oauth information here
-        // note: do not update firebase current meetings since we do not know who started the meeting yet
-        // Create meeting in meeting dictionary
-        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, null, body.payload.object.id)
-        // Add meeting started to record log
-        let currentDate = new Date()
-        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
-        // push messages that set meeting ID and meeting Name in front end
-        Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
-        Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
-        console.log("Meeting started: " + body.payload.object.topic)
+        db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+            // Create meeting in meeting dictionary
+            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id)
+            Meetings[host_id].hostUID = doc.data().firebaseID
+            // Add meeting started to record log
+            let currentDate = new Date()
+            Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+            // push messages that set meeting ID and meeting Name in front end
+            Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
+            Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+            console.log("Meeting started: " + body.payload.object.topic)
+            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                messages: Meetings[host_id].messageLog
+            }).then(()=>{
+            }).catch((error)=>{
+                console.error(error.message)
+            })
+        }).catch((error)=>{
+            console.error(error.message)
+        })
+
+
+
     }
     else if(body.event === "meeting.participant_joined"){
         const participant = body.payload.object.participant
@@ -241,34 +254,13 @@ function handleZoomPost(req){
             let currentDate = new Date()
             Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
             Meetings[host_id].messageLog.push("participant.joined " + participantName)
-            if(participantID === host_id){
-                // Get the user uid from the user
-                db.collection("Users").where("email","==",participantEmail).get().then((querySnapshot) => {
-                    querySnapshot.forEach((doc) => {
-                        Meetings[host_id].hostUID = doc.id
-                        Meetings[host_id].hostEmail = participantEmail
-                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                        }).catch((error)=>{
-                            console.error(error.message)
-                        })
-                    })
-                }).catch((error) => {
-                    console.error(error.message)
-                })
-            }
-        // If participant that joined is not host but the host information is know
-            else if(Meetings[host_id].hostEmail != null && Meetings[host_id].hostEmail !== ""){
-                // update currentMeetings on firebase
-                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                    messages: Meetings[host_id].messageLog
-                }).then(()=>{
-                }).catch((error)=>{
-                    console.error(error.message)
-                })
-            }
+            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                messages: Meetings[host_id].messageLog
+            }).then(()=>{
+            }).catch((error)=>{
+                console.error(error.message)
+            })
         }
     }
     else if(body.event === "meeting.participant_left"){
@@ -282,16 +274,14 @@ function handleZoomPost(req){
         if(Meetings[host_id]){
             Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
             Meetings[host_id].messageLog.push("participant.left " + participantName)
-            // If host information is known
-            if(Meetings[host_id].hostEmail){
-                // update current meetings on firebase
-                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                    messages: Meetings[host_id].messageLog
-                }).then(()=>{
-                }).catch((error)=>{
-                    console.error(error.message)
-                })
-            }
+
+            // update current meetings on firebase
+            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                messages: Meetings[host_id].messageLog
+            }).then(()=>{
+            }).catch((error)=>{
+                console.error(error.message)
+            })
         }
     }
     else if(body.event === "meeting.ended"){

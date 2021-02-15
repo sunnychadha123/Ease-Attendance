@@ -34,22 +34,29 @@ function authenticate(){
                                 if(userEmail == null){
                                     userEmail = ""
                                 }
-                                auth.currentUser.sendEmailVerification().then(() => {
-                                    const user = cred.user
-                                    firestore.collection("Users").doc(user.uid).set({
-                                        name: user.displayName,
-                                        email: user.email
-                                    })
-                                        .then(function() {
-                                            window.location.href = "verify"
-                                            return true;
+                                firestore.collection("ZoomOAuth").get(Authdoc.id).update({
+                                    firebaseID: cred.user.uid
+                                }).then(()=>{
+                                    auth.currentUser.sendEmailVerification().then(() => {
+                                        const user = cred.user
+                                        firestore.collection("Users").doc(user.uid).set({
+                                            name: user.displayName,
+                                            email: user.email
                                         })
-                                        .catch(function(error) {
-                                            document.getElementById("signUpMessage").innerHTML = error.message
-                                        });
-                                }).catch((error) => {
-                                    document.getElementById("signUpMessage").innerHTML = "Please enter a valid email"
+                                            .then(function() {
+                                                window.location.href = "verify"
+                                                return true;
+                                            })
+                                            .catch(function(error) {
+                                                document.getElementById("signUpMessage").innerHTML = error.message
+                                            });
+                                    }).catch((error) => {
+                                        document.getElementById("signUpMessage").innerHTML = "Please enter a valid email"
+                                    })
+                                }).catch((error)=> {
+                                    document.getElementById("signUpMessage").innerHTML = error.message
                                 })
+
 
                             }).catch((e) => {
                                 document.getElementById("signUpMessage").innerHTML = e.message
