@@ -180,9 +180,19 @@ function login(){
         document.getElementById("signin-cover").classList.remove("running")
         document.getElementById("signin").disabled = false
     }
-
-
 }
+
+$("#re_pass").on('keyup', function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        authenticate()
+    }
+});
+$("#login-pass").on('keyup', function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        login()
+    }
+});
+
 function resend(){
     auth.currentUser.sendEmailVerification().then(() => {
         document.getElementById("resend-title").innerHTML = "Please verify your email"
