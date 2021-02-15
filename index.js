@@ -119,7 +119,23 @@ app.get('/verify', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/verify.html'));
 })
 app.get('/authorize', (req, res) => {
-    console.log(req.query.code)
+    const authorizationCode = req.query.code
+    request({
+        url: 'https://zoom.us/oauth/token?grant_type=authorization_code&' + 'code=' + authorizationCode + '&redirect_uri=https://www.easeattendance.com/signup',
+        method: 'POST',
+        json: true,
+        headers: {
+            'Authorization': 'Basic ' + Buffer.from(process.env.zoom_client_id + ':' + process.env.zoom_client_secret).toString('base64')
+        }
+    }, (error, httpResponse, body) => {
+        if (error) {
+            console.error(error)
+        } else {
+            console.log(body)
+            console.log(httpResponse)
+        }
+    })
+
     res.sendFile(path.join(__dirname + '/public/signup.html'));
 })
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
