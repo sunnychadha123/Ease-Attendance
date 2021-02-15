@@ -132,6 +132,24 @@ app.get('/authorize', (req, res) => {
             console.error(error)
         } else {
             console.log(body)
+            const accessToken = body.access_token
+            const refreshToken = body.refresh_token
+
+            request({
+                url: 'https://api.zoom.us/v2/users/me',
+                method: 'GET',
+                json: true,
+                headers: {
+                    'Authorization': "Bearer " + accessToken
+                }
+            }, (error, httpResponse, body) => {
+                if (error) {
+                    console.error(error)
+                } else {
+                    console.log(body)
+                }
+            })
+
         }
     })
 
