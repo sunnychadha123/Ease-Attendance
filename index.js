@@ -352,7 +352,8 @@ function handleZoomPost(req){
 app.post('/api/requests', (req, res) => {
   res.status(200)
   res.send()
-    console.log("post request to /api/requests sent " + req.body)
+    console.log("post request to /api/requests sent ")
+    console.log(req.body)
   if(req.headers.authorization === process.env.zoom_verification_token){
       handleZoomPost(req)
   }
