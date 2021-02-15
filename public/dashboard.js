@@ -308,7 +308,7 @@ auth.onAuthStateChanged((user) => {
             document.getElementById("myTabContent").hidden = true
             document.getElementById("verifyEmail").hidden = false
             document.getElementById("settings-resend-verification-link-button").hidden = false
-            document.getElementById("verifyEmailDescription").innerHTML = "Your current email is now " + auth.currentUser.email + " and a verification email has been sent. If you did not receive it, resend the verification link or change your email in settings."
+            document.getElementById("verifyEmailDescription").innerHTML = "Your current email is now " + auth.currentUser.email + " and a verification email has been sent. If you did not receive it, click on resend the verification link"
         }
     } else {
         //user not signed in
@@ -813,9 +813,6 @@ function logout(){
 }
 function resetSettingInput(){
     document.getElementById("displayName-input-field").value = ""
-    document.getElementById("old-email-input-field").value = ""
-    document.getElementById("current-password-input-field").value = ""
-    document.getElementById("email-input-field").value = ""
     document.getElementById("pass-current-email-input-field").value = ""
 
 }
@@ -846,51 +843,7 @@ function saveDisplayName(){
     }
     $("#settings-modal").modal('hide');
 }
-function saveEmail(){
-    if(document.getElementById("old-email-input-field").value === auth.currentUser.email){
-        firebase.auth().signInWithEmailAndPassword(document.getElementById("old-email-input-field").value, document.getElementById("current-password-input-field").value)
-            .then((userCredential) => {
-                const currEmail = auth.currentUser.email
-                const email = String(document.getElementById("email-input-field").value).trim()
-                auth.currentUser.updateEmail(email).then(function() {
-                    auth.currentUser.sendEmailVerification().then(function() {
-                        checkVerificationStatus()
-                        document.getElementById("myTabContent").hidden = true
-                        document.getElementById("verifyEmail").hidden = false
-                        document.getElementById("settings-resend-verification-link-button").hidden = false
-                        yellowNotification("Your email has changed but is not verified")
-                        document.getElementById("old-email-input-field").value = ""
-                        document.getElementById("current-password-input-field").value = ""
-                        document.getElementById("email-input-field").value = ""
-                    }).catch(function(error) {
-                        auth.currentUser.updateEmail(currEmail).then(function() {
-                            auth.currentUser.sendEmailVerification().then(() => {
-                                checkVerificationStatus()
-                                document.getElementById("myTabContent").hidden = true
-                                document.getElementById("verifyEmail").hidden = false
-                                document.getElementById("settings-resend-verification-link-button").hidden = false
-                            }).catch((error) => {
-                                redNotification(error.message)
-                            })
-                        }).catch(function(error) {
-                            redNotification(error.message)
-                        });
-                        redNotification(error.message)
-                    });
-                }).catch(function(error) {
-                    redNotification(error.message)
-                });
-            })
-            .catch((error) => {
-                redNotification(error.message)
-            });
-    }
-    else{
-        redNotification("Please enter the correct email of the current user")
-    }
 
-    $("#settings-modal").modal('hide');
-}
 function resendVerificationEmail(){
     auth.currentUser.sendEmailVerification().then(function() {
         greenNotification("A verification email has been sent")

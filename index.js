@@ -218,6 +218,7 @@ function handleZoomPost(req){
     const body = req.body
     const host_id = body.payload.object.host_id
     if(body.event === "meeting.started"){
+        // TODO: use oauth information here
         // note: do not update firebase current meetings since we do not know who started the meeting yet
         // Create meeting in meeting dictionary
         Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, null, body.payload.object.id)
@@ -418,7 +419,11 @@ app.post('/deauthorize', (req, res) => {
                                   }).catch((error) => {
                                       console.error(error.message)
                                   })
-                                  console.info("All user information deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
+                                  db.collection("ZoomOAuth").doc(userID).delete().then(()=>{
+                                      console.info("All user information deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
+                                  }).catch((error) => {
+                                      console.error(error.message)
+                                  })
                               }).catch((error) => {
                                   console.error(error.message)
                               })
