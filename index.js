@@ -359,9 +359,9 @@ app.post('/api/requests', (req, res) => {
 })
 
 app.post('/deauthorize', (req, res) => {
+  if (req.headers.authorization === process.env.zoom_verification_token) {
     console.log("post request to /deauthorize received " + req.body)
     console.log(req.body)
-  if (req.headers.authorization === process.env.zoom_verification_token) {
     res.status(200)
     res.send()
     request({
@@ -384,7 +384,7 @@ app.post('/deauthorize', (req, res) => {
       if (error) {
         console.error(error)
       } else {
-          const userID = body.payload.user_id
+          const userID = req.body.payload.user_id
           db.collection("ZoomOAuth").doc(userID).get().then((Authdoc) => {
               if(Authdoc.exists){
                   const email = Authdoc.data().email
