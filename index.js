@@ -134,7 +134,6 @@ app.get('/authorize', (req, res) => {
         if (error) {
             console.error(error)
         } else {
-            console.log(body)
             const accessToken = body.access_token
             const refreshToken = body.refresh_token
 
@@ -393,25 +392,33 @@ app.post('/deauthorize', (req, res) => {
                           const firebaseUserID = Userdoc.id
                           auth.deleteUser(firebaseUserID).then(() => {
                               db.collection("Users").doc(firebaseUserID).delete().then(() => {
-                                  db.collection("Periods").doc(firebaseUserID).delete().then(() => {
-                                      db.collection("Records").where("useruid","==",firebaseUserID).get().then((querySnapshot) => {
-                                          querySnapshot.forEach((Recorddoc) => {
-                                              db.collection("Records").doc(Recorddoc.id).delete().then(() => {
-                                                  db.collection("ZoomOAuth").doc(userID).delete().then(() => {
-                                                      console.info("All user records deleted for user with email: " + email)
-                                                  }).catch((error) => {
-                                                      console.error(error.message)
-                                                  })
-                                              }).catch((error) => {
-                                                  console.error(error.message)
-                                              })
+                                  db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
+                                      querySnapshot.forEach((Perioddoc) => {
+                                          db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
+                                              console.log("Period deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
+                                          }).catch((error) => {
+                                              console.error(error.message)
                                           })
-                                      }).catch((error) => {
-                                          console.error(error.message)
                                       })
                                   }).catch((error) => {
                                       console.error(error.message)
                                   })
+                                  db.collection("Records").where("useruid","==",firebaseUserID).get().then((querySnapshot) => {
+                                      querySnapshot.forEach((Recorddoc) => {
+                                          db.collection("Records").doc(Recorddoc.id).delete().then(() => {
+                                              db.collection("ZoomOAuth").doc(userID).delete().then(() => {
+                                                  console.log("Record deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
+                                              }).catch((error) => {
+                                                  console.error(error.message)
+                                              })
+                                          }).catch((error) => {
+                                              console.error(error.message)
+                                          })
+                                      })
+                                  }).catch((error) => {
+                                      console.error(error.message)
+                                  })
+                                  console.info("All user information deleted for user with email: " + email + " with firebase id: " + firebaseUserID)
                               }).catch((error) => {
                                   console.error(error.message)
                               })
