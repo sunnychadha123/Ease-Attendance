@@ -121,7 +121,7 @@ app.get('/verify', (req, res) => {
 app.get('/authorize', (req, res) => {
     const authorizationCode = req.query.code
     request({
-        url: 'https://zoom.us/oauth/token?grant_type=authorization_code&' + 'code=' + authorizationCode + '&redirect_uri=https://www.easeattendance.com',
+        url: 'https://zoom.us/oauth/token?grant_type=authorization_code&' + 'code=' + authorizationCode + '&redirect_uri=https://www.easeattendance.com/authorize',
         method: 'POST',
         json: true,
         headers: {
