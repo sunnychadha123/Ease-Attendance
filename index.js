@@ -119,7 +119,7 @@ app.get('/verify', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/verify.html'));
 })
 app.get('/authorize', (req, res) => {
-    console.log(req.params.code)
+    console.log(req.query.code)
     res.sendFile(path.join(__dirname + '/public/signup.html'));
 })
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
