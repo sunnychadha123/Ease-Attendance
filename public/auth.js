@@ -17,40 +17,51 @@ function authenticate(){
     else{
         try{
             if(pass === repass && pass.length >= 8){
-                auth.createUserWithEmailAndPassword(email,pass).then(cred => {
-                    auth.currentUser.updateProfile({
-                            displayName: name
-                        }
-                    ).then(function() {
-                        var userEmail = cred.user.email
-                        var userDisplayName = cred.user.displayName
-                        if(userDisplayName == null){
-                            userDisplayName = ""
-                        }
-                        if(userEmail == null){
-                            userEmail = ""
-                        }
-                        auth.currentUser.sendEmailVerification().then(() => {
-                            const user = cred.user
-                            firestore.collection("Users").doc(user.uid).set({
-                                name: user.displayName,
-                                email: user.email
-                            })
-                                .then(function() {
-                                    window.location.href = "verify"
+                var emailRegistered = false
+                firestore.collection("ZoomOAuth").where("email","==",email).get().then((querySnapshot) => {
+                    querySnapshot.forEach((Authdoc) => {
+                        emailRegistered = true
+                        auth.createUserWithEmailAndPassword(email,pass).then(cred => {
+                            auth.currentUser.updateProfile({
+                                    displayName: name
+                                }
+                            ).then(function() {
+                                var userEmail = cred.user.email
+                                var userDisplayName = cred.user.displayName
+                                if(userDisplayName == null){
+                                    userDisplayName = ""
+                                }
+                                if(userEmail == null){
+                                    userEmail = ""
+                                }
+                                auth.currentUser.sendEmailVerification().then(() => {
+                                    const user = cred.user
+                                    firestore.collection("Users").doc(user.uid).set({
+                                        name: user.displayName,
+                                        email: user.email
+                                    })
+                                        .then(function() {
+                                            window.location.href = "verify"
+                                            return true;
+                                        })
+                                        .catch(function(error) {
+                                            document.getElementById("signUpMessage").innerHTML = error.message
+                                        });
+                                }).catch((error) => {
+                                    document.getElementById("signUpMessage").innerHTML = "Please enter a valid email"
                                 })
-                                .catch(function(error) {
-                                    document.getElementById("signUpMessage").innerHTML = error.message
-                                });
-                        }).catch((error) => {
-                            document.getElementById("signUpMessage").innerHTML = "Please enter a valid email"
-                        })
 
-                    }).catch((e) => {
-                        document.getElementById("signUpMessage").innerHTML = e.message
+                            }).catch((e) => {
+                                document.getElementById("signUpMessage").innerHTML = e.message
+                            })
+                        }).catch(err => document.getElementById("signUpMessage").innerHTML = err.message)
                     })
-                }).catch(err => document.getElementById("signUpMessage").innerHTML = err.message)
-
+                    if(emailRegistered === false){
+                        document.getElementById("signUpMessage").innerHTML = "Make sure you downloaded the zoom app and your email is the same as your zoom email"
+                    }
+                }).catch((error) => {
+                    console.error(error.message)
+                })
             }
             else if(pass.length < 8){
                 document.getElementById("signUpMessage").innerHTML = "Make sure your password is 8 or more characters"
