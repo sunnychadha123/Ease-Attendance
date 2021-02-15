@@ -214,7 +214,7 @@ app.post('/support-message', (req,res) => {
 
 // Function to handle zoom webhooks
 
-function handleZoomPost(req){
+async function handleZoomPost(req){
     const body = req.body
     const host_id = body.payload.object.host_id
     if(body.event === "meeting.started"){
@@ -330,13 +330,13 @@ function handleZoomPost(req){
 }
 
 app.post('/api/requests', (req, res) => {
-  res.status(200)
-  res.send()
+    res.status(200)
+    res.send()
     console.log("post request to /api/requests sent ")
     console.log(req.body)
-  if(req.headers.authorization === process.env.zoom_verification_token){
-      handleZoomPost(req)
-  }
+    if(req.headers.authorization === process.env.zoom_verification_token){
+        handleZoomPost(req)
+    }
 })
 
 app.post('/deauthorize', (req, res) => {
