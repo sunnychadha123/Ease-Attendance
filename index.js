@@ -378,9 +378,7 @@ app.post('/deauthorize', (req, res) => {
                       querySnapshot.forEach((Userdoc) => {
                           const firebaseUserID = Userdoc.id
                           auth.updateUser(firebaseUserID, {
-                                  email: "",
-                                  emailVerified: false,
-                                  disabled: true
+                                  emailVerified: false
                               })
                               .then(() => {
                                   auth.deleteUser(firebaseUserID).then(() => {
