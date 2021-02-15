@@ -53,6 +53,11 @@ function arr_diff (newMess, oldMess) {
 
 auth.onAuthStateChanged((user) => {
     if (user) {
+        firestore.collection("Users").doc(user.uid).onSnapshot((doc) => {
+            if(!doc.exists || !doc){
+                window.location.href = "/";
+            }
+        })
         if(user.emailVerified){
             document.getElementById("myTabContent").hidden = false
             document.getElementById("verifyEmail").hidden = true

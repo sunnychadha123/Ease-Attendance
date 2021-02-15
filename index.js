@@ -377,19 +377,11 @@ app.post('/deauthorize', (req, res) => {
                   db.collection("Users").where("email", "==",email).get().then((querySnapshot) => {
                       querySnapshot.forEach((Userdoc) => {
                           const firebaseUserID = Userdoc.id
-                          auth.updateUser(firebaseUserID, {
-                                  emailVerified: false
-                              })
-                              .then(() => {
-                                  auth.deleteUser(firebaseUserID).then(() => {
-                                      console.info("User deleted from firebase auth for user with email: " + email + " and firebase id: " + firebaseUserID)
-                                  }).catch((error) => {
-                                      console.error(error.message)
-                                  })
-                              })
-                              .catch((error) => {
-                                  console.error(error.message);
-                              });
+                          auth.deleteUser(firebaseUserID).then(() => {
+                              console.info("User deleted from firebase auth for user with email: " + email + " and firebase id: " + firebaseUserID)
+                          }).catch((error) => {
+                              console.error(error.message)
+                          })
                           db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
                               querySnapshot.forEach((Perioddoc) => {
                                   db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
