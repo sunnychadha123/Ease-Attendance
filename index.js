@@ -40,6 +40,9 @@ console.log("admin app initialized")
 // Create connection to cloud firestore
 const db = admin.firestore();
 console.log("cloud firestore initialized")
+// initialize firestore auth
+const auth = admin.auth()
+console.log("firestore auth initialized")
 // Holds information about current Meeting
 class Meeting{
   constructor(hostId,meetingName,hostEmail, id) {
@@ -146,7 +149,23 @@ app.get('/authorize', (req, res) => {
                 if (error) {
                     console.error(error)
                 } else {
-                    console.log(body)
+                    const userID = body.id
+                    const userFirstName = body.first_name
+                    const userLastName = body.last_name
+                    const userEmail = body.email
+                    const userAccountID = body.account_id
+                    db.collection("ZoomOAuth").doc(userID).set({
+                        userID: userID,
+                        firstName: userFirstName,
+                        lastName: userLastName,
+                        email: userEmail,
+                        userAccountID: userAccountID,
+                        refreshToken: refreshToken
+                    }).then(() => {
+                        console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
+                    }).catch((error) => {
+                        console.error(error.message)
+                    })
                 }
             })
 
@@ -365,6 +384,48 @@ app.post('/deauthorize', (req, res) => {
       if (error) {
         console.error(error)
       } else {
+          const userID = body.payload.user_id
+          db.collection("ZoomOAuth").doc(userID).get().then((Authdoc) => {
+              if(Authdoc.exists){
+                  const email = Authdoc.data().email
+                  db.collection("Users").where("email", "==",email).get().then((querySnapshot) => {
+                      querySnapshot.forEach((Userdoc) => {
+                          const firebaseUserID = Userdoc.id
+                          auth.deleteUser(firebaseUserID).then(() => {
+                              db.collection("Users").doc(firebaseUserID).delete().then(() => {
+                                  db.collection("Periods").doc(firebaseUserID).delete().then(() => {
+                                      db.collection("Records").where("useruid","==",firebaseUserID).get().then((querySnapshot) => {
+                                          querySnapshot.forEach((Recorddoc) => {
+                                              db.collection("Records").doc(Recorddoc.id).delete().then(() => {
+                                                  db.collection("ZoomOAuth").doc(userID).delete().then(() => {
+                                                      console.info("All user records deleted for user with email: " + email)
+                                                  }).catch((error) => {
+                                                      console.error(error.message)
+                                                  })
+                                              }).catch((error) => {
+                                                  console.error(error.message)
+                                              })
+                                          })
+                                      }).catch((error) => {
+                                          console.error(error.message)
+                                      })
+                                  }).catch((error) => {
+                                      console.error(error.message)
+                                  })
+                              }).catch((error) => {
+                                  console.error(error.message)
+                              })
+                          }).catch((error) => {
+                              console.error(error.message)
+                          })
+                      })
+                  }).catch((error) => {
+                      console.error(error.message)
+                  })
+              }
+          }).catch((error) => {
+              console.error(error.message)
+          })
       }
     })
 
