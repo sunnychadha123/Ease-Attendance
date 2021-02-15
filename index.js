@@ -132,7 +132,6 @@ app.get('/authorize', (req, res) => {
             console.error(error)
         } else {
             console.log(body)
-            console.log(httpResponse)
         }
     })
 
