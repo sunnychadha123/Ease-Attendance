@@ -12,7 +12,7 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "                <a id=\"#features\" class=\"nav-link middle\" href=\"/features\">Features</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
-    "                <a id=\"#get-start\" class=\"nav-link middle\" href=\"getting-started\">Getting Started </a>\n" +
+    "                <a id=\"#get-start\" class=\"nav-link middle\" href=\"documentation\">Documentation</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
     "                <a id=\"#support\" class=\"nav-link middle\" href=\"support\">Support</a>\n" +
@@ -36,7 +36,7 @@ const footerBlock = "<footer>\n" +
     "            <div class=\"text-center justify-content-center col-md-4  mr-auto my-md-4 my-0 mt-4 mb-1 footer-col\">\n" +
     "                <h5 class=\"footer-title\">Pages</h5>\n" +
     "                <a href=\"/\" class=\"footer-link\"><h6>Home</h6></a>\n" +
-    "                <a href=\"getting-started\" class=\"footer-link\"><h6>Getting Started</h6></a>\n" +
+    "                <a href=\"documentation\" class=\"footer-link\"><h6>Documentation</h6></a>\n" +
     "                <a href=\"features\" class=\"footer-link\"><h6>Features</h6></a>\n" +
     "                <a href=\"about-us\" class=\"footer-link\"><h6>About Us</h6></a>\n" +
     "                <a href=\"support\" class=\"footer-link\"><h6>Support</h6></a>\n" +

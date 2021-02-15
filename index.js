@@ -100,8 +100,8 @@ app.get('/terms', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/terms.html'));
 })
 
-app.get('/getting-started', (req, res) => {
-    res.sendFile(path.join(__dirname + '/public/getting-started.html'));
+app.get('/documentation', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/documentation.html'));
 })
 app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname + '/public/dashboard.html'));
