@@ -306,7 +306,8 @@ app.post('/api/requests', (req, res) => {
 })
 
 app.post('/deauthorize', (req, res) => {
-    console.log("post request to /deauthorize sent " + req.body)
+    console.log("post request to /deauthorize received " + req.body)
+    console.log(req.body)
   if (req.headers.authorization === process.env.zoom_verification_token) {
     res.status(200)
     res.send()
@@ -332,6 +333,7 @@ app.post('/deauthorize', (req, res) => {
       } else {
       }
     })
+
   } else {
     res.status(401)
     res.send()
