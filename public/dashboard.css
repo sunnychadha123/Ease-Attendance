@@ -239,7 +239,7 @@ hr{
     margin-left: 300px;
 }
 #myTabContent{
-    min-width: 800px;
+    min-width: 1100px;
 }
 .tab-title{
     color: black;
@@ -257,6 +257,19 @@ hr{
     border-color: #F5B364;
 }
 #add-meeting-button:hover{
+    background: #F5B364;
+    color: white;
+    outline: none;
+    border-color: #F5B364;
+}
+#add-on-registered{
+    margin-top: -5px;
+    margin-left: 30px;
+    background: none;
+    outline: none;
+    border-color: #F5B364;
+}
+#add-on-registered:hover{
     background: #F5B364;
     color: white;
     outline: none;

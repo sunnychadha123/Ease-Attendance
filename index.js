@@ -376,12 +376,12 @@ async function handleZoomPost(req){
                       console.error(error.message);
                   });
               if(uuid === Meetings[host_id].uuid){
-                  delete Meetings[host_id]
                   db.collection("CurrentMeetings").doc(hostUID).set({
                       messages: currentMessages
                   }).then(()=>{
                       //delete the current meeting when meeting has ended
                       db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                          delete Meetings[host_id]
                       }).catch((error) => {
                           console.error(error.message)
                       });

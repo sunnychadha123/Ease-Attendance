@@ -25,6 +25,7 @@ class PastMeeting{
 }
 var Meetings = []
 var PastMeetings
+var isEditingMeeting = false
 var MeetingsdidLoad = false
 var Participants = []
 var CurrentMessages = []
@@ -37,6 +38,8 @@ var currentRecordIndex = -1
 var editingIndex = 1
 var checkVerificationTimer
 var notRegisteredCount = 0
+$("#add-on-registered").prop('disabled',true)
+$("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
@@ -88,6 +91,7 @@ auth.onAuthStateChanged((user) => {
                             const currentMeeting = Meetings[index - 1]
                             $("#meeting-id-input-field").val(currentMeeting.id)
                             $("#meeting-name-input-field").val(currentMeeting.name)
+                            isEditingMeeting = true
                             $("#delete-meeting-button").prop('disabled', false)
                             $("#delete-meeting-button").show()
                             while (studentInputTable.rows.length !== 0) {
@@ -104,7 +108,7 @@ auth.onAuthStateChanged((user) => {
                         cell2.classList.add("meeting-id-text")
                     }
                     MeetingsdidLoad = true
-
+                    refreshTable()
                 });
             firestore.collection("Records").where("useruid", "==", user.uid)
                 .onSnapshot((querySnapshot) => {
@@ -151,7 +155,17 @@ auth.onAuthStateChanged((user) => {
 
                 });
             firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
-                evaluateParticipantTable(doc)
+                if(MeetingsdidLoad){
+                    evaluateParticipantTable(doc)
+                }
+               else{
+                   let loadCurrentMeetingInterval = setInterval(()=>{
+                       if(MeetingsdidLoad){
+                           clearInterval(loadCurrentMeetingInterval)
+                           evaluateParticipantTable(doc)
+                       }
+                   },100)
+                }
             }, (error) => {
                 redNotification("Problem connecting to server")
             })
@@ -228,6 +242,7 @@ function refreshTable(){
     },1000)
 }
 function evaluateParticipantTable(doc){
+    notRegisteredCount = 0
     if(doc.data()){
         const meetingMessages = doc.data().messages
         // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
@@ -238,7 +253,7 @@ function evaluateParticipantTable(doc){
             newMessages.push(newCalculated[i])
         }
         // add new messages to current messages
-        if(newMessages.length === 0){
+        if(meetingMessages.length === 0){
             document.getElementById("status-dot").classList.remove("dot-warning")
             document.getElementById("status-dot").classList.remove("dot-success")
             document.getElementById("status-dot").classList.add("dot-danger")
@@ -304,6 +319,7 @@ function evaluateParticipantTable(doc){
                 else{
                     greenNotification("Your meeting has been saved")
                 }
+                notRegisteredCount = 0
                 CurrentMeeting = ""
                 CurrentMeetingID = ""
                 CurrentMessages = []
@@ -396,7 +412,14 @@ function evaluateParticipantTable(doc){
         document.getElementById("ld-spin").style.display = "none"
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
-
+        if(notRegisteredCount > 0 || meetingIndex === -1){
+            $("#add-on-registered").prop('disabled',false)
+            $("#add-on-registered").show()
+        }
+        else{
+            $("#add-on-registered").prop('disabled',true)
+            $("#add-on-registered").hide()
+        }
     }
     else{
         CurrentMessages = []
@@ -404,13 +427,8 @@ function evaluateParticipantTable(doc){
         document.getElementById("ld-spin").style.display = "none"
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
-
-    }
-    if(notRegisteredCount > 0){
-
-    }
-    else{
-
+        $("#add-on-registered").prop('disabled',true)
+        $("#add-on-registered").hide()
     }
 }
 function clearTable(){
@@ -602,7 +620,12 @@ function addStudent(name){
         var res = name.split(" ")
 
         row.cells[0].children[0].value = res[0]
-        row.cells[1].children[0].value = res[res.length-1]
+        if(res.length !== 1){
+            row.cells[1].children[0].value = res[res.length-1]
+        }
+       else{
+            row.cells[1].children[0].value = "(Last Name)"
+        }
     }
     $("input").on("click", function(){
         $(this).removeClass('input-error')
@@ -622,7 +645,30 @@ function deleteStudent(e){
     const currentRow = e.parentNode.parentNode
     currentRow.parentNode.removeChild(currentRow)
 }
-
+function addNotRegistered(){
+    if(meetingIndex === -1){
+        isEditingMeeting = false
+    }
+    else{
+        isEditingMeeting = true
+        editingIndex = meetingIndex+1
+    }
+    const studentInputTable = document.getElementById("student-input-table")
+    $("#delete-meeting-button").prop('disabled',true)
+    $("#delete-meeting-button").hide()
+    $("#meeting-id-input-field").val(CurrentMeetingID)
+    $("#meeting-name-input-field").val(CurrentMeeting)
+    $("#meeting-id-input-field").removeClass("input-error")
+    $("#meeting-name-input-field").removeClass("input-error")
+    while(studentInputTable.rows.length !== 0){
+        studentInputTable.deleteRow(0)
+    }
+    for(let i = 0; i < Participants.length; i++){
+        const fullName = Participants[i].firstName + " " + Participants[i].lastName
+        addStudent(fullName)
+    }
+    document.getElementById("meeting-modal-title").innerHTML = "Update Participants"
+}
 
 
 function compareMeetings(a, b) {
@@ -787,7 +833,7 @@ function checkID(){
 
 function checkDuplicateID(){
     const meetingId = document.getElementById("meeting-id-input-field").value
-    if(document.getElementById("delete-meeting-button").hasAttribute("disabled")){
+    if(!isEditingMeeting){
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
                 document.getElementById("meeting-id-input-field").classList.add("input-error")
@@ -815,7 +861,7 @@ function addMeeting(){
                 const user = auth.currentUser
                 const periodName = document.getElementById("meeting-name-input-field").value
                 const meetingId = document.getElementById("meeting-id-input-field").value
-                if(!document.getElementById("delete-meeting-button").hasAttribute("disabled")){
+                if(isEditingMeeting){
                     if(meetingId !== Meetings[editingIndex-1].id){
                         deleteMeeting()
                     }
@@ -831,7 +877,6 @@ function addMeeting(){
                 }).catch((error)=>{
                     $(".notify").addClass("notify-active");
                     $("#notifyType").addClass("failureServer");
-
                     setTimeout(function(){
                         $(".notify").removeClass("notify-active");
                         $("#notifyType").removeClass("failureServer");
@@ -841,7 +886,6 @@ function addMeeting(){
             else{
                 $(".notify").addClass("notify-active");
                 $("#notifyType").addClass("failureIDDup");
-
                 setTimeout(function(){
                     $(".notify").removeClass("notify-active");
                     $("#notifyType").removeClass("failureIDDup");
@@ -851,7 +895,6 @@ function addMeeting(){
         else{
             $(".notify").addClass("notify-active");
             $("#notifyType").addClass("failureID");
-
             setTimeout(function(){
                 $(".notify").removeClass("notify-active");
                 $("#notifyType").removeClass("failureID");
@@ -861,14 +904,15 @@ function addMeeting(){
     else{
         $(".notify").addClass("notify-active");
         $("#notifyType").addClass("failure");
-
         setTimeout(function(){
             $(".notify").removeClass("notify-active");
             $("#notifyType").removeClass("failure");
         },2000);
     }
-
 }
+$('#add-edit-meeting-modal').on('hidden.bs.modal', function () {
+    isEditingMeeting = false
+})
 function logout(){
     auth.signOut().then(r => {
         window.location.href = "/";
