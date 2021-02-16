@@ -20,8 +20,6 @@ const nodemailer = require("nodemailer")
 console.log("email client loaded for support")
 const favicon = require('serve-favicon')
 console.log("favicon loaded")
-const ZoomWebhookQueue = []
-var isRequestFunctionBusy = false
 // Initialize admin credentials for db
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -47,15 +45,17 @@ const auth = admin.auth()
 console.log("firestore auth initialized")
 // Holds information about current Meeting
 class Meeting{
-  constructor(hostId,meetingName,hostEmail, id) {
-    this.meetingId = id
-    this.hostId = hostId
-    this.meetingName = meetingName
-    this.hostEmail = hostEmail
-    this.hostUID = null
-    this.messageLog = []
-    this.recordLog = []
-    this.meetingStart = new Date()
+  constructor(hostId,meetingName,hostEmail, id,uuid) {
+      this.meetingId = id
+      this.hostId = hostId
+      this.meetingName = meetingName
+      this.hostEmail = hostEmail
+      this.hostUID = null
+      this.messageLog = []
+      this.recordLog = []
+      this.meetingStart = new Date()
+      this.uuid = uuid
+
   }
 }
 
@@ -222,7 +222,7 @@ async function handleZoomPost(req){
     if(body.event === "meeting.started"){
         db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
             // Create meeting in meeting dictionary
-            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id)
+            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
             Meetings[host_id].hostUID = doc.data().firebaseID
             // Add meeting started to record log
             let currentDate = new Date()
@@ -299,18 +299,7 @@ async function handleZoomPost(req){
               let hostUID = Meetings[host_id].hostUID
               let meetingName = Meetings[host_id].meetingName
               let meetingStart = Meetings[host_id].meetingStart
-              delete Meetings[host_id]
-              db.collection("CurrentMeetings").doc(hostUID).set({
-                  messages: currentMessages
-              }).then(()=>{
-                  //delete the current meeting when meeting has ended
-                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                  }).catch((error) => {
-                      console.error(error.message)
-                  });
-              }).catch((error)=>{
-                  console.error(error.message)
-              })
+              let uuid = body.payload.object.uuid
               db.collection("Records").add({
                   'Events': currentRecords,
                   'MeetingID': meetingID,
@@ -319,37 +308,37 @@ async function handleZoomPost(req){
                   'MeetingStart': meetingStart,
                   'MeetingEnd' : new Date()
               })
-              .then(() => {
-              })
-              .catch((error) => {
-                  console.error(error.message);
-              });
+                  .then(() => {
+                  })
+                  .catch((error) => {
+                      console.error(error.message);
+                  });
+              if(uuid === Meetings[host_id].uuid){
+                  delete Meetings[host_id]
+                  db.collection("CurrentMeetings").doc(hostUID).set({
+                      messages: currentMessages
+                  }).then(()=>{
+                      //delete the current meeting when meeting has ended
+                      db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                      }).catch((error) => {
+                          console.error(error.message)
+                      });
+                  }).catch((error)=>{
+                      console.error(error.message)
+                  })
+              }
           }
     }
 }
-setInterval(()=>{
-    if(!isRequestFunctionBusy){
-        const currentReq = ZoomWebhookQueue.shift()
-        if(currentReq){
-            isRequestFunctionBusy = true
-            handleZoomPost(currentReq).then(()=>{
-                isRequestFunctionBusy = false
-            }).catch(()=>{
-                isRequestFunctionBusy = false
-            })
-        }
-    }
-},50)
 app.post('/api/requests', (req, res) => {
     res.status(200)
     res.send()
     console.log("post request to /api/requests sent ")
     console.log(req.body)
     if(req.headers.authorization === process.env.zoom_verification_token){
-        ZoomWebhookQueue.push(req)
-        for(var i = 0; i < ZoomWebhookQueue.length;i++){
-            console.log(ZoomWebhookQueue[i].body.event)
-        }
+        handleZoomPost(req).catch((error)=>{
+            console.error(error.message)
+        })
     }
 })
 
