@@ -186,7 +186,7 @@ auth.onAuthStateChanged((user) => {
                                 document.getElementById("status-dot").classList.add("dot-success")
                             }
                         }
-                        else if(eventType === "meeting.ended"){
+                        else if(eventType === "meeting.ended" && j === meetingMessages.length-1){
                             document.getElementById("status-dot").classList.remove("dot-warning")
                             document.getElementById("status-dot").classList.remove("dot-success")
                             document.getElementById("status-dot").classList.add("dot-danger")
@@ -397,7 +397,7 @@ function refreshTable(){
                             document.getElementById("status-dot").classList.add("dot-success")
                         }
                     }
-                    else if(eventType === "meeting.ended"){
+                    else if(eventType === "meeting.ended" && j === meetingMessages.length-1 ){
                         document.getElementById("status-dot").classList.remove("dot-warning")
                         document.getElementById("status-dot").classList.remove("dot-success")
                         document.getElementById("status-dot").classList.add("dot-danger")
