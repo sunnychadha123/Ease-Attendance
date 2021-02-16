@@ -422,8 +422,18 @@ function evaluateParticipantTable(doc){
         }
     }
     else{
+        document.getElementById("status-dot").classList.remove("dot-warning")
+        document.getElementById("status-dot").classList.remove("dot-success")
+        document.getElementById("status-dot").classList.add("dot-danger")
+        document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
+        document.getElementById("meeting-id-attendance").value = ""
+        document.getElementById("meeting-id-attendance").hidden = true
+        CurrentMeeting = ""
+        CurrentMeetingID = ""
+        Participants = []
+        meetingIndex = -1
         CurrentMessages = []
-        updateParticipantTable()
+        clearTable()
         document.getElementById("ld-spin").style.display = "none"
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
