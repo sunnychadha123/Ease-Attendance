@@ -248,20 +248,34 @@ async function handleZoomPost(req){
         const participantName = participant.user_name
         const participantEmail = participant.email
         console.log("Participant " + participantName + " has joined")
-        // If the meeting is in the dictionary (meeting exists on our server)
-        if(Meetings[host_id]){
-            let currentDate = new Date()
-            Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-            Meetings[host_id].messageLog.push("participant.joined " + participantName)
-            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                messages: Meetings[host_id].messageLog
-            }).then(()=>{
-            }).catch((error)=>{
-                console.error(error.message)
-            })
-        }
-
+        var tryCounter = 0
+        var tryJoinParticipantInterval = setInterval(() => {
+            if(Meetings[host_id].uuid === body.payload.object.uuid){
+                if(Meetings[host_id]){
+                    let currentDate = new Date()
+                    Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
+                    Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                    // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                    db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                        messages: Meetings[host_id].messageLog
+                    }).then(()=>{
+                        clearInterval(tryJoinParticipantInterval)
+                    }).catch((error)=>{
+                        console.error(error.message)
+                        clearInterval(tryJoinParticipantInterval)
+                    })
+                }
+                else{
+                    clearInterval(tryJoinParticipantInterval)
+                }
+            }
+            else{
+                tryCounter += 1
+            }
+            if(tryCounter >= 4){
+                clearInterval(tryJoinParticipantInterval)
+            }
+        },3000)
     }
     else if(body.event === "meeting.participant_left"){
         const participant = body.payload.object.participant
@@ -270,18 +284,35 @@ async function handleZoomPost(req){
         const participantEmail = participant.email
         let currentDate = new Date()
         console.log("Participant " + participantName + " has left")
-        // If meeting exists on server
-        if(Meetings[host_id]){
-            Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-            Meetings[host_id].messageLog.push("participant.left " + participantName)
-            // update current meetings on firebase
-            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                messages: Meetings[host_id].messageLog
-            }).then(()=>{
-            }).catch((error)=>{
-                console.error(error.message)
-            })
-        }
+
+        var tryCounter = 0
+        var tryLeaveParticipantInterval = setInterval(()=>{
+            if(Meetings[host_id].uuid === body.payload.object.uuid){
+                if(Meetings[host_id]){
+                    Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
+                    Meetings[host_id].messageLog.push("participant.left " + participantName)
+                    // update current meetings on firebase
+                    db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                        messages: Meetings[host_id].messageLog
+                    }).then(()=>{
+                        clearInterval(tryLeaveParticipantInterval)
+                    }).catch((error)=>{
+                        console.error(error.message)
+                        clearInterval(tryLeaveParticipantInterval)
+                    })
+                }
+                else{
+                    clearInterval(tryLeaveParticipantInterval)
+                }
+            }
+            else{
+                tryCounter += 1
+            }
+            if(tryCounter >= 4){
+                clearInterval(tryLeaveParticipantInterval)
+            }
+        },3000)
+
 
     }
     else if(body.event === "meeting.ended"){
@@ -312,20 +343,32 @@ async function handleZoomPost(req){
                   .catch((error) => {
                       console.error(error.message);
                   });
-              if(uuid === Meetings[host_id].uuid){
-                  delete Meetings[host_id]
-                  db.collection("CurrentMeetings").doc(hostUID).set({
-                      messages: currentMessages
-                  }).then(()=>{
-                      //delete the current meeting when meeting has ended
-                      db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                      }).catch((error) => {
+              var tryCounter = 0
+              var tryEndMeetingInterval = setInterval(()=>{
+                  if(uuid === Meetings[host_id].uuid){
+                      delete Meetings[host_id]
+                      db.collection("CurrentMeetings").doc(hostUID).set({
+                          messages: currentMessages
+                      }).then(()=>{
+                          //delete the current meeting when meeting has ended
+                          db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                              clearInterval(tryEndMeetingInterval)
+                          }).catch((error) => {
+                              console.error(error.message)
+                              clearInterval(tryEndMeetingInterval)
+                          });
+                      }).catch((error)=>{
                           console.error(error.message)
-                      });
-                  }).catch((error)=>{
-                      console.error(error.message)
-                  })
-              }
+                          clearInterval(tryEndMeetingInterval)
+                      })
+                  }
+                  else{
+                      tryCounter += 1
+                  }
+                  if(tryCounter >= 4){
+                      clearInterval(tryEndMeetingInterval)
+                  }
+              },3000)
           }
     }
 }
