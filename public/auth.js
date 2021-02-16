@@ -51,7 +51,6 @@ function authenticate(){
                                                 document.getElementById("signup").disabled = false
                                                 document.getElementById("signin-cover").classList.remove("running")
                                                 window.location.href = "verify"
-                                                return true;
                                             })
                                             .catch(function(error) {
                                                 document.getElementById("signin-cover").classList.remove("running")
