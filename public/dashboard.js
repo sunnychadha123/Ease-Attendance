@@ -353,6 +353,7 @@ function updateParticipantTable(){
 function refreshTable(){
     document.getElementById("refresh").disabled = true
     document.getElementById("refresh-cover").classList.add("running")
+    document.getElementById("ld-spin").style.display = "block"
     Participants = []
     CurrentMessages = []
     CurrentMeeting = ""
@@ -505,20 +506,30 @@ function refreshTable(){
                         updateParticipantTable()
                     }
                 }
+                document.getElementById("ld-spin").style.display = "none"
                 document.getElementById("refresh").disabled = false
                 document.getElementById("refresh-cover").classList.remove("running")
+
             }
             else{
                 CurrentMessages = []
                 updateParticipantTable()
+                document.getElementById("ld-spin").style.display = "none"
                 document.getElementById("refresh").disabled = false
                 document.getElementById("refresh-cover").classList.remove("running")
+
             }
         }).catch((error)=>{
             redNotification(error.message)
+            document.getElementById("ld-spin").style.display = "none"
+            document.getElementById("refresh").disabled = false
+            document.getElementById("refresh-cover").classList.remove("running")
             updateParticipantTable()
         })
-    },500)
+        document.getElementById("ld-spin").style.display = "none"
+        document.getElementById("refresh").disabled = false
+        document.getElementById("refresh-cover").classList.remove("running")
+    },1000)
 
 }
 function clearTable(){
