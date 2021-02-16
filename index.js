@@ -125,55 +125,60 @@ app.get('/verify', (req, res) => {
 })
 app.get('/authorize', (req, res) => {
     const authorizationCode = req.query.code
-    request({
-        url: 'https://zoom.us/oauth/token?grant_type=authorization_code&' + 'code=' + authorizationCode + '&redirect_uri=https://www.easeattendance.com/authorize',
-        method: 'POST',
-        json: true,
-        headers: {
-            'Authorization': 'Basic ' + Buffer.from(process.env.zoom_client_id + ':' + process.env.zoom_client_secret).toString('base64')
-        }
-    }, (error, httpResponse, body) => {
-        if (error) {
-            console.error(error)
-        } else {
-            const accessToken = body.access_token
-            const refreshToken = body.refresh_token
+    if(authorizationCode){
+        request({
+            url: 'https://zoom.us/oauth/token?grant_type=authorization_code&' + 'code=' + authorizationCode + '&redirect_uri=https://www.easeattendance.com/authorize',
+            method: 'POST',
+            json: true,
+            headers: {
+                'Authorization': 'Basic ' + Buffer.from(process.env.zoom_client_id + ':' + process.env.zoom_client_secret).toString('base64')
+            }
+        }, (error, httpResponse, body) => {
+            if (error) {
+                console.error(error)
+            } else {
+                const accessToken = body.access_token
+                const refreshToken = body.refresh_token
 
-            request({
-                url: 'https://api.zoom.us/v2/users/me',
-                method: 'GET',
-                json: true,
-                headers: {
-                    'Authorization': "Bearer " + accessToken
-                }
-            }, (error, httpResponse, body) => {
-                if (error) {
-                    console.error(error)
-                } else {
-                    const userID = body.id
-                    const userFirstName = body.first_name
-                    const userLastName = body.last_name
-                    const userEmail = body.email
-                    const userAccountID = body.account_id
-                    db.collection("ZoomOAuth").doc(userID).set({
-                        userID: userID,
-                        firstName: userFirstName,
-                        lastName: userLastName,
-                        email: userEmail,
-                        userAccountID: userAccountID,
-                        refreshToken: refreshToken
-                    }).then(() => {
-                        console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
-                    }).catch((error) => {
-                        console.error(error.message)
-                    })
-                }
-            })
+                request({
+                    url: 'https://api.zoom.us/v2/users/me',
+                    method: 'GET',
+                    json: true,
+                    headers: {
+                        'Authorization': "Bearer " + accessToken
+                    }
+                }, (error, httpResponse, body) => {
+                    if (error) {
+                        console.error(error)
+                    } else {
+                        const userID = body.id
+                        const userFirstName = body.first_name
+                        const userLastName = body.last_name
+                        const userEmail = body.email
+                        const userAccountID = body.account_id
+                        db.collection("ZoomOAuth").doc(userID).set({
+                            userID: userID,
+                            firstName: userFirstName,
+                            lastName: userLastName,
+                            email: userEmail,
+                            userAccountID: userAccountID,
+                            refreshToken: refreshToken
+                        }).then(() => {
+                            console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
+                        }).catch((error) => {
+                            console.error(error.message)
+                        })
+                    }
+                })
 
-        }
-    })
+            }
+        })
 
-    res.sendFile(path.join(__dirname + '/public/signup.html'));
+        res.sendFile(path.join(__dirname + '/public/signup.html'));
+    }
+    else{
+        res.sendFile(path.join(__dirname + '/public/index.html'));
+    }
 })
 app.get('/zoomverify/verifyzoom.html', (req, res) => {
     res.send(process.env.zoom_verification_code)
