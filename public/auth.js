@@ -118,9 +118,9 @@ function login(){
     const pass = document.getElementById("login-pass").value
     const remember = document.getElementById("remember-me").checked
     document.getElementById("signin").disabled = true
+    document.getElementById("signin-cover").classList.add("running")
     if(validateEmail(email)){
         auth.signInWithEmailAndPassword(email,pass).then(cred => {
-            document.getElementById("signin-cover").classList.add("running")
             var userEmail = cred.user.email
             var userDisplayName = cred.user.displayName
             if(userDisplayName == null){

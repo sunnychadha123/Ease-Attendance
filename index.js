@@ -20,6 +20,8 @@ const nodemailer = require("nodemailer")
 console.log("email client loaded for support")
 const favicon = require('serve-favicon')
 console.log("favicon loaded")
+const ZoomWebhookQueue = []
+var isRequestFunctionBusy = false
 // Initialize admin credentials for db
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -233,11 +235,14 @@ async function handleZoomPost(req){
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
+                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
+                isRequestFunctionBusy = false
             })
         }).catch((error)=>{
             console.error(error.message)
+            isRequestFunctionBusy = false
         })
     }
     else if(body.event === "meeting.participant_joined"){
@@ -255,9 +260,14 @@ async function handleZoomPost(req){
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
+                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
+                isRequestFunctionBusy = false
             })
+        }
+        else{
+            isRequestFunctionBusy = false
         }
     }
     else if(body.event === "meeting.participant_left"){
@@ -276,15 +286,20 @@ async function handleZoomPost(req){
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
+                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
+                isRequestFunctionBusy = false
             })
+        }
+        else{
+            isRequestFunctionBusy = false
         }
     }
     else if(body.event === "meeting.ended"){
         // If meeting exists and participant is known
         console.log("Meeting ended: " + body.payload.object.topic)
-          if(Meetings[host_id] && Meetings[host_id].hostEmail){
+          if(Meetings[host_id]){
             let currentDate = new Date()
             // Add meeting end to record log
             Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
@@ -297,6 +312,20 @@ async function handleZoomPost(req){
               let meetingName = Meetings[host_id].meetingName
               let meetingStart = Meetings[host_id].meetingStart
               delete Meetings[host_id]
+              db.collection("CurrentMeetings").doc(hostUID).set({
+                  messages: currentMessages
+              }).then(()=>{
+                  //delete the current meeting when meeting has ended
+                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                      isRequestFunctionBusy = false
+                  }).catch((error) => {
+                      console.error(error.message)
+                      isRequestFunctionBusy = false
+                  });
+              }).catch((error)=>{
+                  console.error(error.message)
+                  isRequestFunctionBusy = false
+              })
               db.collection("Records").add({
                   'Events': currentRecords,
                   'MeetingID': meetingID,
@@ -306,38 +335,42 @@ async function handleZoomPost(req){
                   'MeetingEnd' : new Date()
               })
               .then(() => {
+                  isRequestFunctionBusy = false
               })
               .catch((error) => {
                   console.error(error.message);
+                  isRequestFunctionBusy = false
               });
-              db.collection("CurrentMeetings").doc(hostUID).set({
-                  messages: currentMessages
-              }).then(()=>{
-                  //delete the current meeting when meeting has ended
-                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                  }).catch((error) => {
-                      console.error(error.message)
-                  });
-              }).catch((error)=>{
-                  console.error(error.message)
-              })
           }
           // If host information is now known and meeting exists on server
           else if(Meetings[host_id]){
               delete Meetings[host_id]
+              isRequestFunctionBusy = false
+          }
+          else{
+              isRequestFunctionBusy = false
           }
     }
 }
-
+setInterval(()=>{
+    if(!isRequestFunctionBusy){
+        const currentReq = ZoomWebhookQueue.pop()
+        if(currentReq){
+            isRequestFunctionBusy = true
+            handleZoomPost(currentReq).catch((error)=>{
+                console.error(error.message)
+                isRequestFunctionBusy = false
+            })
+        }
+    }
+},50)
 app.post('/api/requests', (req, res) => {
     res.status(200)
     res.send()
     console.log("post request to /api/requests sent ")
     console.log(req.body)
     if(req.headers.authorization === process.env.zoom_verification_token){
-        handleZoomPost(req).catch((error)=>{
-            console.error(error.message)
-        })
+        ZoomWebhookQueue.push(req)
     }
 })
 
