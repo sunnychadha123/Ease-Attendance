@@ -138,6 +138,7 @@ app.get('/authorize', (req, res) => {
             }, (error, httpResponse, body) => {
                 if (error) {
                     console.error(error)
+                    res.sendFile(path.join(__dirname + '/public/index.html'));
                 } else {
                     const accessToken = body.access_token
                     const refreshToken = body.refresh_token
@@ -152,31 +153,38 @@ app.get('/authorize', (req, res) => {
                     }, (error, httpResponse, body) => {
                         if (error) {
                             console.error(error)
+                            res.sendFile(path.join(__dirname + '/public/index.html'));
                         } else {
                             const userID = body.id
                             const userFirstName = body.first_name
                             const userLastName = body.last_name
                             const userEmail = body.email
                             const userAccountID = body.account_id
-                            db.collection("ZoomOAuth").doc(userID).set({
-                                userID: userID,
-                                firstName: userFirstName,
-                                lastName: userLastName,
-                                email: userEmail,
-                                userAccountID: userAccountID,
-                                refreshToken: refreshToken
-                            }).then(() => {
-                                console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
-                            }).catch((error) => {
-                                console.error(error.message)
-                            })
+                            if(userID && userID !== ""){
+                                db.collection("ZoomOAuth").doc(userID).set({
+                                    userID: userID,
+                                    firstName: userFirstName,
+                                    lastName: userLastName,
+                                    email: userEmail,
+                                    userAccountID: userAccountID,
+                                    refreshToken: refreshToken
+                                }).then(() => {
+                                    console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
+                                    res.sendFile(path.join(__dirname + '/public/signup.html'));
+                                }).catch((error) => {
+                                    console.error(error.message)
+                                    res.sendFile(path.join(__dirname + '/public/index.html'));
+                                })
+                            }
+                            else{
+                                res.sendFile(path.join(__dirname + '/public/index.html'));
+                            }
+
                         }
                     })
-
                 }
             })
 
-            res.sendFile(path.join(__dirname + '/public/signup.html'));
         }
         catch(error){
             console.error(error.message)
