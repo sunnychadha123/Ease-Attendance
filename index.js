@@ -354,7 +354,7 @@ async function handleZoomPost(req){
 }
 setInterval(()=>{
     if(!isRequestFunctionBusy){
-        const currentReq = ZoomWebhookQueue.pop()
+        const currentReq = ZoomWebhookQueue.shift()
         if(currentReq){
             isRequestFunctionBusy = true
             handleZoomPost(currentReq).catch((error)=>{
