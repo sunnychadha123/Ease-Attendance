@@ -423,6 +423,16 @@ hr{
 #current-record-name, #current-record-date,#current-record-id{
     margin-bottom: 15px;
 }
+#refresh{
+    margin-top: -5px;
+}
+#refresh:disabled{
+    cursor: default;
+}
+.ld-ring{
+    color: #ee6165!important;
+    font-size: 20px;
+}
 .record-row:hover{
     transform: scale(1);
     -webkit-transform: scale(1);

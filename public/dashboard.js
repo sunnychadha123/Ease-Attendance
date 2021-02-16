@@ -30,7 +30,6 @@ var Participants = []
 var CurrentMessages = []
 var EncounteredParticipants = new Set()
 var names = []
-var meetingOccuring = false
 var CurrentMeeting = ""
 var CurrentMeetingID = ""
 var meetingIndex = -1
@@ -176,7 +175,6 @@ auth.onAuthStateChanged((user) => {
                                 meetingName += data[i] + " "
                             }
                             CurrentMeeting = meetingName
-                            meetingOccuring = true
                             document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                             document.getElementById("status-dot").classList.remove("dot-danger")
                             if(meetingIndex === -1){
@@ -214,7 +212,6 @@ auth.onAuthStateChanged((user) => {
                             else{
                                 greenNotification("Your meeting has been saved")
                             }
-                            meetingOccuring = false
                             CurrentMeeting = ""
                             CurrentMeetingID = ""
                             CurrentMessages = []
@@ -224,7 +221,6 @@ auth.onAuthStateChanged((user) => {
                         else if(eventType === "meeting.id"){
                             CurrentMeetingID = data[1]
                             document.getElementById("meeting-id-attendance").innerHTML = "ID: " + CurrentMeetingID
-                            meetingOccuring = false
                             CurrentMeeting = ""
                             document.getElementById("status-dot").classList.remove("dot-success")
                             document.getElementById("status-dot").classList.add("dot-danger")
@@ -354,7 +350,178 @@ function updateParticipantTable(){
         filterClick("not-registered-filter")
     }
 }
+function refreshTable(){
+    document.getElementById("refresh").disabled = true
+    document.getElementById("refresh-cover").classList.add("running")
+    Meetings = []
+    var Participants = []
+    var CurrentMessages = []
+    var CurrentMeeting = ""
+    var CurrentMeetingID = ""
+    var meetingIndex = -1
+    setTimeout(()=>{
+        firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).get().then((doc)=>{
+            if(doc.data()){
+                const meetingMessages = doc.data().messages
+                // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
+                const newCalculated = arr_diff(meetingMessages,CurrentMessages)
+                var newMessages = []
+                for(let i = 0; i < newCalculated.length; i++){
+                    CurrentMessages.push(newCalculated[i])
+                    newMessages.push(newCalculated[i])
+                }
+                // add new messages to current messages
+                for(var j = 0; j < newMessages.length; j++){
+                    const currentMessage = newMessages[j]
+                    const data = currentMessage.split(" ")
+                    const eventType = data[0]
+                    if(eventType === "meeting.started"){
+                        const participantTable = document.getElementById("participant-table")
+                        while(participantTable.rows.length > 1){
+                            participantTable.deleteRow(1)
+                        }
+                        document.getElementById("meeting-id-attendance").hidden = false
+                        var meetingName = ""
+                        for(i = 1; i < data.length;i++){
+                            meetingName += data[i] + " "
+                        }
+                        CurrentMeeting = meetingName
+                        document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
+                        document.getElementById("status-dot").classList.remove("dot-danger")
+                        if(meetingIndex === -1){
+                            document.getElementById("status-dot").classList.remove("dot-success")
+                            document.getElementById("status-dot").classList.add("dot-warning")
+                        }
+                        else{
+                            document.getElementById("status-dot").classList.remove("dot-warning")
+                            document.getElementById("status-dot").classList.add("dot-success")
+                        }
+                    }
+                    else if(eventType === "meeting.ended"){
+                        document.getElementById("status-dot").classList.remove("dot-warning")
+                        document.getElementById("status-dot").classList.remove("dot-success")
+                        document.getElementById("status-dot").classList.add("dot-danger")
+                        document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
+                        document.getElementById("meeting-id-attendance").value = ""
+                        document.getElementById("meeting-id-attendance").hidden = true
+                        if(meetingIndex === -1){
+                            $('#add-edit-meeting-modal').modal('show');
+                            $("#meeting-id-input-field").val(CurrentMeetingID)
+                            $("#meeting-name-input-field").val(CurrentMeeting)
+                            $("#delete-meeting-button").prop('disabled', true)
+                            $("#delete-meeting-button").hide()
+                            $("#save-meeting-button").innerHTML = "Add Meeting"
+                            const studentInputTable = document.getElementById("student-input-table")
+                            while (studentInputTable.rows.length !== 0) {
+                                studentInputTable.deleteRow(0)
+                            }
+                            EncounteredParticipants.forEach(participant => {
+                                addStudent(participant)
+                            })
+                            document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
+                        }
+                        else{
+                            greenNotification("Your meeting has been saved")
+                        }
+                        CurrentMeeting = ""
+                        CurrentMeetingID = ""
+                        CurrentMessages = []
+                        Participants = []
+                        clearTable()
+                    }
+                    else if(eventType === "meeting.id"){
+                        CurrentMeetingID = data[1]
+                        document.getElementById("meeting-id-attendance").innerHTML = "ID: " + CurrentMeetingID
+                        CurrentMeeting = ""
+                        document.getElementById("status-dot").classList.remove("dot-success")
+                        document.getElementById("status-dot").classList.add("dot-danger")
+                        for(i = 0; i < Meetings.length; i++){
+                            if(String(Meetings[i].id) === String(CurrentMeetingID)){
+                                meetingIndex = i;
+                                break
+                            }
+                        }
+                        if(meetingIndex !== -1){
+                            for(let i = 0 ; i < Meetings[meetingIndex].arr.length; i++){
+                                const name = Meetings[meetingIndex].arr[i].split(" ")
+                                const participantFirst = name[0]
+                                const participantLast = name[name.length-1]
+                                Participants.unshift(new Participant(participantFirst, participantLast, "Absent", true))
 
+                            }
+                        }
+                    }
+                    else if(eventType === "participant.joined"){
+                        var participantFirst = ""
+                        var participantLast = ""
+                        if(data.length === 2){
+                            participantFirst = data[1]
+                        }
+                        else if(data.length > 2){
+                            participantFirst = data[1]
+                            participantLast = data[data.length-1]
+                        }
+                        let fullName = participantFirst + " " + participantLast
+                        EncounteredParticipants.add(fullName.trim())
+                        if(meetingIndex !== -1){
+                            var isPartOfRoster = false
+                            for(var i = 0 ; i < Participants.length; i++){
+                                if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
+                                    const toAdd = Participants[i]
+                                    isPartOfRoster = true
+                                    Participants.splice(i,1)
+                                    Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true))
+                                    break
+                                }
+                            }
+                            if(!isPartOfRoster){
+                                Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                            }
+                        }
+                        else{
+                            Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                        }
+                        updateParticipantTable()
+                    }
+                    else if(eventType === "participant.left"){
+                        var participantFirst = ""
+                        var participantLast = ""
+                        if(data.length === 2){
+                            participantFirst = data[1]
+                        }
+                        else if(data.length > 2){
+                            participantFirst = data[1]
+                            participantLast = data[data.length-1]
+                        }
+                        for(i = 0 ; i < Participants.length; i++){
+                            if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
+                                const currParticipant = Participants[i]
+                                Participants.splice(i,1)
+                                if(currParticipant.partOfRoster){
+                                    Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
+                                }
+                                break
+                            }
+                        }
+                        updateParticipantTable()
+                    }
+                }
+                document.getElementById("refresh").disabled = false
+                document.getElementById("refresh-cover").classList.remove("running")
+            }
+            else{
+                CurrentMessages = []
+                updateParticipantTable()
+                document.getElementById("refresh").disabled = false
+                document.getElementById("refresh-cover").classList.remove("running")
+            }
+        }).catch((error)=>{
+            redNotification(error.message)
+            updateParticipantTable()
+        })
+    },1000)
+
+}
 function clearTable(){
     const participantTable = document.getElementById("participant-table")
     const currentNumRows = participantTable.rows.length

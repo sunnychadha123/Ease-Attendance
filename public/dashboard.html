@@ -26,6 +26,8 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
     <link rel="stylesheet" href="dashboard.css">
     <script src="https://code.iconify.design/1/1.0.6/iconify.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="vendor/ldbtn.min.css">
+    <link rel="stylesheet" type="text/css" href="vendor/loading.min.css">
 </head>
 <div class="notify"><span id="notifyType"></span></div>
 <body>
@@ -100,6 +102,10 @@
                     <a id="absent-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Absent</a>
                     <a id="left-meeting-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Left Meeting</a>
                     <a id="not-registered-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Registered</a>
+                    <div id="refresh-cover" class="ld ld-over-full">
+                        <a id="refresh" onclick="refreshTable()" type="button" class="btn btn-secondary filter-button"><span class="iconify restart-icon" data-inline="false" data-icon="ic:round-restart-alt" style="font-size: 30px;"></span></a>
+                        <div class="ld ld-ring ld-spin"></div>
+                    </div>
                 </div>
                 <table class="table" id="participant-table">
                     <thead id="participant-table-head">
@@ -201,7 +207,7 @@
                             </div>
                             <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="XXX-XXXX-XXXX" aria-label="Meeting ID" aria-describedby="addon-wrapping">
                         </div>
-                        <h5 class="modal-title">Students</h5>
+                        <h5 class="modal-title">Participants</h5>
                         <table id="student-input-table">
                             <tbody id="student-input-table-body">
                             <tr>
