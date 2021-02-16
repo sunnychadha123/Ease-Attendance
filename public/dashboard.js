@@ -238,6 +238,20 @@ function evaluateParticipantTable(doc){
             newMessages.push(newCalculated[i])
         }
         // add new messages to current messages
+        if(newMessages.length === 0){
+            document.getElementById("status-dot").classList.remove("dot-warning")
+            document.getElementById("status-dot").classList.remove("dot-success")
+            document.getElementById("status-dot").classList.add("dot-danger")
+            document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
+            document.getElementById("meeting-id-attendance").value = ""
+            document.getElementById("meeting-id-attendance").hidden = true
+            CurrentMeeting = ""
+            CurrentMeetingID = ""
+            CurrentMessages = []
+            Participants = []
+            meetingIndex = -1
+            clearTable()
+        }
         for(var j = 0; j < newMessages.length; j++){
             const currentMessage = newMessages[j]
             const data = currentMessage.split(" ")
@@ -293,6 +307,7 @@ function evaluateParticipantTable(doc){
                 CurrentMeeting = ""
                 CurrentMeetingID = ""
                 CurrentMessages = []
+                meetingIndex = -1
                 Participants = []
                 clearTable()
             }
