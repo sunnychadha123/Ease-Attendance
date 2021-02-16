@@ -131,9 +131,9 @@ function login(){
             }
             if(remember === true){
                 auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(() => {
-                    window.location.href = "dashboard"
                     document.getElementById("signin-cover").classList.remove("running")
                     document.getElementById("signin").disabled = false
+                    window.location.href = "dashboard"
                 }).catch((error) =>{
                     document.getElementById("loginMessage").innerHTML = error.message;
                     document.getElementById("signin-cover").classList.remove("running")
@@ -142,9 +142,9 @@ function login(){
             }
             else{
                 auth.setPersistence(firebase.auth.Auth.Persistence.SESSION).then(() => {
-                    window.location.href = "dashboard"
                     document.getElementById("signin-cover").classList.remove("running")
                     document.getElementById("signin").disabled = false
+                    window.location.href = "dashboard"
                 }).catch((error) => {
                     document.getElementById("loginMessage").innerHTML = error.message;
                     document.getElementById("signin-cover").classList.remove("running")

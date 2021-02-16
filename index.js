@@ -235,14 +235,11 @@ async function handleZoomPost(req){
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
-                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
-                isRequestFunctionBusy = false
             })
         }).catch((error)=>{
             console.error(error.message)
-            isRequestFunctionBusy = false
         })
     }
     else if(body.event === "meeting.participant_joined"){
@@ -260,15 +257,11 @@ async function handleZoomPost(req){
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
-                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
-                isRequestFunctionBusy = false
             })
         }
-        else{
-            isRequestFunctionBusy = false
-        }
+
     }
     else if(body.event === "meeting.participant_left"){
         const participant = body.payload.object.participant
@@ -281,20 +274,15 @@ async function handleZoomPost(req){
         if(Meetings[host_id]){
             Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
             Meetings[host_id].messageLog.push("participant.left " + participantName)
-
             // update current meetings on firebase
             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                 messages: Meetings[host_id].messageLog
             }).then(()=>{
-                isRequestFunctionBusy = false
             }).catch((error)=>{
                 console.error(error.message)
-                isRequestFunctionBusy = false
             })
         }
-        else{
-            isRequestFunctionBusy = false
-        }
+
     }
     else if(body.event === "meeting.ended"){
         // If meeting exists and participant is known
@@ -317,14 +305,11 @@ async function handleZoomPost(req){
               }).then(()=>{
                   //delete the current meeting when meeting has ended
                   db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                      isRequestFunctionBusy = false
                   }).catch((error) => {
                       console.error(error.message)
-                      isRequestFunctionBusy = false
                   });
               }).catch((error)=>{
                   console.error(error.message)
-                  isRequestFunctionBusy = false
               })
               db.collection("Records").add({
                   'Events': currentRecords,
@@ -335,20 +320,10 @@ async function handleZoomPost(req){
                   'MeetingEnd' : new Date()
               })
               .then(() => {
-                  isRequestFunctionBusy = false
               })
               .catch((error) => {
                   console.error(error.message);
-                  isRequestFunctionBusy = false
               });
-          }
-          // If host information is now known and meeting exists on server
-          else if(Meetings[host_id]){
-              delete Meetings[host_id]
-              isRequestFunctionBusy = false
-          }
-          else{
-              isRequestFunctionBusy = false
           }
     }
 }
@@ -357,8 +332,9 @@ setInterval(()=>{
         const currentReq = ZoomWebhookQueue.shift()
         if(currentReq){
             isRequestFunctionBusy = true
-            handleZoomPost(currentReq).catch((error)=>{
-                console.error(error.message)
+            handleZoomPost(currentReq).then(()=>{
+                isRequestFunctionBusy = false
+            }).catch(()=>{
                 isRequestFunctionBusy = false
             })
         }
@@ -371,6 +347,9 @@ app.post('/api/requests', (req, res) => {
     console.log(req.body)
     if(req.headers.authorization === process.env.zoom_verification_token){
         ZoomWebhookQueue.push(req)
+        for(var i = 0; i < ZoomWebhookQueue.length;i++){
+            console.log(ZoomWebhookQueue[i].body.event)
+        }
     }
 })
 
