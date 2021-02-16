@@ -353,12 +353,11 @@ function updateParticipantTable(){
 function refreshTable(){
     document.getElementById("refresh").disabled = true
     document.getElementById("refresh-cover").classList.add("running")
-    Meetings = []
-    var Participants = []
-    var CurrentMessages = []
-    var CurrentMeeting = ""
-    var CurrentMeetingID = ""
-    var meetingIndex = -1
+    Participants = []
+    CurrentMessages = []
+    CurrentMeeting = ""
+    CurrentMeetingID = ""
+    meetingIndex = -1
     setTimeout(()=>{
         firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).get().then((doc)=>{
             if(doc.data()){
@@ -519,7 +518,7 @@ function refreshTable(){
             redNotification(error.message)
             updateParticipantTable()
         })
-    },1000)
+    },500)
 
 }
 function clearTable(){
