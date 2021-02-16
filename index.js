@@ -289,12 +289,11 @@ async function handleZoomPost(req){
         console.log("Meeting ended: " + body.payload.object.topic)
           if(Meetings[host_id]){
             let currentDate = new Date()
-            // Add meeting end to record log
-            Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate);
-            Meetings[host_id].messageLog.push("meeting.ended");
             // save record to data base
               let currentMessages = Meetings[host_id].messageLog
+              currentMessages.push("meeting.ended")
               let currentRecords = Meetings[host_id].recordLog
+              currentRecords.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate)
               let meetingID = Meetings[host_id].meetingId
               let hostUID = Meetings[host_id].hostUID
               let meetingName = Meetings[host_id].meetingName
