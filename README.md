@@ -36,4 +36,4 @@ OR
 ## In-Meeting Features
 
 1. See all who are present, absent or have left the meeting
-2. Register People into meetings that aren't in the Roser
+2. Register People into meetings that aren't in the roster
