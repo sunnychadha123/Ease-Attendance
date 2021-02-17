@@ -154,21 +154,26 @@ auth.onAuthStateChanged((user) => {
                     }
 
                 });
-            firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
-                if(MeetingsdidLoad){
+            if(MeetingsdidLoad){
+                firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
                     evaluateParticipantTable(doc)
-                }
-               else{
-                   let loadCurrentMeetingInterval = setInterval(()=>{
-                       if(MeetingsdidLoad){
-                           clearInterval(loadCurrentMeetingInterval)
-                           evaluateParticipantTable(doc)
-                       }
-                   },100)
-                }
-            }, (error) => {
-                redNotification("Problem connecting to server")
-            })
+                }, (error) => {
+                    redNotification("Problem connecting to server")
+                })
+            }
+            else{
+                let getCurrentMeetingsInterval = setInterval(()=>{
+                    if(MeetingsdidLoad){
+                        firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
+                            evaluateParticipantTable(doc)
+                            clearInterval(getCurrentMeetingsInterval)
+                        }, (error) => {
+                            redNotification("Problem connecting to server")
+                            clearInterval(getCurrentMeetingsInterval)
+                        })
+                    }
+                },1000)
+            }
         }
         else{
             //user email is not verified
@@ -257,7 +262,7 @@ function evaluateParticipantTable(doc){
             document.getElementById("status-dot").classList.remove("dot-warning")
             document.getElementById("status-dot").classList.remove("dot-success")
             document.getElementById("status-dot").classList.add("dot-danger")
-            document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
+            document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
             document.getElementById("meeting-id-attendance").value = ""
             document.getElementById("meeting-id-attendance").hidden = true
             CurrentMeeting = ""
