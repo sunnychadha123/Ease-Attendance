@@ -68,6 +68,7 @@ auth.onAuthStateChanged((user) => {
             document.getElementById("user-name").innerHTML = "Welcome " + user.displayName
             firestore.collection("Periods").where("useruid", "==", user.uid)
                 .onSnapshot((querySnapshot) => {
+                    MeetingsdidLoad = false
                     Meetings = []
                     querySnapshot.forEach((doc) => {
                         const currData = doc.data()
@@ -154,26 +155,24 @@ auth.onAuthStateChanged((user) => {
                     }
 
                 });
-            if(MeetingsdidLoad){
+
                 firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
-                    evaluateParticipantTable(doc)
+                    if(MeetingsdidLoad){
+                        evaluateParticipantTable(doc)
+                    }
+                    else{
+                        let getMeetingInterval = setInterval(()=>{
+                            if(MeetingsdidLoad){
+                                evaluateParticipantTable(doc)
+                                clearInterval(getMeetingInterval)
+                            }
+                        },500)
+                    }
                 }, (error) => {
                     redNotification("Problem connecting to server")
                 })
-            }
-            else{
-                let getCurrentMeetingsInterval = setInterval(()=>{
-                    if(MeetingsdidLoad){
-                        firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
-                            evaluateParticipantTable(doc)
-                            clearInterval(getCurrentMeetingsInterval)
-                        }, (error) => {
-                            redNotification("Problem connecting to server")
-                            clearInterval(getCurrentMeetingsInterval)
-                        })
-                    }
-                },1000)
-            }
+
+
         }
         else{
             //user email is not verified
