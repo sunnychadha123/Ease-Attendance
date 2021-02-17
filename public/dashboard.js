@@ -431,7 +431,7 @@ function evaluateParticipantTable(doc){
         document.getElementById("status-dot").classList.remove("dot-warning")
         document.getElementById("status-dot").classList.remove("dot-success")
         document.getElementById("status-dot").classList.add("dot-danger")
-        document.getElementById("currentMeeting-name").innerHTML = "No Meeting has started"
+        document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
         document.getElementById("meeting-id-attendance").value = ""
         document.getElementById("meeting-id-attendance").hidden = true
         CurrentMeeting = ""
