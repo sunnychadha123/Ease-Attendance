@@ -295,7 +295,7 @@ async function handleZoomPost(req){
                 else{
                     tryCounterA+=1
                 }
-                if(tryCounterA >= 6){
+                if(tryCounterA >= 10){
                     clearInterval(tryStartMeetingInterval)
                 }
             },3000)
@@ -349,7 +349,7 @@ async function handleZoomPost(req){
                 else{
                     tryCounterB += 1
                 }
-                if(tryCounterB >= 6){
+                if(tryCounterB >= 10){
                     clearInterval(tryJoinParticipantInterval)
                 }
             },3000)
@@ -400,7 +400,7 @@ async function handleZoomPost(req){
                 else{
                     tryCounterC += 1
                 }
-                if(tryCounterC >= 6){
+                if(tryCounterC >= 10){
                     clearInterval(tryLeaveParticipantInterval)
                 }
             },3000)
@@ -471,7 +471,7 @@ async function handleZoomPost(req){
                       else{
                           tryCounterD += 1
                       }
-                      if(tryCounterD >= 4){
+                      if(tryCounterD >= 10){
                           clearInterval(tryEndMeetingInterval)
                       }
                   },3000)
