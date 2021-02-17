@@ -297,6 +297,7 @@ function evaluateParticipantTable(doc){
                     document.getElementById("status-dot").classList.remove("dot-warning")
                     document.getElementById("status-dot").classList.add("dot-success")
                 }
+                updateParticipantTable()
             }
             else if(eventType === "meeting.ended" && j === newMessages.length-1 ){
                 document.getElementById("status-dot").classList.remove("dot-warning")
@@ -353,6 +354,7 @@ function evaluateParticipantTable(doc){
 
                     }
                 }
+                updateParticipantTable()
             }
             else if(eventType === "participant.joined"){
                 var participantFirst = ""
