@@ -168,7 +168,7 @@ app.get('/authorize', (req, res) => {
                                     email: userEmail,
                                     userAccountID: userAccountID,
                                     refreshToken: refreshToken
-                                }).then(() => {
+                                }, {merge: true}).then(() => {
                                     console.info("User " + userFirstName + " " + userLastName + " with email " + userEmail + " has downloaded the Ease Attendance app")
                                     res.sendFile(path.join(__dirname + '/public/signup.html'));
                                 }).catch((error) => {
@@ -240,27 +240,66 @@ async function handleZoomPost(req){
     const body = req.body
     const host_id = body.payload.object.host_id
     if(body.event === "meeting.started"){
-        db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
-            // Create meeting in meeting dictionary
-            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
-            Meetings[host_id].hostUID = doc.data().firebaseID
-            // Add meeting started to record log
-            let currentDate = new Date()
-            Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
-            // push messages that set meeting ID and meeting Name in front end
-            Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
-            Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
-            console.log("Meeting started: " + body.payload.object.topic)
-            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                messages: Meetings[host_id].messageLog
-            }).then(()=>{
+        if(!Meetings[host_id]){
+            db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                // Create meeting in meeting dictionary
+                Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                Meetings[host_id].hostUID = doc.data().firebaseID
+                // Add meeting started to record log
+                let currentDate = new Date()
+                Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+                // push messages that set meeting ID and meeting Name in front end
+                Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
+                Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+                console.log("Meeting started: " + body.payload.object.topic)
+                // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                    messages: Meetings[host_id].messageLog
+                }).then(()=>{
+                }).catch((error)=>{
+                    console.error(error.message)
+                })
             }).catch((error)=>{
                 console.error(error.message)
             })
-        }).catch((error)=>{
-            console.error(error.message)
-        })
+        }
+        else{
+            var tryCounter = 0
+            var tryStartMeetingInterval = setInterval(() => {
+                if(!Meetings[host_id]){
+                    db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                        // Create meeting in meeting dictionary
+                        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                        Meetings[host_id].hostUID = doc.data().firebaseID
+                        // Add meeting started to record log
+                        let currentDate = new Date()
+                        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+                        // push messages that set meeting ID and meeting Name in front end
+                        Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
+                        Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+                        console.log("Meeting started: " + body.payload.object.topic)
+                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                            messages: Meetings[host_id].messageLog
+                        }).then(()=>{
+                            clearInterval(tryStartMeetingInterval)
+                        }).catch((error)=>{
+                            console.error(error.message)
+                            clearInterval(tryStartMeetingInterval)
+                        })
+                    }).catch((error)=>{
+                        console.error(error.message)
+                        clearInterval(tryStartMeetingInterval)
+                    })
+                }
+                else{
+                    tryCounter+=1
+                }
+                if(tryCounter >= 4){
+                    clearInterval(tryStartMeetingInterval)
+                }
+            },3000)
+        }
     }
     else if(body.event === "meeting.participant_joined"){
         const participant = body.payload.object.participant
@@ -269,7 +308,7 @@ async function handleZoomPost(req){
         const participantEmail = participant.email
         console.log("Participant " + participantName + " has joined")
 
-        if(Meetings[host_id].uuid === body.payload.object.uuid){
+        if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
             if(Meetings[host_id]){
                 let currentDate = new Date()
                 Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
@@ -288,7 +327,7 @@ async function handleZoomPost(req){
         else{
             var tryCounter = 0
             var tryJoinParticipantInterval = setInterval(() => {
-                if(Meetings[host_id].uuid === body.payload.object.uuid){
+                if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
                         let currentDate = new Date()
                         Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
@@ -324,7 +363,7 @@ async function handleZoomPost(req){
         let currentDate = new Date()
         console.log("Participant " + participantName + " has left")
 
-        if(Meetings[host_id].uuid === body.payload.object.uuid){
+        if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
             if(Meetings[host_id]){
                 Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
                 Meetings[host_id].messageLog.push("participant.left " + participantName)
@@ -340,7 +379,7 @@ async function handleZoomPost(req){
         else{
             var tryCounter = 0
             var tryLeaveParticipantInterval = setInterval(()=>{
-                if(Meetings[host_id].uuid === body.payload.object.uuid){
+                if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
                         Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
                         Meetings[host_id].messageLog.push("participant.left " + participantName)
@@ -395,7 +434,7 @@ async function handleZoomPost(req){
                   .catch((error) => {
                       console.error(error.message);
                   });
-              if(uuid === Meetings[host_id].uuid){
+              if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
                   db.collection("CurrentMeetings").doc(hostUID).set({
                       messages: currentMessages
                   }).then(()=>{
@@ -412,7 +451,7 @@ async function handleZoomPost(req){
               else{
                   var tryCounter = 0
                   var tryEndMeetingInterval = setInterval(()=>{
-                      if(uuid === Meetings[host_id].uuid){
+                      if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
                           delete Meetings[host_id]
                           db.collection("CurrentMeetings").doc(hostUID).set({
                               messages: currentMessages
