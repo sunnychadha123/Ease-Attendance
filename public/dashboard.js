@@ -346,7 +346,8 @@ function evaluateParticipantTable(doc){
                 }
                 if(meetingIndex !== -1){
                     for(let i = 0 ; i < Meetings[meetingIndex].arr.length; i++){
-                        const name = Meetings[meetingIndex].arr[i].split(" ")
+                        let decryptedName = CryptoJS.AES.decrypt(Meetings[meetingIndex].arr[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
+                        const name = decryptedName.split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
                         Participants.unshift(new Participant(participantFirst, participantLast, "Absent", true))
@@ -757,13 +758,13 @@ $("#current-record-search-input-field").on('keyup', function (e) {
         currentRecordTable.deleteRow(0)
     }
     for(let i = PastMeetings[currentRecordIndex].events.length-1; i >= 0; i--){
-        const currString = PastMeetings[currentRecordIndex].events[i]
+        const currString = CryptoJS.AES.decrypt(PastMeetings[currentRecordIndex].events[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
         if(currString.includes(currValue)){
             var row = currentRecordTable.insertRow(0);
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
             var cell1 = row.insertCell(0)
-            cell1.innerHTML = PastMeetings[currentRecordIndex].events[i]
+            cell1.innerHTML = CryptoJS.AES.decrypt(PastMeetings[currentRecordIndex].events[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
 
         }
     }
