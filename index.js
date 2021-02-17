@@ -264,7 +264,7 @@ async function handleZoomPost(req){
             })
         }
         else{
-            var tryCounter = 0
+            var tryCounterA = 0
             var tryStartMeetingInterval = setInterval(() => {
                 if(!Meetings[host_id]){
                     db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
@@ -293,9 +293,9 @@ async function handleZoomPost(req){
                     })
                 }
                 else{
-                    tryCounter+=1
+                    tryCounterA+=1
                 }
-                if(tryCounter >= 4){
+                if(tryCounterA >= 6){
                     clearInterval(tryStartMeetingInterval)
                 }
             },3000)
@@ -325,7 +325,7 @@ async function handleZoomPost(req){
             }
         }
         else{
-            var tryCounter = 0
+            var tryCounterB = 0
             var tryJoinParticipantInterval = setInterval(() => {
                 if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
@@ -347,9 +347,9 @@ async function handleZoomPost(req){
                     }
                 }
                 else{
-                    tryCounter += 1
+                    tryCounterB += 1
                 }
-                if(tryCounter >= 4){
+                if(tryCounterB >= 6){
                     clearInterval(tryJoinParticipantInterval)
                 }
             },3000)
@@ -377,7 +377,7 @@ async function handleZoomPost(req){
             }
         }
         else{
-            var tryCounter = 0
+            var tryCounterC = 0
             var tryLeaveParticipantInterval = setInterval(()=>{
                 if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
@@ -398,9 +398,9 @@ async function handleZoomPost(req){
                     }
                 }
                 else{
-                    tryCounter += 1
+                    tryCounterC += 1
                 }
-                if(tryCounter >= 4){
+                if(tryCounterC >= 6){
                     clearInterval(tryLeaveParticipantInterval)
                 }
             },3000)
@@ -449,16 +449,16 @@ async function handleZoomPost(req){
                   })
               }
               else{
-                  var tryCounter = 0
+                  var tryCounterD = 0
                   var tryEndMeetingInterval = setInterval(()=>{
                       if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
-                          delete Meetings[host_id]
                           db.collection("CurrentMeetings").doc(hostUID).set({
                               messages: currentMessages
                           }).then(()=>{
                               //delete the current meeting when meeting has ended
                               db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
                                   clearInterval(tryEndMeetingInterval)
+                                  delete Meetings[host_id]
                               }).catch((error) => {
                                   console.error(error.message)
                                   clearInterval(tryEndMeetingInterval)
@@ -469,9 +469,9 @@ async function handleZoomPost(req){
                           })
                       }
                       else{
-                          tryCounter += 1
+                          tryCounterD += 1
                       }
-                      if(tryCounter >= 4){
+                      if(tryCounterD >= 4){
                           clearInterval(tryEndMeetingInterval)
                       }
                   },3000)
