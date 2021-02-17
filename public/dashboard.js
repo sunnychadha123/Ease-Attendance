@@ -99,7 +99,7 @@ auth.onAuthStateChanged((user) => {
                                 studentInputTable.deleteRow(0)
                             }
                             for (i = 0; i < currentMeeting.arr.length; i++) {
-                                addStudent(currentMeeting.arr[i])
+                                addStudent(CryptoJS.AES.decrypt(currentMeeting.arr[i],user.uid).toString(CryptoJS.enc.Utf8))
                             }
                         })
                         var cell1 = currentRow.insertCell(0)
@@ -141,7 +141,7 @@ auth.onAuthStateChanged((user) => {
                             for (i = 0; i < currentMeeting.events.length; i++) {
                                 var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
                                 var cell1 = row.insertCell(0)
-                                cell1.innerHTML = currentMeeting.events[i]
+                                cell1.innerHTML = CryptoJS.AES.decrypt(currentMeeting.events[i], user.uid).toString(CryptoJS.enc.Utf8);
                             }
                         })
                         var cell1 = currentRow.insertCell(0)
@@ -156,7 +156,7 @@ auth.onAuthStateChanged((user) => {
 
                 });
 
-                firestore.collection("CurrentMeetings").doc(auth.currentUser.uid).onSnapshot((doc) =>{
+                firestore.collection("CurrentMeetings").doc(user.uid).onSnapshot((doc) =>{
                     if(MeetingsdidLoad){
                         evaluateParticipantTable(doc)
                     }
@@ -272,7 +272,7 @@ function evaluateParticipantTable(doc){
             clearTable()
         }
         for(var j = 0; j < newMessages.length; j++){
-            const currentMessage = newMessages[j]
+            const currentMessage = CryptoJS.AES.decrypt(newMessages[j], auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
             const data = currentMessage.split(" ")
             const eventType = data[0]
             if(eventType === "meeting.started"){
@@ -823,7 +823,8 @@ function check(){
         }
         else{
             currentName += value
-            names.push(currentName)
+            names.push(CryptoJS.AES.encrypt(currentName, auth.currentUser.uid).toString())
+            console.log(names)
             currentName = ""
         }
         if(value === "" || value == null){

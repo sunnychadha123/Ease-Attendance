@@ -20,6 +20,8 @@ const nodemailer = require("nodemailer")
 console.log("email client loaded for support")
 const favicon = require('serve-favicon')
 console.log("favicon loaded")
+const CryptoJS = require("crypto-js")
+console.log("Encryption module loaded")
 // Initialize admin credentials for db
 admin.initializeApp({
   credential: admin.credential.cert({
@@ -247,10 +249,13 @@ async function handleZoomPost(req){
                 Meetings[host_id].hostUID = doc.data().firebaseID
                 // Add meeting started to record log
                 let currentDate = new Date()
-                Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+                let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                let messageStringID = "meeting.id " + body.payload.object.id
+                let messageStringStart = "meeting.started " + body.payload.object.topic
+                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
                 // push messages that set meeting ID and meeting Name in front end
-                Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
-                Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
                 console.log("Meeting started: " + body.payload.object.topic)
                 // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
@@ -273,10 +278,13 @@ async function handleZoomPost(req){
                         Meetings[host_id].hostUID = doc.data().firebaseID
                         // Add meeting started to record log
                         let currentDate = new Date()
-                        Meetings[host_id].recordLog.push("Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate)
+                        let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                        let messageStringID = "meeting.id " + body.payload.object.id
+                        let messageStringStart = "meeting.started " + body.payload.object.topic
+                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
                         // push messages that set meeting ID and meeting Name in front end
-                        Meetings[host_id].messageLog.push("meeting.id " + body.payload.object.id)
-                        Meetings[host_id].messageLog.push("meeting.started " + body.payload.object.topic)
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
                         console.log("Meeting started: " + body.payload.object.topic)
                         // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                         db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
@@ -311,8 +319,10 @@ async function handleZoomPost(req){
         if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
             if(Meetings[host_id]){
                 let currentDate = new Date()
-                Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-                Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                let recordString = participantName +  " has joined" + "  " + currentDate
+                let messageString = "participant.joined " + participantName
+                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
                 // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                     messages: Meetings[host_id].messageLog
@@ -330,8 +340,10 @@ async function handleZoomPost(req){
                 if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
                         let currentDate = new Date()
-                        Meetings[host_id].recordLog.push(participantName +  " has joined" + "  " + currentDate)
-                        Meetings[host_id].messageLog.push("participant.joined " + participantName)
+                        let recordString = participantName +  " has joined" + "  " + currentDate
+                        let messageString = "participant.joined " + participantName
+                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
                         // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                         db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                             messages: Meetings[host_id].messageLog
@@ -360,13 +372,15 @@ async function handleZoomPost(req){
         const participantID = participant.id
         const participantName = participant.user_name
         const participantEmail = participant.email
-        let currentDate = new Date()
         console.log("Participant " + participantName + " has left")
 
         if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
             if(Meetings[host_id]){
-                Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-                Meetings[host_id].messageLog.push("participant.left " + participantName)
+                let currentDate = new Date()
+                let recordString = participantName +  " has left" + "  " + currentDate
+                let messageString = "participant.left " + participantName
+                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
                 // update current meetings on firebase
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                     messages: Meetings[host_id].messageLog
@@ -381,8 +395,11 @@ async function handleZoomPost(req){
             var tryLeaveParticipantInterval = setInterval(()=>{
                 if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
                     if(Meetings[host_id]){
-                        Meetings[host_id].recordLog.push(participantName +  " has left" + "  " + currentDate)
-                        Meetings[host_id].messageLog.push("participant.left " + participantName)
+                        let currentDate = new Date()
+                        let recordString = participantName +  " has left" + "  " + currentDate
+                        let messageString = "participant.left " + participantName
+                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
                         // update current meetings on firebase
                         db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                             messages: Meetings[host_id].messageLog
@@ -413,9 +430,10 @@ async function handleZoomPost(req){
             let currentDate = new Date()
             // save record to data base
               let currentMessages = Meetings[host_id].messageLog
-              currentMessages.push("meeting.ended")
+              currentMessages.push(CryptoJS.AES.encrypt("meeting.ended",Meetings[host_id].hostUID).toString())
               let currentRecords = Meetings[host_id].recordLog
-              currentRecords.push("Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate)
+              let recordString = "Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate
+              currentRecords.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
               let meetingID = Meetings[host_id].meetingId
               let hostUID = Meetings[host_id].hostUID
               let meetingName = Meetings[host_id].meetingName
