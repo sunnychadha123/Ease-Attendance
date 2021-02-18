@@ -246,7 +246,6 @@ function refreshTable(){
     },1000)
 }
 function evaluateParticipantTable(doc){
-    notRegisteredCount = 0
     if(doc.data()){
         const meetingMessages = doc.data().messages
         // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
@@ -324,7 +323,6 @@ function evaluateParticipantTable(doc){
                 else{
                     greenNotification("Your meeting has been saved")
                 }
-                notRegisteredCount = 0
                 CurrentMeeting = ""
                 CurrentMeetingID = ""
                 CurrentMessages = []
@@ -366,7 +364,7 @@ function evaluateParticipantTable(doc){
                     participantFirst = data[1]
                     participantLast = data[data.length-1]
                 }
-                let fullName = participantFirst + " " + participantLast
+                let fullName = participantFirst.trim() + " " + participantLast.trim()
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
                     var isPartOfRoster = false
@@ -381,12 +379,10 @@ function evaluateParticipantTable(doc){
                     }
                     if(!isPartOfRoster){
                         Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
-                        notRegisteredCount += 1
                     }
                 }
                 else{
                     Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
-                    notRegisteredCount += 1
                 }
                 updateParticipantTable()
             }
@@ -400,12 +396,9 @@ function evaluateParticipantTable(doc){
                     participantFirst = data[1]
                     participantLast = data[data.length-1]
                 }
-                for(i = 0 ; i < Participants.length; i++){
+                for(let i = 0 ; i < Participants.length; i++){
                     if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                         const currParticipant = Participants[i]
-                        if(!currParticipant.partOfRoster){
-                            notRegisteredCount -= 1
-                        }
                         Participants.splice(i,1)
                         if(currParticipant.partOfRoster){
                             Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
@@ -419,14 +412,6 @@ function evaluateParticipantTable(doc){
         document.getElementById("ld-spin").style.display = "none"
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
-        if(notRegisteredCount > 0 || meetingIndex === -1){
-            $("#add-on-registered").prop('disabled',false)
-            $("#add-on-registered").show()
-        }
-        else{
-            $("#add-on-registered").prop('disabled',true)
-            $("#add-on-registered").hide()
-        }
     }
     else{
         document.getElementById("status-dot").classList.remove("dot-warning")
@@ -498,6 +483,7 @@ $("#student-search-input-field").on('keyup', function (e) {
 
 });
 function filterClick(clicked_id){
+    notRegisteredCount = 0
     $("#student-search-input-field").val("")
     const participantTable = document.getElementById("participant-table")
     document.getElementById(clicked_id).classList.add("filter-active")
@@ -511,6 +497,7 @@ function filterClick(clicked_id){
             var row = participantTable.insertRow(1);
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
+                notRegisteredCount+=1
                 row.style.backgroundColor = "#b8b8b8"
             }
             else{
@@ -552,6 +539,9 @@ function filterClick(clicked_id){
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
             }
+            else if(Participants[i].state === "Not Registered"){
+                notRegisteredCount += 1
+            }
         }
     }
     else if(clicked_id === "absent-filter"){
@@ -572,6 +562,9 @@ function filterClick(clicked_id){
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
             }
+            else if(Participants[i].state === "Not Registered"){
+                notRegisteredCount += 1
+            }
         }
     }
     else if(clicked_id === "not-registered-filter"){
@@ -581,6 +574,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
+                notRegisteredCount += 1
                 var row = participantTable.insertRow(1);
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
@@ -610,7 +604,18 @@ function filterClick(clicked_id){
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
             }
+            else if(Participants[i].state === "Not Registered"){
+                notRegisteredCount += 1
+            }
         }
+    }
+    if(notRegisteredCount > 0 || meetingIndex === -1){
+        $("#add-on-registered").prop('disabled',false)
+        $("#add-on-registered").show()
+    }
+    else{
+        $("#add-on-registered").prop('disabled',true)
+        $("#add-on-registered").hide()
     }
 }
 
@@ -825,7 +830,6 @@ function check(){
         else{
             currentName += value
             names.push(CryptoJS.AES.encrypt(currentName, auth.currentUser.uid).toString())
-            console.log(names)
             currentName = ""
         }
         if(value === "" || value == null){
