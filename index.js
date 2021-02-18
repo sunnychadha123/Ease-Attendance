@@ -305,6 +305,30 @@ async function handleZoomPost(req){
                 }
                 if(tryCounterA >= 10){
                     clearInterval(tryStartMeetingInterval)
+                    db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                        // Create meeting in meeting dictionary
+                        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                        Meetings[host_id].hostUID = doc.data().firebaseID
+                        // Add meeting started to record log
+                        let currentDate = new Date()
+                        let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                        let messageStringID = "meeting.id " + body.payload.object.id
+                        let messageStringStart = "meeting.started " + body.payload.object.topic
+                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
+                        // push messages that set meeting ID and meeting Name in front end
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
+                        console.log("Meeting started: " + body.payload.object.topic)
+                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                            messages: Meetings[host_id].messageLog
+                        }).then(()=>{
+                        }).catch((error)=>{
+                            console.error(error.message)
+                        })
+                    }).catch((error)=>{
+                        console.error(error.message)
+                    })
                 }
             },3000)
         }
