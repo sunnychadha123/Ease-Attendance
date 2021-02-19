@@ -609,7 +609,7 @@ function filterClick(clicked_id){
             }
         }
     }
-    if(notRegisteredCount > 0 || meetingIndex === -1){
+    if(notRegisteredCount > 0){
         $("#add-on-registered").prop('disabled',false)
         $("#add-on-registered").show()
     }
