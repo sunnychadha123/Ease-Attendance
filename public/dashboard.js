@@ -189,7 +189,7 @@ auth.onAuthStateChanged((user) => {
 });
 document.getElementById("meeting-id-attendance").hidden = true
 $("input").on("click", function(){
-    $(this).removeClass('input-error')
+    $(this).removeClass('is-invalid')
 })
 $(function() {
     $('#meeting-id-input-field').on('keypress', function(e) {
@@ -628,8 +628,8 @@ function addMeetingModal(){
     $("#delete-meeting-button").hide()
     $("#meeting-id-input-field").val("")
     $("#meeting-name-input-field").val("")
-    $("#meeting-id-input-field").removeClass("input-error")
-    $("#meeting-name-input-field").removeClass("input-error")
+    $("#meeting-id-input-field").removeClass("is-invalid")
+    $("#meeting-name-input-field").removeClass("is-invalid")
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
@@ -652,7 +652,7 @@ function addStudent(name){
         }
     }
     $("input").on("click", function(){
-        $(this).removeClass('input-error')
+        $(this).removeClass('is-invalid')
     })
     $('.student-name').on('keypress', function(e) {
         if (e.which === 32){
@@ -684,8 +684,8 @@ function addNotRegistered(){
     $("#delete-meeting-button").hide()
     $("#meeting-id-input-field").val(CurrentMeetingID)
     $("#meeting-name-input-field").val(CurrentMeeting)
-    $("#meeting-id-input-field").removeClass("input-error")
-    $("#meeting-name-input-field").removeClass("input-error")
+    $("#meeting-id-input-field").removeClass("is-invalid")
+    $("#meeting-name-input-field").removeClass("is-invalid")
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
@@ -813,18 +813,18 @@ function check(){
     var currentCount = 0
     var shouldProceed = true;
     if(idInput === "" || idInput == null){
-        document.getElementById("meeting-id-input-field").classList.add("input-error")
+        document.getElementById("meeting-id-input-field").classList.add("is-invalid")
         shouldProceed = false;
     }
     else{
-        document.getElementById("meeting-id-input-field").classList.remove("input-error")
+        document.getElementById("meeting-id-input-field").classList.remove("is-invalid")
     }
     if(nameInput === "" || idInput == null){
-        document.getElementById("meeting-name-input-field").classList.add("input-error")
+        document.getElementById("meeting-name-input-field").classList.add("is-invalid")
         shouldProceed = false;
     }
     else{
-        document.getElementById("meeting-name-input-field").classList.remove("input-error")
+        document.getElementById("meeting-name-input-field").classList.remove("is-invalid")
     }
     $('.student-name').each(function(index,data) {
         const value = $(this).val().trim();
@@ -836,12 +836,12 @@ function check(){
             names.push(CryptoJS.AES.encrypt(currentName, auth.currentUser.uid).toString())
             currentName = ""
         }
-        if(value === "" || value == null){
-            this.classList.add("input-error")
+        if((value === "" || value == null) && currentCount % 2 === 0){
+            this.classList.add("is-invalid")
             shouldProceed = false;
         }
         else{
-            this.classList.remove("input-error")
+            this.classList.remove("is-invalid")
         }
         currentCount += 1
     });
@@ -850,10 +850,10 @@ function check(){
 function checkID(){
     const currID = document.getElementById("meeting-id-input-field").value
     if(currID.length < 9){
-        document.getElementById("meeting-id-input-field").classList.add("input-error")
+        document.getElementById("meeting-id-input-field").classList.add("is-invalid")
         return false
     }
-    document.getElementById("meeting-id-input-field").classList.remove("input-error")
+    document.getElementById("meeting-id-input-field").classList.remove("is-invalid")
     return true
 }
 
@@ -862,7 +862,7 @@ function checkDuplicateID(){
     if(!isEditingMeeting){
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
-                document.getElementById("meeting-id-input-field").classList.add("input-error")
+                document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
             }
         }
@@ -870,12 +870,12 @@ function checkDuplicateID(){
     else{
         for(i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId && i !== editingIndex-1){
-                document.getElementById("meeting-id-input-field").classList.add("input-error")
+                document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
             }
         }
     }
-    document.getElementById("meeting-id-input-field").classList.remove("input-error")
+    document.getElementById("meeting-id-input-field").classList.remove("is-invalid")
     return true
 }
 
