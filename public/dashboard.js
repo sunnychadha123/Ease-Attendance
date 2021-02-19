@@ -310,6 +310,8 @@ function evaluateParticipantTable(doc){
                     $("#meeting-name-input-field").val(CurrentMeeting)
                     $("#delete-meeting-button").prop('disabled', true)
                     $("#delete-meeting-button").hide()
+                    $("#meeting-id-input-field").prop('disabled',true)
+                    $("#meeting-name-input-field").prop('disabled',true)
                     $("#save-meeting-button").innerHTML = "Add Meeting"
                     const studentInputTable = document.getElementById("student-input-table")
                     while (studentInputTable.rows.length !== 0) {
@@ -668,6 +670,8 @@ function deleteStudent(e){
     currentRow.parentNode.removeChild(currentRow)
 }
 function addNotRegistered(){
+    $("#meeting-id-input-field").prop('disabled',true)
+    $("#meeting-name-input-field").prop('disabled',true)
     if(meetingIndex === -1){
         isEditingMeeting = false
     }
@@ -934,6 +938,8 @@ function addMeeting(){
 }
 $('#add-edit-meeting-modal').on('hidden.bs.modal', function () {
     isEditingMeeting = false
+    $("#meeting-id-input-field").prop('disabled',false)
+    $("#meeting-name-input-field").prop('disabled',false)
 })
 function logout(){
     auth.signOut().then(r => {

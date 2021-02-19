@@ -479,15 +479,17 @@ async function handleZoomPost(req){
               if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
                   db.collection("CurrentMeetings").doc(hostUID).set({
                       messages: currentMessages
-                  }).then(()=>{
+                  }).then(()=> {
                       //delete the current meeting when meeting has ended
-                      db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                          if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
-                              delete Meetings[host_id]
-                          }
-                      }).catch((error) => {
-                          console.error(error.message)
-                      });
+                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                          db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                              if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                                  delete Meetings[host_id]
+                              }
+                          }).catch((error) => {
+                              console.error(error.message)
+                          });
+                      }
                   }).catch((error)=>{
                       console.error(error.message)
                   })
@@ -498,15 +500,19 @@ async function handleZoomPost(req){
                       if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
                           db.collection("CurrentMeetings").doc(hostUID).set({
                               messages: currentMessages
-                          }).then(()=>{
+                          }).then(()=> {
                               //delete the current meeting when meeting has ended
-                              db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                                  clearInterval(tryEndMeetingInterval)
-                                  delete Meetings[host_id]
-                              }).catch((error) => {
-                                  console.error(error.message)
-                                  clearInterval(tryEndMeetingInterval)
-                              });
+                              if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                                      clearInterval(tryEndMeetingInterval)
+                                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                                          delete Meetings[host_id]
+                                      }
+                                  }).catch((error) => {
+                                      console.error(error.message)
+                                      clearInterval(tryEndMeetingInterval)
+                                  });
+                              }
                           }).catch((error)=>{
                               console.error(error.message)
                               clearInterval(tryEndMeetingInterval)
