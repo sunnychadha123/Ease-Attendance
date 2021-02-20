@@ -5,6 +5,7 @@
 
 An integration with Zoom to allow teachers to be able to take attendance faster and easier. This Zoom Marketplace app connects to Zoom and allows teachers to easily and automatically track the attendance of their students. Later, detailed records are produced and stored for reference. This app connects to easeattendance.com to take attendance.
 
+Go to [Ease Attendance](https://www.easeattendance.com/) to find more info about features, documentation, support from developers, more about us and our goals, and to ***start easily taking attendance***!
 
 ## Features
 
@@ -22,7 +23,7 @@ An integration with Zoom to allow teachers to be able to take attendance faster 
 
 ## Setup
 
-1. Install the plugin [here]()
+1. Install the plugin [here](https://zoom.us/oauth/authorize?response_type=code&client_id=jr7r46eTRvyF0CPmGFBGGA&redirect_uri=https://www.easeattendance.com/authorize)
 2. Create an account with the same email 
 3. Create a Meeting with a class roster Automatically or Manually:
 
