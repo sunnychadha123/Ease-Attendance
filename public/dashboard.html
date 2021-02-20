@@ -98,7 +98,7 @@
                     </div>
                     <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Student Name" aria-label="Student Name" aria-describedby="addon-wrapping">
                 </div>
-                <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Participants</button>
+                <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update participants</button>
                 <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
                     <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
@@ -154,8 +154,29 @@
                     <tbody>
                     </tbody>
                 </table>
+                <button  id="delete-all-records-button" type="button" data-toggle="modal" data-target="#delete-record-warning-modal" class="btn destructive-btn float-right">Delete All Records</button>
+                <!--- Delete all records warning modal -->
+                <div class="modal fade" id="delete-record-warning-modal" tabindex="" role="dialog" aria-labelledby="delete-record-warning-modal" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header delete-record-header">
+                                <h2 id="delete-all-records-modal-title" class="float-left">Delete All Meeting Records</h2>
+                                <button id="close-delete-all-records-modal" type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                                    <span class="iconify" data-inline="false" data-icon="cil:x" style="font-size: 35px;"></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5 class="">Are you sure you want to delete all you meeting records</h5>
+                                <h5 class="text-secondary">This action is irreversible</h5>
+                            </div>
+                            <div class="modal-footer">
+                                <button  onclick="confirmDeleteAllRecords()" id="delete-all-records-button-confirm" type="button" class="btn destructive-btn float-right">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <!-- Meeting Record Modal -->
-                <div class="modal fade" id="meeting-record-modal" tabindex="-1" role="dialog" aria-labelledby="meeting-record=modal" aria-hidden="true">
+                <div class="modal fade" id="meeting-record-modal" tabindex="-1" role="dialog" aria-labelledby="meeting-record-modal" aria-hidden="true">
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -179,7 +200,7 @@
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <button onclick="deleteRecord()" id="delete-record-button" type="button" class="btn btn-primary">Delete record</button>
+                                <button onclick="deleteRecord()" id="delete-record-button" type="button" class="btn btn-primary">Delete Record</button>
                             </div>
                         </div>
                     </div>
@@ -247,7 +268,7 @@
     <div hidden id="verifyEmail" class="container justify-content-center text-center">
         <h3 id="verifyEmailTitle">Please verify email</h3>
         <h6 id="verifyEmailDescription">A verification link has been sent to your email. If you did not receive it, resend the verification link or change your email in settings</h6>
-        <button type="button" onclick="resendVerificationEmail()" class="btn save-setting-button">Resend verification email</button>
+        <button type="button" onclick="resendVerificationEmail()" class="btn save-setting-button">Resend Verification Email</button>
     </div>
 </div>
 
@@ -269,16 +290,16 @@
                         </div>
                         <input autocomplete="off" id="displayName-input-field" onclick="this.select()" type="text" class="form-control " placeholder="Enter a new name" aria-label="New Name" aria-describedby="addon-wrapping">
                     </div>
-                    <button type="button" onclick="saveDisplayName()" class="btn save-setting-button">Save changes</button>
+                    <button type="button" onclick="saveDisplayName()" class="btn save-setting-button">Save Changes</button>
                     <button hidden id="settings-resend-verification-link-button" type="button" onclick="settingsResendVerificationEmail()" class="btn save-setting-button">Resend verification email</button>
                     <h6>Password</h6>
                     <div id="pass-current-email" class="input-group flex-nowrap float-left">
                         <div id="pass-current-email-prepend" class="input-group-prepend">
-                            <span class="input-group-text" id="addon-wrapping-6"><span class="iconify" data-inline="false" data-icon="carbon:email" style="font-size: 20px;"></span></span></span>
+                            <span class="input-group-text" id="addon-wrapping-6"><span class="iconify" data-inline="false" data-icon="carbon:email" style="font-size: 20px;"></span></span>
                         </div>
                         <input autocomplete="off" id="pass-current-email-input-field" onclick="this.select()" type="email" class="form-control " placeholder="Enter email" aria-label="Old pass" aria-describedby="addon-wrapping">
                     </div>
-                    <button type="button" onclick="resetPassword()" class="btn save-setting-button">Send reset link</button>
+                    <button type="button" onclick="resetPassword()" class="btn save-setting-button">Send Reset Link</button>
                 </div>
 
 

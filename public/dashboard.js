@@ -873,7 +873,28 @@ function deleteRecord(){
         redNotification("Error deleting record")
     });
 }
-
+function confirmDeleteAllRecords(){
+    let deletionCount = 0
+    let PastMeetingsLength = PastMeetings.length
+    for(let i = 0; i < PastMeetingsLength; i++){
+        if(i < PastMeetingsLength){
+            firestore.collection("Records").doc(PastMeetings[i].docID).delete().then(() =>{
+                deletionCount += 1
+                if(deletionCount === PastMeetingsLength){
+                    $("#delete-record-warning-modal").modal("hide")
+                    greenNotification("All meeting records deleted")
+                }
+            }).catch((error) => {
+                redNotification("Error deleting records")
+                i = PastMeetingsLength
+            })
+        }
+        else{
+            break
+        }
+    }
+    $("#delete-record-warning-modal").modal("hide")
+}
 
 function deleteMeeting(){
     const currentMeeting = Meetings[editingIndex-1]
