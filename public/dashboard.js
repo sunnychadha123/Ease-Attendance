@@ -268,6 +268,8 @@ function evaluateParticipantTable(doc){
             CurrentMeetingID = ""
             CurrentMessages = []
             Participants = []
+            document.getElementById("current-participants").innerHTML = ""
+            document.getElementById("current-participant-number").innerHTML = ""
             meetingIndex = -1
             clearTable()
         }
@@ -432,6 +434,8 @@ function evaluateParticipantTable(doc){
             meetingIndex = -1
             Participants = []
             MeetingIsOccurring = false
+            document.getElementById("current-participants").innerHTML = ""
+            document.getElementById("current-participant-number").innerHTML = ""
             clearTable()
         }
         else{
@@ -445,6 +449,8 @@ function evaluateParticipantTable(doc){
             CurrentMeetingID = ""
             Participants = []
             meetingIndex = -1
+            document.getElementById("current-participants").innerHTML = ""
+            document.getElementById("current-participant-number").innerHTML = ""
             CurrentMessages = []
             clearTable()
             document.getElementById("ld-spin").style.display = "none"
@@ -509,6 +515,8 @@ function filterClick(clicked_id){
     $("#student-search-input-field").val("")
     const participantTable = document.getElementById("participant-table")
     document.getElementById(clicked_id).classList.add("filter-active")
+    let presentParticipantCount = 0;
+    let totalParticipants = 0;
     clearTable()
     if(clicked_id === "all-filter"){
         document.getElementById("present-filter").classList.remove("filter-active")
@@ -521,6 +529,7 @@ function filterClick(clicked_id){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
                 row.style.backgroundColor = "#b8b8b8"
+                presentParticipantCount += 1
             }
             else{
                 row.style.backgroundColor = "#ffffff"
@@ -532,12 +541,16 @@ function filterClick(clicked_id){
             cell3.innerHTML = Participants[i].state
             if(Participants[i].state === "Present"){
                 cell3.style.color = "#00bc50"
+                presentParticipantCount += 1
+                totalParticipants += 1
             }
             if(Participants[i].state === "Absent"){
                 cell3.style.color = "#dd174d"
+                totalParticipants += 1
             }
             if(Participants[i].state === "Left Meeting"){
                 cell3.style.color = "#ddb217"
+                totalParticipants += 1
             }
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
@@ -550,6 +563,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
+                presentParticipantCount += 1
                 var row = participantTable.insertRow(1);
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
@@ -560,9 +574,17 @@ function filterClick(clicked_id){
                 cell3.style.color = "#00bc50"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
+                totalParticipants += 1
             }
             else if(Participants[i].state === "Not Registered"){
+                presentParticipantCount += 1
                 notRegisteredCount += 1
+            }
+            else if(Participants[i].state === "Absent"){
+                totalParticipants += 1
+            }
+            else if(Participants[i].state === "Left Meeting"){
+                totalParticipants += 1
             }
         }
     }
@@ -583,9 +605,18 @@ function filterClick(clicked_id){
                 cell3.style.color = "#dd174d"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
+                totalParticipants += 1
+            }
+            else if(Participants[i].state === "Present"){
+                presentParticipantCount += 1
+                totalParticipants += 1
             }
             else if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
+                presentParticipantCount += 1
+            }
+            else if(Participants[i].state === "Left Meeting"){
+                totalParticipants += 1
             }
         }
     }
@@ -606,6 +637,17 @@ function filterClick(clicked_id){
                 cell3.innerHTML = Participants[i].state
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
+                presentParticipantCount += 1
+            }
+            else if(Participants[i].state === "Present"){
+                presentParticipantCount += 1
+                totalParticipants += 1
+            }
+            else if(Participants[i].state === "Left Meeting"){
+                totalParticipants += 1
+            }
+            else if(Participants[i].state === "Absent"){
+                totalParticipants += 1
             }
         }
     }
@@ -625,11 +667,32 @@ function filterClick(clicked_id){
                 cell3.style.color = "#ddb217"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
+                totalParticipants += 1
             }
             else if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
+                presentParticipantCount += 1
+            }
+            else if(Participants[i].state === "Present"){
+                presentParticipantCount += 1
+                totalParticipants += 1
+            }
+            else if(Participants[i].state === "Absent"){
+                totalParticipants += 1
             }
         }
+    }
+    if(MeetingIsOccurring && meetingIndex === -1){
+        document.getElementById("current-participants").innerHTML = "Participants: "
+        document.getElementById("current-participant-number").innerHTML = String(presentParticipantCount)
+    }
+    else if(MeetingIsOccurring){
+        document.getElementById("current-participants").innerHTML = "Participants: "
+        document.getElementById("current-participant-number").innerHTML = String(presentParticipantCount) + " out of " + String(totalParticipants)
+    }
+    else{
+        document.getElementById("current-participants").innerHTML = ""
+        document.getElementById("current-participant-number").innerHTML = ""
     }
     if(notRegisteredCount > 0){
         $("#add-on-registered").prop('disabled',false)

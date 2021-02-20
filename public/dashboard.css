@@ -176,6 +176,7 @@ hr{
 }
 #status{
     color: black;
+    margin-top: 10px;
     margin-bottom: 50px;
 }
 
@@ -513,4 +514,12 @@ hr{
     -webkit-appearance: none;
     outline: none;
     border: none
+}
+#current-participants{
+    color: black;
+    display: inline!important;
+}
+#current-participant-number{
+    color: #ebac62;
+    display: inline!important;
 }
