@@ -6,11 +6,12 @@ class Meeting{
     }
 }
 class Participant{
-    constructor(first,last,attendance, roster) {
+    constructor(first,last,attendance, roster, id) {
         this.firstName = first
         this.lastName = last
         this.state = attendance
         this.partOfRoster = roster
+        this.id = id
     }
 }
 class PastMeeting{
@@ -359,11 +360,12 @@ function evaluateParticipantTable(doc){
             else if(eventType === "participant.joined"){
                 var participantFirst = ""
                 var participantLast = ""
+                var user_id = data[1]
                 if(data.length === 2){
-                    participantFirst = data[1]
+                    participantFirst = data[2]
                 }
                 else if(data.length > 2){
-                    participantFirst = data[1]
+                    participantFirst = data[2]
                     participantLast = data[data.length-1]
                 }
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
@@ -371,39 +373,41 @@ function evaluateParticipantTable(doc){
                 if(meetingIndex !== -1){
                     var isPartOfRoster = false
                     for(var i = 0 ; i < Participants.length; i++){
-                        if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
-                            const toAdd = Participants[i]
+                        if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].state !== "Present" && Participants[i].id === user_id){
                             isPartOfRoster = true
                             Participants.splice(i,1)
-                            Participants.unshift(new Participant(toAdd.firstName, toAdd.lastName, "Present",true))
                             break
                         }
                     }
                     if(!isPartOfRoster){
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                        Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false,user_id))
+                    }
+                    else{
+                        Participants.unshift(new Participant(participantFirst, participantLast, "Present",true,user_id))
                     }
                 }
                 else{
-                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false,user_id))
                 }
                 updateParticipantTable()
             }
             else if(eventType === "participant.left"){
                 var participantFirst = ""
                 var participantLast = ""
+                let user_id = data[1]
                 if(data.length === 2){
-                    participantFirst = data[1]
+                    participantFirst = data[2]
                 }
                 else if(data.length > 2){
-                    participantFirst = data[1]
+                    participantFirst = data[2]
                     participantLast = data[data.length-1]
                 }
                 for(let i = 0 ; i < Participants.length; i++){
-                    if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
+                    if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].id === user_id){
                         const currParticipant = Participants[i]
                         Participants.splice(i,1)
                         if(currParticipant.partOfRoster){
-                            Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
+                            Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true,user_id))
                         }
                         break
                     }
