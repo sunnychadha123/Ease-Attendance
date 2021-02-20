@@ -399,14 +399,28 @@ function evaluateParticipantTable(doc){
                     participantFirst = data[1]
                     participantLast = data[data.length-1]
                 }
+                var currParticipant = null
+                var currIndex = null
                 for(let i = 0 ; i < Participants.length; i++){
                     if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
-                        const currParticipant = Participants[i]
-                        Participants.splice(i,1)
-                        if(currParticipant.partOfRoster){
-                            Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
+                        if(currParticipant && currParticipant.state === "Present"){
+                            if(Participants[i].state === "Not Registered"){
+                                currParticipant = Participants[i]
+                                currIndex = i
+                            }
                         }
-                        break
+                        else if(!currParticipant){
+                            if(Participants[i].state === "Not Registered" || Participants[i].state === "Present"){
+                                currParticipant = Participants[i]
+                                currIndex = i
+                            }
+                        }
+                    }
+                }
+                if(currParticipant){
+                    Participants.splice(currIndex,1)
+                    if(currParticipant.partOfRoster){
+                        Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
                     }
                 }
                 updateParticipantTable()
