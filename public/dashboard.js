@@ -290,15 +290,16 @@ function evaluateParticipantTable(doc){
                     meetingName += data[i] + " "
                 }
                 CurrentMeeting = meetingName
-                document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 document.getElementById("status-dot").classList.remove("dot-danger")
                 if(meetingIndex === -1){
                     document.getElementById("status-dot").classList.remove("dot-success")
                     document.getElementById("status-dot").classList.add("dot-warning")
+                    document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 }
                 else{
                     document.getElementById("status-dot").classList.remove("dot-warning")
                     document.getElementById("status-dot").classList.add("dot-success")
+                    document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + Meetings[meetingIndex].name
                 }
                 updateParticipantTable()
             }
