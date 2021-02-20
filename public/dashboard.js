@@ -114,6 +114,7 @@ auth.onAuthStateChanged((user) => {
                 });
             firestore.collection("Records").where("useruid", "==", user.uid)
                 .onSnapshot((querySnapshot) => {
+                    document.getElementById("records-search-input-field").value = ""
                     PastMeetings = []
                     querySnapshot.forEach((doc) => {
                         const currData = doc.data()
@@ -483,7 +484,7 @@ $("#student-search-input-field").on('keyup', function (e) {
     clearTable()
     for(let i = Participants.length-1; i >= 0; i--){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
-        if(fullName.includes(currValue)){
+        if(fullName.toLowerCase().includes(currValue.toLowerCase().trim())){
             var row = participantTable.insertRow(1);
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
@@ -806,7 +807,7 @@ $("#records-search-input-field").on('keyup', function (e) {
     for(let i = PastMeetings.length-1; i >= 0; i--){
         const name = PastMeetings[i].MeetingName
         const currentRecordTable = document.getElementById("current-record-table")
-        if(name.includes(currValue)){
+        if(name.toLowerCase().includes(currValue.toLowerCase().trim())){
             var currentRow = recordTable.insertRow(1)
             currentRow.addEventListener("click", function () {
                 var index = this.rowIndex
@@ -851,7 +852,7 @@ $("#current-record-search-input-field").on('keyup', function (e) {
     }
     for(let i = PastMeetings[currentRecordIndex].events.length-1; i >= 0; i--){
         const currString = CryptoJS.AES.decrypt(PastMeetings[currentRecordIndex].events[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
-        if(currString.includes(currValue)){
+        if(currString.toLowerCase().includes(currValue.toLowerCase().trim())){
             var row = currentRecordTable.insertRow(0);
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
