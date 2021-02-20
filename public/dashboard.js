@@ -876,9 +876,13 @@ function deleteRecord(){
 function confirmDeleteAllRecords(){
     let deletionCount = 0
     let PastMeetingsLength = PastMeetings.length
+    let PastMeetingIDs = []
+    for(let i = 0; i < PastMeetingsLength; i++){
+        PastMeetingIDs.push(PastMeetings[i].docID)
+    }
     for(let i = 0; i < PastMeetingsLength; i++){
         if(i < PastMeetingsLength){
-            firestore.collection("Records").doc(PastMeetings[i].docID).delete().then(() =>{
+            firestore.collection("Records").doc(PastMeetingIDs[i]).delete().then(() =>{
                 deletionCount += 1
                 if(deletionCount === PastMeetingsLength){
                     $("#delete-record-warning-modal").modal("hide")
