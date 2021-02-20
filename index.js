@@ -497,26 +497,17 @@ async function handleZoomPost(req){
               else{
                   var tryCounterD = 0
                   var tryEndMeetingInterval = setInterval(()=>{
-                      if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
-                          db.collection("CurrentMeetings").doc(hostUID).set({
-                              messages: currentMessages
-                          }).then(()=> {
-                              //delete the current meeting when meeting has ended
+                      //delete the current meeting when meeting has ended
+                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                          db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                              clearInterval(tryEndMeetingInterval)
                               if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                                  db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                                      clearInterval(tryEndMeetingInterval)
-                                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                                          delete Meetings[host_id]
-                                      }
-                                  }).catch((error) => {
-                                      console.error(error.message)
-                                      clearInterval(tryEndMeetingInterval)
-                                  });
+                                  delete Meetings[host_id]
                               }
-                          }).catch((error)=>{
+                          }).catch((error) => {
                               console.error(error.message)
                               clearInterval(tryEndMeetingInterval)
-                          })
+                          });
                       }
                       else{
                           tryCounterD += 1

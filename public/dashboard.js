@@ -38,6 +38,7 @@ var currentRecordIndex = -1
 var editingIndex = 1
 var checkVerificationTimer
 var notRegisteredCount = 0
+var MeetingIsOccurring = false
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -275,6 +276,7 @@ function evaluateParticipantTable(doc){
             const data = currentMessage.split(" ")
             const eventType = data[0]
             if(eventType === "meeting.started"){
+                MeetingIsOccurring = true
                 const participantTable = document.getElementById("participant-table")
                 while(participantTable.rows.length > 1){
                     participantTable.deleteRow(1)
@@ -296,41 +298,6 @@ function evaluateParticipantTable(doc){
                     document.getElementById("status-dot").classList.add("dot-success")
                 }
                 updateParticipantTable()
-            }
-            else if(eventType === "meeting.ended" && j === newMessages.length-1 ){
-                document.getElementById("status-dot").classList.remove("dot-warning")
-                document.getElementById("status-dot").classList.remove("dot-success")
-                document.getElementById("status-dot").classList.add("dot-danger")
-                document.getElementById("currentMeeting-name").innerHTML = "Meeting Has Ended"
-                document.getElementById("meeting-id-attendance").value = ""
-                document.getElementById("meeting-id-attendance").hidden = true
-                if(meetingIndex === -1){
-                    $('#add-edit-meeting-modal').modal('show');
-                    $("#meeting-id-input-field").val(CurrentMeetingID)
-                    $("#meeting-name-input-field").val(CurrentMeeting)
-                    $("#delete-meeting-button").prop('disabled', true)
-                    $("#delete-meeting-button").hide()
-                    $("#meeting-id-input-field").prop('disabled',true)
-                    $("#meeting-name-input-field").prop('disabled',true)
-                    $("#save-meeting-button").innerHTML = "Add Meeting"
-                    const studentInputTable = document.getElementById("student-input-table")
-                    while (studentInputTable.rows.length !== 0) {
-                        studentInputTable.deleteRow(0)
-                    }
-                    EncounteredParticipants.forEach(participant => {
-                        addStudent(participant)
-                    })
-                    document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
-                }
-                else{
-                    greenNotification("Your meeting has been saved")
-                }
-                CurrentMeeting = ""
-                CurrentMeetingID = ""
-                CurrentMessages = []
-                meetingIndex = -1
-                Participants = []
-                clearTable()
             }
             else if(eventType === "meeting.id"){
                 CurrentMeetingID = data[1]
@@ -431,23 +398,61 @@ function evaluateParticipantTable(doc){
         document.getElementById("refresh-cover").classList.remove("running")
     }
     else{
-        document.getElementById("status-dot").classList.remove("dot-warning")
-        document.getElementById("status-dot").classList.remove("dot-success")
-        document.getElementById("status-dot").classList.add("dot-danger")
-        document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
-        document.getElementById("meeting-id-attendance").value = ""
-        document.getElementById("meeting-id-attendance").hidden = true
-        CurrentMeeting = ""
-        CurrentMeetingID = ""
-        Participants = []
-        meetingIndex = -1
-        CurrentMessages = []
-        clearTable()
-        document.getElementById("ld-spin").style.display = "none"
-        document.getElementById("refresh").disabled = false
-        document.getElementById("refresh-cover").classList.remove("running")
-        $("#add-on-registered").prop('disabled',true)
-        $("#add-on-registered").hide()
+        if(MeetingIsOccurring){
+            document.getElementById("status-dot").classList.remove("dot-warning")
+            document.getElementById("status-dot").classList.remove("dot-success")
+            document.getElementById("status-dot").classList.add("dot-danger")
+            document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
+            document.getElementById("meeting-id-attendance").value = ""
+            document.getElementById("meeting-id-attendance").hidden = true
+            if(meetingIndex === -1){
+                $('#add-edit-meeting-modal').modal('show');
+                $("#meeting-id-input-field").val(CurrentMeetingID)
+                $("#meeting-name-input-field").val(CurrentMeeting)
+                $("#delete-meeting-button").prop('disabled', true)
+                $("#delete-meeting-button").hide()
+                $("#meeting-id-input-field").prop('disabled',true)
+                $("#meeting-name-input-field").prop('disabled',true)
+                $("#save-meeting-button").innerHTML = "Add Meeting"
+                const studentInputTable = document.getElementById("student-input-table")
+                while (studentInputTable.rows.length !== 0) {
+                    studentInputTable.deleteRow(0)
+                }
+                EncounteredParticipants.forEach(participant => {
+                    addStudent(participant)
+                })
+                document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
+            }
+            else{
+                greenNotification("Your meeting has been saved")
+            }
+            CurrentMeeting = ""
+            CurrentMeetingID = ""
+            CurrentMessages = []
+            meetingIndex = -1
+            Participants = []
+            MeetingIsOccurring = false
+            clearTable()
+        }
+        else{
+            document.getElementById("status-dot").classList.remove("dot-warning")
+            document.getElementById("status-dot").classList.remove("dot-success")
+            document.getElementById("status-dot").classList.add("dot-danger")
+            document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
+            document.getElementById("meeting-id-attendance").value = ""
+            document.getElementById("meeting-id-attendance").hidden = true
+            CurrentMeeting = ""
+            CurrentMeetingID = ""
+            Participants = []
+            meetingIndex = -1
+            CurrentMessages = []
+            clearTable()
+            document.getElementById("ld-spin").style.display = "none"
+            document.getElementById("refresh").disabled = false
+            document.getElementById("refresh-cover").classList.remove("running")
+            $("#add-on-registered").prop('disabled',true)
+            $("#add-on-registered").hide()
+        }
     }
 }
 function clearTable(){
