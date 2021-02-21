@@ -43,14 +43,14 @@
                 <h3 class="title-description">Helping teachers make their days easier during a tough time</h3>
             </div>
             <div class="banner-col banner-img-col col-lg-5 text-center align-content-center justify-content-center">
-                <lottie-player src="https://assets9.lottiefiles.com/private_files/lf30_ZXsep1.json"  class="banner-img"  speed="1"    loop  autoplay></lottie-player>
+                <lottie-player src="Animations/feature-banner-animation.json"  class="banner-img"  speed="1"    loop  autoplay></lottie-player>
             </div>
 
         </div>
         <div id="quickstart-row" class="container-fluid row justify-content-center">
             <div class="col-lg-6 description-img-col text-lg-left text-center">
                 <div id="gear-animation">
-                <lottie-player id="gear-animation-lottie" src="https://assets4.lottiefiles.com/packages/lf20_ApLQiZ.json"   speed="1"  class=" text-lg-left text-center  " style="width: 100%;" loop ></lottie-player>
+                <lottie-player id="gear-animation-lottie" src="Animations/gear-animation.json"   speed="1"  class=" text-lg-left text-center  " style="width: 100%;" loop ></lottie-player>
                 </div>
                 <h3 id="take-attendance-title" class=" text-center caption-title">Quickly take attendance</h3>
                 <h5 class="take-attendance-caption text-center caption ">Start a meeting and open the website. Watch the attendance update live.</h5>
@@ -90,6 +90,42 @@
                 <h5 class="feature-description">View past meeting records to look back on the attendance of previous meetings</h5>
             </div>
         </div>
+        <div class="container justify-content-center text-center" id="security-container">
+            <lottie-player src="Animations/security.json"  id="security-animation"  speed="1"    loop  autoplay></lottie-player>
+            <h3 id="security-title-text">Security</h3>
+            <h4 id="security-title-description">Your data is safe with us</h4>
+        </div>
+        <div class="container" id="security-container-1">
+            <div class=" row justify-content-center text-center" >
+                <div class="col-8 col-lg-6 text-center security-col">
+                    <h4 class="security-title">Keeping students safe</h4>
+                    <h5 class="">The only data that we receive about students are their names. When received, these names are immediately encrypted and stored in a secure database.
+                        Only after the data is sent to the meeting host, is it then decrypted using their unique credentials</h5>
+                </div>
+                <div class="col-8 col-lg-6 justify-content-center security-img-col security-col">
+                    <img src="Images/student-security-img.png" class="security-image"/>
+                </div>
+            </div>
+            <div class=" row justify-content-center text-center" >
+                <div class="col-8 text-center text-center security-col">
+                    <h4 class="security-title">In accordance with FERPA regulations</h4>
+                    <h5 class="">All data stored on students are not accessible to anyone but the teacher. Even the Ease Attendance team cannot get the names of students from our database</h5>
+                </div>
+                <div class="col-8 justify-content-center security-img-col security-col">
+                    <img src="Images/security-regulations.png" class="security-image"/>
+                </div>
+            </div>
+            <div class=" row justify-content-center text-center" >
+                <div class="col-8 col-lg-6 text-center security-col">
+                    <h4 class="security-title">State of the art security and encryption</h4>
+                    <h5 class="">All data sent in and out of our website uses industry standard TLS and HTTPS protocols. All user credential information stored on the user is encrypted using Google's encryption method in our database. The passwords for all of our users
+                        are never saved. All student names are encrypted using state of the art AES encryption and can only be decrypted by the teacher</h5>
+                </div>
+                <div class="col-8 col-lg-6 justify-content-center security-img-col security-col">
+                    <img src="Images/security-encryption.png" class="security-image"/>
+                </div>
+            </div>
+        </div>
 
         <div class="start-row row justify-content-center text-center">
             <div class="col start-col justify-content-center text-center">
@@ -118,6 +154,11 @@
                 frames: [0, 350],
             },
         ]
+    });
+</script>
+<script>
+    $(function () {
+        $('body').show();
     });
 </script>
 </html>

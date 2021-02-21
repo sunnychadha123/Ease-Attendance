@@ -5,6 +5,7 @@ html{
 }
 body {
     overflow-x: hidden;
+    display: none;
 }
 #main-fluid{
     margin-top: 10px;
@@ -171,6 +172,19 @@ body {
 }
 .hidden{
     visibility: hidden;
+}
+#security-container{
+    margin-top: 50px;
+
+}
+.security-image{
+    width: 90%;
+}
+.security-title{
+    color: #ee6165;
+}
+.security-col{
+    margin-top: 50px;
 }
 @media (max-width: 1650px) {
     .banner-img {
