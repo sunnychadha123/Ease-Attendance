@@ -3,7 +3,7 @@ console.log("email html loaded")
 const port = process.env.PORT || 4000
 console.log("port selected = " + port)
 require('dotenv').config()
-console.log("env vars loaded")
+console.log(".env vars loaded")
 const express = require('express')
 console.log("express loaded")
 const bodyParser = require('body-parser')
