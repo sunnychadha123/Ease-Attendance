@@ -2,7 +2,7 @@ body {
     font-size: .875rem;
     -webkit-appearance: none !important;
 }
-
+*:hover, *:focus, *:active {box-shadow: none !important; }
 .feather {
     width: 16px;
     height: 16px;
