@@ -279,6 +279,7 @@ function evaluateParticipantTable(doc){
             const data = currentMessage.split(" ")
             const eventType = data[0]
             if(eventType === "meeting.started"){
+                EncounteredParticipants = new Set()
                 MeetingIsOccurring = true
                 const participantTable = document.getElementById("participant-table")
                 while(participantTable.rows.length > 1){
