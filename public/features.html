@@ -91,7 +91,7 @@
             </div>
         </div>
         <div class="container justify-content-center text-center" id="security-container">
-            <lottie-player src="Animations/security.json"  id="security-animation"  speed="1"    loop  autoplay></lottie-player>
+            <lottie-player src="Animations/security.json"  id="security-animation"  speed="1"    loop  ></lottie-player>
             <h3 id="security-title-text">Security</h3>
             <h4 id="security-title-description">Your data is safe with us</h4>
         </div>
@@ -152,6 +152,19 @@
                 container: "#quickstart-row",
                 type: "seek",
                 frames: [0, 350],
+            },
+        ]
+    });
+    LottieInteractivity.create({
+        mode:"scroll",
+        player:'#security-animation',
+
+        actions: [
+            {
+                visibility:[0,1],
+                container: "#security-container",
+                type: "seek",
+                frames: [0, 270],
             },
         ]
     });
