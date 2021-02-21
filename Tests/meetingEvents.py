@@ -1,6 +1,6 @@
 import requests
+from time import sleep
 
-VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
 
 def startMeeting(meetingName,meetingID,hostID):
     url = "https://www.easeattendance.com/api/requests"
@@ -13,8 +13,7 @@ def startMeeting(meetingName,meetingID,hostID):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response.text)
-
+    print(response)
 
 def endMeeting(meetingName,meetingID,hostID):
     url = "https://www.easeattendance.com/api/requests"
@@ -27,8 +26,7 @@ def endMeeting(meetingName,meetingID,hostID):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response.text)
-
+    print(response)
 
 def addParticipant(participantName, meetingName, meetingID, hostID):
     url = "https://www.easeattendance.com/api/requests"
@@ -41,7 +39,7 @@ def addParticipant(participantName, meetingName, meetingID, hostID):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response.text)
+    print(response)
 
 def removeParticipant(participantName, meetingName, meetingID, hostID):
     url = "https://www.easeattendance.com/api/requests"
@@ -54,4 +52,32 @@ def removeParticipant(participantName, meetingName, meetingID, hostID):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response.text)
+    print(response)
+
+
+VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
+AdityaHostID = "TbQ_nGjpR9aMPQnS-IkQPQ"
+meetingID = "1234567890"
+meetingName = "PG Family Friendly Time"
+
+startMeeting(meetingName,meetingID,VarunHostID)
+startMeeting(meetingName,meetingID,AdityaHostID)
+
+sleep(5)
+
+for x in range(1000):
+    addParticipant(str(x)+" "+str(x), meetingName, meetingID, VarunHostID)
+    addParticipant(str(x)+" "+str(x), meetingName, meetingID, AdityaHostID)
+
+
+sleep(30)
+
+for x in range(1000):
+    removeParticipant(str(x)+" "+str(x), meetingName, meetingID, VarunHostID)
+    removeParticipant(str(x)+" "+str(x), meetingName, meetingID, AdityaHostID)
+
+
+sleep(5)
+
+endMeeting(meetingName,meetingID,VarunHostID)
+endMeeting(meetingName,meetingID,AdityaHostID)
