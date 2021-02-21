@@ -279,6 +279,7 @@ function evaluateParticipantTable(doc){
             const data = currentMessage.split(" ")
             const eventType = data[0]
             if(eventType === "meeting.started"){
+                EncounteredParticipants = new Set()
                 MeetingIsOccurring = true
                 const participantTable = document.getElementById("participant-table")
                 while(participantTable.rows.length > 1){
@@ -409,6 +410,8 @@ function evaluateParticipantTable(doc){
             document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
             document.getElementById("meeting-id-attendance").value = ""
             document.getElementById("meeting-id-attendance").hidden = true
+            $("#add-on-registered").prop('disabled',true)
+            $("#add-on-registered").hide()
             if(meetingIndex === -1){
                 $('#add-edit-meeting-modal').modal('show');
                 $("#meeting-id-input-field").val(CurrentMeetingID)
