@@ -392,7 +392,7 @@ function evaluateParticipantTable(doc){
                         }
                     }
                     if(!didActOnEvent){
-                        Participants[i].bufferCount += 1
+                        Participants[presentParticipantIndex].bufferCount += 1
                     }
                 }
                 else{
