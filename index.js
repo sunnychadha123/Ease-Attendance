@@ -559,6 +559,15 @@ app.post('/deauthorize', (req, res) => {
                           }).catch((error) => {
                               console.error(error.message)
                           })
+                          if(Meetings[firebaseUserID]){
+                              delete Meetings[firebaseUserID];
+                              db.collection("CurrentMeetings").doc(firebaseUserID).delete().then(() => {
+                                  console.log("Meetings deleted for user with useruid " + firebaseUserID)
+                              }).catch(() => {
+                                  console.error("Error deleting meeting for user with uid " + firebaseUserID)
+                              })
+                          }
+
                           db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
                               querySnapshot.forEach((Perioddoc) => {
                                   db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
