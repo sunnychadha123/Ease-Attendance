@@ -223,6 +223,7 @@ function updateParticipantTable(){
     else if( document.getElementById("not-registered-filter").classList.contains("filter-active")){
         filterClick("not-registered-filter")
     }
+    sortParticipants()
 }
 function refreshTable(){
     document.getElementById("refresh").disabled = true
@@ -247,6 +248,7 @@ function refreshTable(){
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
     },1000)
+    sortParticipants()
 }
 function evaluateParticipantTable(doc){
     if(doc.data()){
@@ -709,9 +711,7 @@ function filterClick(clicked_id){
         $("#add-on-registered").prop('disabled',true)
         $("#add-on-registered").hide()
     }
-
-
-
+    sortParticipants()
 }
 
 function sortByLast(){

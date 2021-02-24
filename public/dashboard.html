@@ -99,8 +99,7 @@
                     <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Participant Name" aria-label="Student Name" aria-describedby="addon-wrapping">
                 </div>
                 <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Participants</button>
-                <button onclick="sortByFirst()"   type="button" id="sortParticipantsByFirst">Sort by first</button>
-                <button onclick="sortByLast()"   type="button" id="sortParticipantsByLast">Sort by last</button>
+
 
                 <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
@@ -116,12 +115,14 @@
                 <table class="table sortable" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
-                        <a onclick="sortByFirst()">
-                            <th class="table-head-title"  scope="col">First Name</th>
-                        </a>
-                        <a onclick="sortByLast()">
-                            <th class="table-head-title"  scope="col">Last Name</th>
-                        </a>
+                        <th class="table-head-title"  scope="col">
+                            <a onclick="sortByFirst()" class = "sort-buttons">First Name</a>
+                        </th>
+
+                        <th class="table-head-title"  scope="col">
+                            <a onclick="sortByLast()" class = "sort-buttons">Last Name</a>
+                        </th>
+
                         <th class="table-head-title" scope="col">Status</th>
                     </tr>
                     </thead>

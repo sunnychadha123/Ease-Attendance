@@ -210,6 +210,9 @@ hr{
     height: 20px;
     width: 20px;
 }
+.sort-buttons{
+    cursor : pointer;
+}
 .filter-button{
     -webkit-appearance: none!important;
     margin-bottom: 10px;
