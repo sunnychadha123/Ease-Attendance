@@ -238,293 +238,281 @@ app.post('/support-message', (req,res) => {
 
 // Function to handle zoom webhooks
 
-async function handleZoomPost(req){
-    const body = req.body
-    const host_id = body.payload.object.host_id
-    if(body.event === "meeting.started"){
-        if(!Meetings[host_id]){
-            db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
-                // Create meeting in meeting dictionary
-                Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
-                Meetings[host_id].hostUID = doc.data().firebaseID
-                // Add meeting started to record log
-                let currentDate = new Date()
-                let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
-                let messageStringID = "meeting.id " + body.payload.object.id
-                let messageStringStart = "meeting.started " + body.payload.object.topic
-                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
-                // push messages that set meeting ID and meeting Name in front end
-                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
-                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
-                console.log("Meeting started: " + body.payload.object.topic)
-                // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                    messages: Meetings[host_id].messageLog
-                }).then(()=>{
-                }).catch((error)=>{
-                    console.error(error.message)
-                })
-            }).catch((error)=>{
-                console.error(error.message)
-            })
-        }
-        else{
-            var tryCounterA = 0
-            var tryStartMeetingInterval = setInterval(() => {
-                if(!Meetings[host_id]){
-                    db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
-                        // Create meeting in meeting dictionary
-                        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
-                        Meetings[host_id].hostUID = doc.data().firebaseID
-                        // Add meeting started to record log
-                        let currentDate = new Date()
-                        let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
-                        let messageStringID = "meeting.id " + body.payload.object.id
-                        let messageStringStart = "meeting.started " + body.payload.object.topic
-                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
-                        // push messages that set meeting ID and meeting Name in front end
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
-                        console.log("Meeting started: " + body.payload.object.topic)
-                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                            clearInterval(tryStartMeetingInterval)
-                        }).catch((error)=>{
-                            console.error(error.message)
-                            clearInterval(tryStartMeetingInterval)
-                        })
-                    }).catch((error)=>{
-                        console.error(error.message)
-                        clearInterval(tryStartMeetingInterval)
-                    })
-                }
-                else{
-                    tryCounterA+=1
-                }
-                if(tryCounterA >= 10){
-                    clearInterval(tryStartMeetingInterval)
-                    db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
-                        // Create meeting in meeting dictionary
-                        Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
-                        Meetings[host_id].hostUID = doc.data().firebaseID
-                        // Add meeting started to record log
-                        let currentDate = new Date()
-                        let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
-                        let messageStringID = "meeting.id " + body.payload.object.id
-                        let messageStringStart = "meeting.started " + body.payload.object.topic
-                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
-                        // push messages that set meeting ID and meeting Name in front end
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
-                        console.log("Meeting started: " + body.payload.object.topic)
-                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                        }).catch((error)=>{
-                            console.error(error.message)
-                        })
-                    }).catch((error)=>{
-                        console.error(error.message)
-                    })
-                }
-            },3000)
-        }
-    }
-    else if(body.event === "meeting.participant_joined"){
-        const participant = body.payload.object.participant
-        const participantID = participant.id
-        const participantName = participant.user_name
-        const participantEmail = participant.email
-        console.log("Participant " + participantName + " has joined")
 
-        if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-            let currentDate = new Date()
-            let recordString = participantName +  " has joined" + "  " + currentDate
-            let messageString = "participant.joined " + participantName + " " + participantEmail
-            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
-            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
-            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                messages: Meetings[host_id].messageLog
-            }).then(()=>{
-
-            }).catch((error)=>{
-                console.error(error.message)
-
-            })
-        }
-        else{
-            var tryCounterB = 0
-            var tryJoinParticipantInterval = setInterval(() => {
-                if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-                    if(Meetings[host_id]){
-                        let currentDate = new Date()
-                        let recordString = participantName +  " has joined" + "  " + currentDate
-                        let messageString = "participant.joined " + participantName + " " + participantEmail
-                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
-                        // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                            clearInterval(tryJoinParticipantInterval)
-                        }).catch((error)=>{
-                            console.error(error.message)
-                            clearInterval(tryJoinParticipantInterval)
-                        })
-                    }
-                    else{
-                        clearInterval(tryJoinParticipantInterval)
-                    }
-                }
-                else{
-                    tryCounterB += 1
-                }
-                if(tryCounterB >= 10){
-                    clearInterval(tryJoinParticipantInterval)
-                }
-            },3000)
-        }
-    }
-    else if(body.event === "meeting.participant_left"){
-        const participant = body.payload.object.participant
-        const participantID = participant.id
-        const participantName = participant.user_name
-        const participantEmail = participant.email
-        console.log("Participant " + participantName + " has left")
-
-        if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-            let currentDate = new Date()
-            let recordString = participantName +  " has left" + "  " + currentDate
-            let messageString = "participant.left " + participantName + " " + participantEmail
-            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
-            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
-            // update current meetings on firebase
-            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                messages: Meetings[host_id].messageLog
-            }).then(()=>{
-            }).catch((error)=>{
-                console.error(error.message)
-            })
-        }
-        else{
-            var tryCounterC = 0
-            var tryLeaveParticipantInterval = setInterval(()=>{
-                if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-                    if(Meetings[host_id]){
-                        let currentDate = new Date()
-                        let recordString = participantName +  " has left" + "  " + currentDate
-                        let messageString = "participant.left " + participantName + " " + participantEmail
-                        Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
-                        Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
-                        // update current meetings on firebase
-                        db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                            messages: Meetings[host_id].messageLog
-                        }).then(()=>{
-                            clearInterval(tryLeaveParticipantInterval)
-                        }).catch((error)=>{
-                            console.error(error.message)
-                            clearInterval(tryLeaveParticipantInterval)
-                        })
-                    }
-                    else{
-                        clearInterval(tryLeaveParticipantInterval)
-                    }
-                }
-                else{
-                    tryCounterC += 1
-                }
-                if(tryCounterC >= 10){
-                    clearInterval(tryLeaveParticipantInterval)
-                }
-            },3000)
-        }
-    }
-    else if(body.event === "meeting.ended"){
-        // If meeting exists and participant is known
-        console.log("Meeting ended: " + body.payload.object.topic)
-          if(Meetings[host_id]){
-            let currentDate = new Date()
-            // save record to data base
-              let currentMessages = Meetings[host_id].messageLog
-              currentMessages.push(CryptoJS.AES.encrypt("meeting.ended",Meetings[host_id].hostUID).toString())
-              let currentRecords = Meetings[host_id].recordLog
-              let recordString = "Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate
-              currentRecords.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
-              let meetingID = Meetings[host_id].meetingId
-              let hostUID = Meetings[host_id].hostUID
-              let meetingName = Meetings[host_id].meetingName
-              let meetingStart = Meetings[host_id].meetingStart
-              let uuid = body.payload.object.uuid
-              db.collection("Records").add({
-                  'Events': currentRecords,
-                  'MeetingID': meetingID,
-                  'useruid': hostUID,
-                  'MeetingName': meetingName,
-                  'MeetingStart': meetingStart,
-                  'MeetingEnd' : new Date()
-              })
-                  .then(() => {
-                  })
-                  .catch((error) => {
-                      console.error(error.message);
-                  });
-              if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
-                  db.collection("CurrentMeetings").doc(hostUID).set({
-                      messages: currentMessages
-                  }).then(()=> {
-                      //delete the current meeting when meeting has ended
-                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                          db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                              if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                                  delete Meetings[host_id]
-                              }
-                          }).catch((error) => {
-                              console.error(error.message)
-                          });
-                      }
-                  }).catch((error)=>{
-                      console.error(error.message)
-                  })
-              }
-              else{
-                  var tryCounterD = 0
-                  var tryEndMeetingInterval = setInterval(()=>{
-                      //delete the current meeting when meeting has ended
-                      if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                          db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
-                              clearInterval(tryEndMeetingInterval)
-                              if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
-                                  delete Meetings[host_id]
-                              }
-                          }).catch((error) => {
-                              console.error(error.message)
-                              clearInterval(tryEndMeetingInterval)
-                          });
-                      }
-                      else{
-                          tryCounterD += 1
-                      }
-                      if(tryCounterD >= 10){
-                          clearInterval(tryEndMeetingInterval)
-                      }
-                  },3000)
-              }
-          }
-    }
-}
 app.post('/api/requests', (req, res) => {
     res.status(200)
     res.send()
     console.log("post request to /api/requests sent ")
     console.log(req.body)
     if(req && req.headers && req.headers.authorization === process.env.zoom_verification_token){
-        handleZoomPost(req).catch((error)=>{
-            console.error(error.message)
-        })
+        const body = req.body
+        const host_id = body.payload.object.host_id
+        if(body.event === "meeting.started"){
+            if(!Meetings[host_id]){
+                db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                    // Create meeting in meeting dictionary
+                    Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                    Meetings[host_id].hostUID = doc.data().firebaseID
+                    // Add meeting started to record log
+                    let currentDate = new Date()
+                    let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                    let messageStringID = "meeting.id " + body.payload.object.id
+                    let messageStringStart = "meeting.started " + body.payload.object.topic
+                    Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
+                    // push messages that set meeting ID and meeting Name in front end
+                    Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                    Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
+                    console.log("Meeting started: " + body.payload.object.topic)
+                    // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                    db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                        messages: Meetings[host_id].messageLog
+                    }).then(()=>{
+                    }).catch((error)=>{
+                        console.error(error.message)
+                    })
+                }).catch((error)=>{
+                    console.error(error.message)
+                })
+            }
+            else{
+                var tryCounterA = 0
+                var tryStartMeetingInterval = setInterval(() => {
+                    if(!Meetings[host_id]){
+                        clearInterval(tryStartMeetingInterval)
+                        db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                            // Create meeting in meeting dictionary
+                            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                            Meetings[host_id].hostUID = doc.data().firebaseID
+                            // Add meeting started to record log
+                            let currentDate = new Date()
+                            let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                            let messageStringID = "meeting.id " + body.payload.object.id
+                            let messageStringStart = "meeting.started " + body.payload.object.topic
+                            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
+                            // push messages that set meeting ID and meeting Name in front end
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
+                            console.log("Meeting started: " + body.payload.object.topic)
+                            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                                messages: Meetings[host_id].messageLog
+                            }).then(()=>{
+                            }).catch((error)=>{
+                                console.error(error.message)
+                            })
+                        }).catch((error)=>{
+                            console.error(error.message)
+                        })
+                    }
+                    else{
+                        tryCounterA+=1
+                    }
+                    if(tryCounterA >= 10){
+                        clearInterval(tryStartMeetingInterval)
+                        db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
+                            // Create meeting in meeting dictionary
+                            Meetings[host_id] = new Meeting(host_id, body.payload.object.topic, doc.data().email, body.payload.object.id,body.payload.object.uuid)
+                            Meetings[host_id].hostUID = doc.data().firebaseID
+                            // Add meeting started to record log
+                            let currentDate = new Date()
+                            let recordString = "Meeting: " + body.payload.object.topic + " has started " + "with ID: " + body.payload.object.id + "  " + currentDate
+                            let messageStringID = "meeting.id " + body.payload.object.id
+                            let messageStringStart = "meeting.started " + body.payload.object.topic
+                            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,doc.data().firebaseID).toString())
+                            // push messages that set meeting ID and meeting Name in front end
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
+                            console.log("Meeting started: " + body.payload.object.topic)
+                            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                                messages: Meetings[host_id].messageLog
+                            }).then(()=>{
+                            }).catch((error)=>{
+                                console.error(error.message)
+                            })
+                        }).catch((error)=>{
+                            console.error(error.message)
+                        })
+                    }
+                },3000)
+            }
+        }
+        else if(body.event === "meeting.participant_joined"){
+            const participant = body.payload.object.participant
+            const participantID = participant.id
+            const participantName = participant.user_name
+            const participantEmail = participant.email
+            console.log("Participant " + participantName + " has joined")
+
+            if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
+                let currentDate = new Date()
+                let recordString = participantName +  " has joined" + "  " + currentDate
+                let messageString = "participant.joined " + participantName + " " + participantEmail
+                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
+                // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                    messages: Meetings[host_id].messageLog
+                }).then(()=>{
+
+                }).catch((error)=>{
+                    console.error(error.message)
+
+                })
+            }
+            else{
+                var tryCounterB = 0
+                var tryJoinParticipantInterval = setInterval(() => {
+                    if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
+                        clearInterval(tryJoinParticipantInterval)
+                        if(Meetings[host_id]){
+                            let currentDate = new Date()
+                            let recordString = participantName +  " has joined" + "  " + currentDate
+                            let messageString = "participant.joined " + participantName + " " + participantEmail
+                            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
+                            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                                messages: Meetings[host_id].messageLog
+                            }).then(()=>{
+                            }).catch((error)=>{
+                                console.error(error.message)
+                            })
+                        }
+                    }
+                    else{
+                        tryCounterB += 1
+                    }
+                    if(tryCounterB >= 10){
+                        clearInterval(tryJoinParticipantInterval)
+                    }
+                },3000)
+            }
+        }
+        else if(body.event === "meeting.participant_left"){
+            const participant = body.payload.object.participant
+            const participantID = participant.id
+            const participantName = participant.user_name
+            const participantEmail = participant.email
+            console.log("Participant " + participantName + " has left")
+
+            if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
+                let currentDate = new Date()
+                let recordString = participantName +  " has left" + "  " + currentDate
+                let messageString = "participant.left " + participantName + " " + participantEmail
+                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
+                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
+                // update current meetings on firebase
+                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                    messages: Meetings[host_id].messageLog
+                }).then(()=>{
+                }).catch((error)=>{
+                    console.error(error.message)
+                })
+            }
+            else{
+                var tryCounterC = 0
+                var tryLeaveParticipantInterval = setInterval(()=>{
+                    if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
+                        clearInterval(tryLeaveParticipantInterval)
+                        if(Meetings[host_id]){
+                            let currentDate = new Date()
+                            let recordString = participantName +  " has left" + "  " + currentDate
+                            let messageString = "participant.left " + participantName + " " + participantEmail
+                            // adds multiple times
+                            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
+                            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
+                            // update current meetings on firebase
+                            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                                messages: Meetings[host_id].messageLog
+                            }).then(()=>{
+                            }).catch((error)=>{
+                                console.error(error.message)
+                            })
+                        }
+                        else{
+                        }
+                    }
+                    else{
+                        tryCounterC += 1
+                    }
+                    if(tryCounterC >= 10){
+                        clearInterval(tryLeaveParticipantInterval)
+                    }
+                },3000)
+            }
+        }
+        else if(body.event === "meeting.ended"){
+            // If meeting exists and participant is known
+            console.log("Meeting ended: " + body.payload.object.topic)
+            if(Meetings[host_id]){
+                let currentDate = new Date()
+                // save record to data base
+                let currentMessages = Meetings[host_id].messageLog
+                currentMessages.push(CryptoJS.AES.encrypt("meeting.ended",Meetings[host_id].hostUID).toString())
+                let currentRecords = Meetings[host_id].recordLog
+                let recordString = "Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate
+                currentRecords.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+                let meetingID = Meetings[host_id].meetingId
+                let hostUID = Meetings[host_id].hostUID
+                let meetingName = Meetings[host_id].meetingName
+                let meetingStart = Meetings[host_id].meetingStart
+                let uuid = body.payload.object.uuid
+                db.collection("Records").add({
+                    'Events': currentRecords,
+                    'MeetingID': meetingID,
+                    'useruid': hostUID,
+                    'MeetingName': meetingName,
+                    'MeetingStart': meetingStart,
+                    'MeetingEnd' : new Date()
+                })
+                    .then(() => {
+                    })
+                    .catch((error) => {
+                        console.error(error.message);
+                    });
+                if(Meetings[host_id] && uuid === Meetings[host_id].uuid){
+                    db.collection("CurrentMeetings").doc(hostUID).set({
+                        messages: currentMessages
+                    }).then(()=> {
+                        //delete the current meeting when meeting has ended
+                        if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                            db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                                if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                                    delete Meetings[host_id]
+                                }
+                            }).catch((error) => {
+                                console.error(error.message)
+                            });
+                        }
+                    }).catch((error)=>{
+                        console.error(error.message)
+                    })
+                }
+                else{
+                    var tryCounterD = 0
+                    var tryEndMeetingInterval = setInterval(()=>{
+                        //delete the current meeting when meeting has ended
+                        if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                            clearInterval(tryEndMeetingInterval)
+                            db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
+                                if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                                    delete Meetings[host_id]
+                                }
+                            }).catch((error) => {
+                                console.error(error.message)
+                            });
+                        }
+                        else{
+                            tryCounterD += 1
+                        }
+                        if(tryCounterD >= 10){
+                            clearInterval(tryEndMeetingInterval)
+                        }
+                    },3000)
+                }
+            }
+        }
     }
 })
 

@@ -247,6 +247,12 @@ function refreshTable(){
         document.getElementById("refresh-cover").classList.remove("running")
     },1000)
 }
+function decryptMessages(messages){
+    for(let i = 0; i < messages.length; i++){
+        const currentMessage = CryptoJS.AES.decrypt(messages[i], auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
+        console.log(currentMessage)
+    }
+}
 function evaluateParticipantTable(doc){
     if(doc.data()){
         const meetingMessages = doc.data().messages
@@ -322,7 +328,9 @@ function evaluateParticipantTable(doc){
                         const name = decryptedName.split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Absent", true))
+                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true)
+                        currParticipant.bufferCount = 0
+                        Participants.unshift(currParticipant)
 
                     }
                 }
@@ -343,14 +351,19 @@ function evaluateParticipantTable(doc){
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
                     let wasPresent = false
+                    let didActOnEvent = false
+                    let presentParticipantIndex = -1
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             if(Participants[i].email && participantEmail === Participants[i].email){
                                 wasPresent = true;
+                                presentParticipantIndex = i;
                             }
                             if(Participants[i].email && participantEmail === Participants[i].email && Participants[i].state === "Left Meeting"){
+                                didActOnEvent = true
                                 Participants.splice(i,1)
                                 let currParticipant = new Participant(participantFirst, participantLast, "Present",true)
+                                currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
                                 Participants.unshift(currParticipant)
                                 break;
@@ -359,11 +372,13 @@ function evaluateParticipantTable(doc){
                     }
                     if(!wasPresent){
                         let isRegistered = false
+                        didActOnEvent = true
                         for(let i = 0; i < Participants.length; i++){
                             if(Participants[i].state === "Absent"){
                                 isRegistered = true;
                                 Participants.splice(i,1)
                                 let currParticipant = new Participant(participantFirst, participantLast, "Present",true)
+                                currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
                                 Participants.unshift(currParticipant)
                                 break;
@@ -371,21 +386,27 @@ function evaluateParticipantTable(doc){
                         }
                         if(!isRegistered){
                             let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false)
+                            currParticipant.bufferCount = 1
                             currParticipant.email = participantEmail
                             Participants.unshift(currParticipant)
                         }
+                    }
+                    if(!didActOnEvent){
+                        Participants[i].bufferCount += 1
                     }
                 }
                 else{
                     let wasPresent = false
                     for(let i = 0; i < Participants.length; i++){
                         if(Participants[i].state === "Not Registered" && Participants[i].email === participantEmail){
+                            Participants[i].bufferCount += 1
                             wasPresent = true;
                             break;
                         }
                     }
                     if(!wasPresent){
                         let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false)
+                        currParticipant.bufferCount = 1
                         currParticipant.email = participantEmail
                         Participants.unshift(currParticipant)
                     }
@@ -407,15 +428,26 @@ function evaluateParticipantTable(doc){
                 for(let i = 0 ; i < Participants.length; i++){
                     if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].email && Participants[i].email === participantEmail){
                         if(Participants[i].state === "Not Registered"){
-                            Participants.splice(i,1)
+                            if(Participants[i].bufferCount === 1){
+                                Participants.splice(i,1)
+                            }
+                            else{
+                                Participants[i].bufferCount -= 1
+                            }
                             break;
                         }
                         else if(Participants[i].state === "Present"){
-                            Participants.splice(i,1)
-                            let currParticipant = new Participant(participantFirst, participantLast, "Left Meeting",true)
-                            currParticipant.email = participantEmail
-                            Participants.unshift(currParticipant)
-                            break;
+                            if(Participants[i].bufferCount === 1){
+                                Participants.splice(i,1)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Left Meeting",true)
+                                currParticipant.bufferCount = 0
+                                currParticipant.email = participantEmail
+                                Participants.unshift(currParticipant)
+                                break;
+                            }
+                            else{
+                                Participants[i].bufferCount -= 1;
+                            }
                         }
                     }
                 }
