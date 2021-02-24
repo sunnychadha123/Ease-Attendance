@@ -375,7 +375,7 @@ function evaluateParticipantTable(doc){
                         let isRegistered = false
                         didActOnEvent = true
                         for(let i = 0; i < Participants.length; i++){
-                            if(Participants[i].state === "Absent"){
+                            if(Participants[i].state === "Absent" && Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                                 isRegistered = true;
                                 Participants.splice(i,1)
                                 let currParticipant = new Participant(participantFirst, participantLast, "Present",true)
