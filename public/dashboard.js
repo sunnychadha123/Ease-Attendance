@@ -272,6 +272,7 @@ function evaluateParticipantTable(doc){
             document.getElementById("meeting-id-attendance").value = ""
             document.getElementById("meeting-id-attendance").hidden = true
             CurrentMeeting = ""
+            EncounteredParticipants = new Set()
             CurrentMeetingID = ""
             CurrentMessages = []
             Participants = []
@@ -495,6 +496,7 @@ function evaluateParticipantTable(doc){
             meetingIndex = -1
             Participants = []
             MeetingIsOccurring = false
+            EncounteredParticipants = new Set()
             document.getElementById("current-participants").innerHTML = ""
             document.getElementById("current-participant-number").innerHTML = ""
             clearTable()
