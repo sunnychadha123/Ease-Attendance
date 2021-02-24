@@ -559,8 +559,8 @@ app.post('/deauthorize', (req, res) => {
                           }).catch((error) => {
                               console.error(error.message)
                           })
-                          if(Meetings[firebaseUserID]){
-                              delete Meetings[firebaseUserID];
+                          if(Meetings[userID]){
+                              delete Meetings[userID];
                               db.collection("CurrentMeetings").doc(firebaseUserID).delete().then(() => {
                                   console.log("Meetings deleted for user with useruid " + firebaseUserID)
                               }).catch(() => {
