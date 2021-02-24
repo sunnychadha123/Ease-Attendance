@@ -341,22 +341,20 @@ async function handleZoomPost(req){
         console.log("Participant " + participantName + " has joined")
 
         if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-            if(Meetings[host_id]){
-                let currentDate = new Date()
-                let recordString = participantName +  " has joined" + "  " + currentDate
-                let messageString = "participant.joined " + participantName
-                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
-                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
-                // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
-                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                    messages: Meetings[host_id].messageLog
-                }).then(()=>{
+            let currentDate = new Date()
+            let recordString = participantName +  " has joined" + "  " + currentDate
+            let messageString = "participant.joined " + participantName + " " + participantEmail
+            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
+            // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
+            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                messages: Meetings[host_id].messageLog
+            }).then(()=>{
 
-                }).catch((error)=>{
-                    console.error(error.message)
+            }).catch((error)=>{
+                console.error(error.message)
 
-                })
-            }
+            })
         }
         else{
             var tryCounterB = 0
@@ -365,7 +363,7 @@ async function handleZoomPost(req){
                     if(Meetings[host_id]){
                         let currentDate = new Date()
                         let recordString = participantName +  " has joined" + "  " + currentDate
-                        let messageString = "participant.joined " + participantName
+                        let messageString = "participant.joined " + participantName + " " + participantEmail
                         Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
                         Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
                         // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
@@ -399,20 +397,18 @@ async function handleZoomPost(req){
         console.log("Participant " + participantName + " has left")
 
         if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
-            if(Meetings[host_id]){
-                let currentDate = new Date()
-                let recordString = participantName +  " has left" + "  " + currentDate
-                let messageString = "participant.left " + participantName
-                Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
-                Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
-                // update current meetings on firebase
-                db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
-                    messages: Meetings[host_id].messageLog
-                }).then(()=>{
-                }).catch((error)=>{
-                    console.error(error.message)
-                })
-            }
+            let currentDate = new Date()
+            let recordString = participantName +  " has left" + "  " + currentDate
+            let messageString = "participant.left " + participantName + " " + participantEmail
+            Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
+            Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
+            // update current meetings on firebase
+            db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
+                messages: Meetings[host_id].messageLog
+            }).then(()=>{
+            }).catch((error)=>{
+                console.error(error.message)
+            })
         }
         else{
             var tryCounterC = 0
@@ -421,7 +417,7 @@ async function handleZoomPost(req){
                     if(Meetings[host_id]){
                         let currentDate = new Date()
                         let recordString = participantName +  " has left" + "  " + currentDate
-                        let messageString = "participant.left " + participantName
+                        let messageString = "participant.left " + participantName + " " + participantEmail
                         Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
                         Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
                         // update current meetings on firebase

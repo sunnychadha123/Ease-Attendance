@@ -331,68 +331,92 @@ function evaluateParticipantTable(doc){
             else if(eventType === "participant.joined"){
                 var participantFirst = ""
                 var participantLast = ""
-                if(data.length === 2){
+                if(data.length === 3){
                     participantFirst = data[1]
                 }
-                else if(data.length > 2){
+                else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-1]
+                    participantLast = data[data.length-2]
                 }
+                let participantEmail = data[data.length-1]
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
-                    var isPartOfRoster = false
+                    let wasPresent = false
                     for(var i = 0 ; i < Participants.length; i++){
-                        if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].state !== "Present"){
-                            isPartOfRoster = true
-                            Participants.splice(i,1)
-                            break
+                        if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
+                            if(Participants[i].email && participantEmail === Participants[i].email){
+                                wasPresent = true;
+                            }
+                            if(Participants[i].email && participantEmail === Participants[i].email && Participants[i].state === "Left Meeting"){
+                                Participants.splice(i,1)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true)
+                                currParticipant.email = participantEmail
+                                Participants.unshift(currParticipant)
+                                break;
+                            }
                         }
                     }
-                    if(!isPartOfRoster){
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
-                    }
-                    else{
-                        Participants.unshift(new Participant(participantFirst, participantLast, "Present",true))
+                    if(!wasPresent){
+                        let isRegistered = false
+                        for(let i = 0; i < Participants.length; i++){
+                            if(Participants[i].state === "Absent"){
+                                isRegistered = true;
+                                Participants.splice(i,1)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true)
+                                currParticipant.email = participantEmail
+                                Participants.unshift(currParticipant)
+                                break;
+                            }
+                        }
+                        if(!isRegistered){
+                            let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false)
+                            currParticipant.email = participantEmail
+                            Participants.unshift(currParticipant)
+                        }
                     }
                 }
                 else{
-                    Participants.unshift(new Participant(participantFirst, participantLast, "Not Registered",false))
+                    let wasPresent = false
+                    for(let i = 0; i < Participants.length; i++){
+                        if(Participants[i].state === "Not Registered" && Participants[i].email === participantEmail){
+                            wasPresent = true;
+                            break;
+                        }
+                    }
+                    if(!wasPresent){
+                        let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false)
+                        currParticipant.email = participantEmail
+                        Participants.unshift(currParticipant)
+                    }
                 }
                 updateParticipantTable()
             }
             else if(eventType === "participant.left"){
                 var participantFirst = ""
                 var participantLast = ""
-                if(data.length === 2){
+                if(data.length === 3){
                     participantFirst = data[1]
                 }
-                else if(data.length > 2){
+                else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-1]
+                    participantLast = data[data.length-2]
                 }
-                var currParticipant = null
-                var currIndex = null
+                let participantEmail = data[data.length-1]
+                let fullName = participantFirst.trim() + " " + participantLast.trim()
                 for(let i = 0 ; i < Participants.length; i++){
-                    if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
-                        if(currParticipant && currParticipant.state === "Present"){
-                            if(Participants[i].state === "Not Registered"){
-                                currParticipant = Participants[i]
-                                currIndex = i
-                            }
+                    if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].email && Participants[i].email === participantEmail){
+                        if(Participants[i].state === "Not Registered"){
+                            Participants.splice(i,1)
+                            break;
                         }
-                        else if(!currParticipant){
-                            if(Participants[i].state === "Not Registered" || Participants[i].state === "Present"){
-                                currParticipant = Participants[i]
-                                currIndex = i
-                            }
+                        else if(Participants[i].state === "Present"){
+                            Participants.splice(i,1)
+                            let currParticipant = new Participant(participantFirst, participantLast, "Left Meeting",true)
+                            currParticipant.email = participantEmail
+                            Participants.unshift(currParticipant)
+                            break;
                         }
-                    }
-                }
-                if(currParticipant){
-                    Participants.splice(currIndex,1)
-                    if(currParticipant.partOfRoster){
-                        Participants.unshift(new Participant(currParticipant.firstName, currParticipant.lastName, "Left Meeting", true))
                     }
                 }
                 updateParticipantTable()
