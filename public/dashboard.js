@@ -39,6 +39,7 @@ var editingIndex = 1
 var checkVerificationTimer
 var notRegisteredCount = 0
 var MeetingIsOccurring = false
+var mPartTablSortBy = "first" // can be "first" or "last" to sort participants table
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -560,6 +561,7 @@ function filterClick(clicked_id){
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
         }
+
     }
     else if(clicked_id === "present-filter"){
         document.getElementById("all-filter").classList.remove("filter-active")
@@ -707,8 +709,49 @@ function filterClick(clicked_id){
         $("#add-on-registered").prop('disabled',true)
         $("#add-on-registered").hide()
     }
+
+
+
 }
 
+function sortByLast(){
+    mPartTablSortBy = "last"
+    sortParticipants()
+}
+function sortByFirst(){
+    mPartTablSortBy = "first"
+    sortParticipants()
+}
+function sortParticipants(){
+    //Sort Table:
+    const participantTable = document.getElementById("participant-table")
+    var switching, i ,x,y,shouldSwitch,rows;
+    switching = true;
+
+    while (switching) {
+        switching = false;
+        rows = participantTable.rows
+        for(i = 1; i < (rows.length-1); i++){
+            shouldSwitch = false;
+            if(mPartTablSortBy === "first"){
+                x = rows[i].cells[0].innerHTML;
+                y = rows[i+1].cells[0].innerHTML;
+            }
+            else if (mPartTablSortBy === "last"){
+                x = rows[i].cells[1].innerHTML;
+                y = rows[i+1].cells[1].innerHTML;
+            }
+            if(x.toLowerCase()>y.toLowerCase()){
+                shouldSwitch = true;
+                break;
+            }
+        }
+        if(shouldSwitch){
+            rows[i].parentNode.insertBefore(rows[i+1],rows[i]);
+            switching= true;
+        }
+    }
+}
 
 function addMeetingModal(){
     const studentInputTable = document.getElementById("student-input-table")
