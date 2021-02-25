@@ -32,10 +32,10 @@ def endMeeting(meetingName, meetingID, hostID):
     print(response)
 
 
-def addParticipant(participantName, meetingName, meetingID, hostID):
+def addParticipant(participantName, meetingName, meetingID, hostID, email):
     url = "https://www.easeattendance.com/api/requests"
     url = "http://localhost:4000/api/requests"
-    payload = "{\n  \"event\": \"meeting.participant_joined\",\n  \"event_ts\": \"long\",\n  \"payload\": {\n    \"account_id\": \"string\",\n    \"object\": {\n      \"id\": \"" + meetingID + "\",\n      \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n      \"host_id\": \"" + hostID + "\",\n      \"topic\": \"" + meetingName + "\",\n      \"type\": \"2\",\n      \"start_time\": \"string [date-time]\",\n      \"timezone\": \"string\",\n      \"duration\": \"integer\",\n      \"participant\": {\n        \"user_id\": \"11111111\",\n        \"user_name\": \"" + participantName + "\",\n        \"email\": \"email\",\n        \"id\": \"string\",\n        \"join_time\": \"string [date-time]\"\n      }\n    }\n  }\n}"
+    payload = "{\n  \"event\": \"meeting.participant_joined\",\n  \"event_ts\": \"long\",\n  \"payload\": {\n    \"account_id\": \"string\",\n    \"object\": {\n      \"id\": \"" + meetingID + "\",\n      \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n      \"host_id\": \"" + hostID + "\",\n      \"topic\": \"" + meetingName + "\",\n      \"type\": \"2\",\n      \"start_time\": \"string [date-time]\",\n      \"timezone\": \"string\",\n      \"duration\": \"integer\",\n      \"participant\": {\n        \"user_id\": \"11111111\",\n        \"user_name\": \"" + participantName + "\",\n        \"email\": \""+email+"\",\n        \"id\": \"string\",\n        \"join_time\": \"string [date-time]\"\n      }\n    }\n  }\n}"
     headers = {
         'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
         'Content-Type': 'application/json'
@@ -46,10 +46,10 @@ def addParticipant(participantName, meetingName, meetingID, hostID):
     print(response)
 
 
-def removeParticipant(participantName, meetingName, meetingID, hostID):
+def removeParticipant(participantName, meetingName, meetingID, hostID,email):
     url = "https://www.easeattendance.com/api/requests"
     url = "http://localhost:4000/api/requests"
-    payload = "{\n    \"event\": \"meeting.participant_left\",\n    \"event_ts\": \"long\",\n    \"payload\": {\n        \"account_id\": \"string\",\n        \"object\": {\n            \"id\": \"" + meetingID + "\",\n            \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n            \"host_id\": \"" + hostID + "\",\n            \"topic\": \"" + meetingName + "\",\n            \"type\": \"2\",\n            \"start_time\": \"string [date-time]\",\n            \"timezone\": \"string\",\n            \"duration\": \"integer\",\n            \"participant\": {\n                \"user_id\": \"11111111\",\n                \"user_name\": \"" + participantName + "\",\n                \"email\": \"email\",\n                \"id\": \"string\",\n                \"join_time\": \"string [date-time]\"\n            }\n        }\n    }\n}"
+    payload = "{\n    \"event\": \"meeting.participant_left\",\n    \"event_ts\": \"long\",\n    \"payload\": {\n        \"account_id\": \"string\",\n        \"object\": {\n            \"id\": \"" + meetingID + "\",\n            \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n            \"host_id\": \"" + hostID + "\",\n            \"topic\": \"" + meetingName + "\",\n            \"type\": \"2\",\n            \"start_time\": \"string [date-time]\",\n            \"timezone\": \"string\",\n            \"duration\": \"integer\",\n            \"participant\": {\n                \"user_id\": \"11111111\",\n                \"user_name\": \"" + participantName + "\",\n                \"email\": \""+email+"\",\n                \"id\": \"string\",\n                \"join_time\": \"string [date-time]\"\n            }\n        }\n    }\n}"
     headers = {
         'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
         'Content-Type': 'application/json'
@@ -69,9 +69,9 @@ startMeeting(meetingName, meetingID, AdityaHostID)
 
 sleep(5)
 for x in range(10):
-    addParticipant(names.get_first_name() + " " + names.get_first_name(), meetingName, meetingID, AdityaHostID)
-    sleep(0)
+    addParticipant(names.get_first_name() + " " + names.get_last_name(), meetingName, meetingID, AdityaHostID,"generic Email")
+    sleep(0.5)
 
-sleep(30)
+sleep(15)
 
 endMeeting(meetingName, meetingID, AdityaHostID)

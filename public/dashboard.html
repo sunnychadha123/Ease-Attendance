@@ -99,8 +99,6 @@
                     <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Participant Name" aria-label="Student Name" aria-describedby="addon-wrapping">
                 </div>
                 <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Participants</button>
-
-
                 <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
                     <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
@@ -112,7 +110,7 @@
                         <div id="ld-spin" class="ld ld-ring ld-spin"></div>
                     </div>
                 </div>
-                <table class="table sortable" id="participant-table">
+                <table class="table" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
                         <th class="table-head-title"  scope="col">

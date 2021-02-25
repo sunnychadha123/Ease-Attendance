@@ -563,7 +563,6 @@ function filterClick(clicked_id){
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
         }
-
     }
     else if(clicked_id === "present-filter"){
         document.getElementById("all-filter").classList.remove("filter-active")
