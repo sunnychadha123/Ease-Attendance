@@ -126,7 +126,7 @@ auth.onAuthStateChanged((user) => {
                         recordTable.deleteRow(1)
                     }
                     const currentRecordTable = document.getElementById("current-record-table")
-                    for (i = PastMeetings.length - 1; i >= 0; i--) {
+                    for (let i = PastMeetings.length - 1; i >= 0; i--) {
                         var currentRow = recordTable.insertRow(1)
                         currentRow.classList.add("record-row");
                         currentRow.addEventListener("click", function () {
@@ -140,10 +140,10 @@ auth.onAuthStateChanged((user) => {
                             while (currentRecordTable.rows.length !== 0) {
                                 currentRecordTable.deleteRow(0)
                             }
-                            for (i = 0; i < currentMeeting.events.length; i++) {
+                            for (let j = 0; j < currentMeeting.events.length; j++) {
                                 var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
-                                var cell1 = row.insertCell(0)
-                                cell1.innerHTML = CryptoJS.AES.decrypt(currentMeeting.events[i], user.uid).toString(CryptoJS.enc.Utf8);
+                                var cell1 = row.insertCell(0);
+                                cell1.innerHTML = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
                             }
                         })
                         var cell1 = currentRow.insertCell(0)
