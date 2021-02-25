@@ -343,7 +343,7 @@ app.post('/api/requests', (req, res) => {
             const participantName = participant.user_name
             let participantEmail = participant.email
             if(participantEmail === "" || participantEmail == null){
-                participantEmail = participant.id
+                participantEmail = participant.user_id
             }
             console.log("Participant " + participantName + " has joined")
 
@@ -398,7 +398,7 @@ app.post('/api/requests', (req, res) => {
             const participantName = participant.user_name
             let participantEmail = participant.email
             if(participantEmail === "" || participantEmail == null){
-                participantEmail = participant.id
+                participantEmail = participant.user_id
             }
             console.log("Participant " + participantName + " has left")
 
