@@ -341,7 +341,10 @@ app.post('/api/requests', (req, res) => {
             const participant = body.payload.object.participant
             const participantID = participant.id
             const participantName = participant.user_name
-            const participantEmail = participant.email
+            let participantEmail = participant.email
+            if(participantEmail === "" || participantEmail == null){
+                participantEmail = participant.id
+            }
             console.log("Participant " + participantName + " has joined")
 
             if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
@@ -393,7 +396,10 @@ app.post('/api/requests', (req, res) => {
             const participant = body.payload.object.participant
             const participantID = participant.id
             const participantName = participant.user_name
-            const participantEmail = participant.email
+            let participantEmail = participant.email
+            if(participantEmail === "" || participantEmail == null){
+                participantEmail = participant.id
+            }
             console.log("Participant " + participantName + " has left")
 
             if(Meetings[host_id] && Meetings[host_id].uuid === body.payload.object.uuid){
