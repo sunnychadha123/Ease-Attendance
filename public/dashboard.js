@@ -39,7 +39,7 @@ var editingIndex = 1
 var checkVerificationTimer
 var notRegisteredCount = 0
 var MeetingIsOccurring = false
-var mPartTablSortBy = "first" // can be "first" or "last" to sort participants table
+var ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -223,7 +223,6 @@ function updateParticipantTable(){
     else if( document.getElementById("not-registered-filter").classList.contains("filter-active")){
         filterClick("not-registered-filter")
     }
-    sortParticipants()
 }
 function refreshTable(){
     document.getElementById("refresh").disabled = true
@@ -248,7 +247,6 @@ function refreshTable(){
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
     },1000)
-    sortParticipants()
 }
 function evaluateParticipantTable(doc){
     if(doc.data()){
@@ -710,28 +708,27 @@ function filterClick(clicked_id){
         $("#add-on-registered").prop('disabled',true)
         $("#add-on-registered").hide()
     }
-    sortParticipants()
+    sortParticipants(participantTable)
 }
 
 function sortByLast(){
-    mPartTablSortBy = "last"
+    ParticipantTableSortBy = "last"
     var lastButton = document.getElementById("lastNameBtn")
     lastButton.style.color = "#F5B364"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "white"
-    sortParticipants()
+    sortParticipants(document.getElementById("participant-table"))
 }
 function sortByFirst(){
-    mPartTablSortBy = "first"
+    ParticipantTableSortBy = "first"
     var lastButton = document.getElementById("lastNameBtn")
     lastButton.style.color = "white"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "#F5B364"
-    sortParticipants()
+    sortParticipants(document.getElementById("participant-table"))
 }
-function sortParticipants(){
+function sortParticipants(participantTable){
     //Sort Table:
-    const participantTable = document.getElementById("participant-table")
     var switching, i ,x,y,shouldSwitch,rows;
     switching = true;
 
@@ -740,11 +737,11 @@ function sortParticipants(){
         rows = participantTable.rows
         for(i = 1; i < (rows.length-1); i++){
             shouldSwitch = false;
-            if(mPartTablSortBy === "first"){
+            if(ParticipantTableSortBy === "first"){
                 x = rows[i].cells[0].innerHTML;
                 y = rows[i+1].cells[0].innerHTML;
             }
-            else if (mPartTablSortBy === "last"){
+            else if (ParticipantTableSortBy === "last"){
                 x = rows[i].cells[1].innerHTML;
                 y = rows[i+1].cells[1].innerHTML;
             }
