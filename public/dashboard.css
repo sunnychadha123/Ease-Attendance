@@ -213,6 +213,12 @@ hr{
 .sort-buttons{
     cursor : pointer;
 }
+#firstNameBtn:hover{
+    color: #F5B364 !important;
+}
+#lastNameBtn:hover{
+    color: #F5B364 !important;
+}
 .filter-button{
     -webkit-appearance: none!important;
     margin-bottom: 10px;

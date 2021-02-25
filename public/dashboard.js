@@ -715,10 +715,18 @@ function filterClick(clicked_id){
 
 function sortByLast(){
     mPartTablSortBy = "last"
+    var lastButton = document.getElementById("lastNameBtn")
+    lastButton.style.color = "#F5B364"
+    var firstButton = document.getElementById("firstNameBtn")
+    firstButton.style.color = "white"
     sortParticipants()
 }
 function sortByFirst(){
     mPartTablSortBy = "first"
+    var lastButton = document.getElementById("lastNameBtn")
+    lastButton.style.color = "white"
+    var firstButton = document.getElementById("firstNameBtn")
+    firstButton.style.color = "#F5B364"
     sortParticipants()
 }
 function sortParticipants(){
