@@ -67,11 +67,12 @@ meetingName = "a new meetinga sdf"
 
 startMeeting(meetingName, meetingID, AdityaHostID)
 
-sleep(5)
-for x in range(10):
-    addParticipant(names.get_first_name() + " " + names.get_last_name(), meetingName, meetingID, AdityaHostID,"generic Email")
-    sleep(0.5)
+print(input("next"))
 
-sleep(15)
+for x in range(5):
+    addParticipant(names.get_first_name() + " " + names.get_last_name(), meetingName, meetingID, AdityaHostID,"generic Email")
+    sleep(0.00)
+
+print(input("next"))
 
 endMeeting(meetingName, meetingID, AdityaHostID)

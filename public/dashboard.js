@@ -40,6 +40,7 @@ var checkVerificationTimer
 var notRegisteredCount = 0
 var MeetingIsOccurring = false
 var ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
+var listNamesShown = []
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -524,13 +525,14 @@ function filterClick(clicked_id){
     let presentParticipantCount = 0;
     let totalParticipants = 0;
     clearTable()
+    listNamesShown = []
     if(clicked_id === "all-filter"){
         document.getElementById("present-filter").classList.remove("filter-active")
         document.getElementById("absent-filter").classList.remove("filter-active")
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            var row = participantTable.insertRow(1);
+            var row = participantTable.insertRow(1+ search(i));
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
@@ -570,7 +572,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 presentParticipantCount += 1
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ search(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -601,7 +603,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Absent"){
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ search(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -634,7 +636,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ search(i));
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -664,7 +666,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Left Meeting"){
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ search(i));
                 row.style.backgroundColor = "#ffffff"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
@@ -708,7 +710,6 @@ function filterClick(clicked_id){
         $("#add-on-registered").prop('disabled',true)
         $("#add-on-registered").hide()
     }
-    sortParticipants(participantTable)
 }
 
 function sortByLast(){
@@ -717,7 +718,7 @@ function sortByLast(){
     lastButton.style.color = "#F5B364"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "white"
-    sortParticipants(document.getElementById("participant-table"))
+    updateParticipantTable()
 }
 function sortByFirst(){
     ParticipantTableSortBy = "first"
@@ -725,10 +726,10 @@ function sortByFirst(){
     lastButton.style.color = "white"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "#F5B364"
-    sortParticipants(document.getElementById("participant-table"))
+    updateParticipantTable()
 }
-function sortParticipants(participantTable){
-    //Sort Table:
+function findParticipantIndex(participantTable, nameToFind){
+/*  //Sort Table:
     var switching, i ,x,y,shouldSwitch,rows;
     switching = true;
 
@@ -754,8 +755,69 @@ function sortParticipants(participantTable){
             rows[i].parentNode.insertBefore(rows[i+1],rows[i]);
             switching= true;
         }
+    }*/
+    let list = tableToArray(participantTable)
+    console.log(list)
+    if(ParticipantTableSortBy === "first"){
+        list.sort(function (a,b){
+            return a[0]>b[0] ? 1 : a[0] < b[0] ?-1:0
+        });
+    }else if(ParticipantTableSortBy === "last"){
+        list.sort(function (a,b){
+            return a[1]>b[1] ? 1 : a[1] < b[1] ?-1:0
+        });
     }
+    console.log(list)
+
+
+
 }
+
+function search(i){
+    console.log(listNamesShown)
+
+    let searchFor;
+    if(ParticipantTableSortBy === "first")
+        searchFor = Participants[i].firstName
+    else if (ParticipantTableSortBy === "last")
+        searchFor = Participants[i].lastName
+
+    var low = 0
+    var high = listNamesShown.length-1
+    var mid;
+    while(low<=high){
+        mid = Math.floor((low+high)/2)
+        console.log(mid)
+        if(listNamesShown[mid] < searchFor){
+            low = mid +1
+        }else if (listNamesShown[mid] > searchFor){
+            high = mid-1
+        }
+        else if (listNamesShown[mid] === searchFor){
+            listNamesShown.splice(mid,0,searchFor)
+            return mid;
+        }
+        console.log("still going")
+    }
+    listNamesShown.splice(low,0,searchFor)
+    return low;
+}
+function tableToArray(participantTable){
+    let rows = participantTable.rows;
+    let list = [];
+    let participantRowData;
+    let arrayRow;
+    for (var i = 0; i < rows.length; i++) {
+        participantRowData = rows[i].children
+        arrayRow = [];
+        for (var j = 0; j < participantRowData.length; j++) {
+            arrayRow.push(participantRowData[j].innerHTML);
+        }
+        list.push(arrayRow);
+    }
+    return list;
+}
+
 
 function addMeetingModal(){
     const studentInputTable = document.getElementById("student-input-table")
