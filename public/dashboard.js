@@ -728,50 +728,6 @@ function sortByFirst(){
     firstButton.style.color = "#F5B364"
     updateParticipantTable()
 }
-function findParticipantIndex(participantTable, nameToFind){
-/*  //Sort Table:
-    var switching, i ,x,y,shouldSwitch,rows;
-    switching = true;
-
-    while (switching) {
-        switching = false;
-        rows = participantTable.rows
-        for(i = 1; i < (rows.length-1); i++){
-            shouldSwitch = false;
-            if(ParticipantTableSortBy === "first"){
-                x = rows[i].cells[0].innerHTML;
-                y = rows[i+1].cells[0].innerHTML;
-            }
-            else if (ParticipantTableSortBy === "last"){
-                x = rows[i].cells[1].innerHTML;
-                y = rows[i+1].cells[1].innerHTML;
-            }
-            if(x.toLowerCase()>y.toLowerCase()){
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if(shouldSwitch){
-            rows[i].parentNode.insertBefore(rows[i+1],rows[i]);
-            switching= true;
-        }
-    }*/
-    let list = tableToArray(participantTable)
-    console.log(list)
-    if(ParticipantTableSortBy === "first"){
-        list.sort(function (a,b){
-            return a[0]>b[0] ? 1 : a[0] < b[0] ?-1:0
-        });
-    }else if(ParticipantTableSortBy === "last"){
-        list.sort(function (a,b){
-            return a[1]>b[1] ? 1 : a[1] < b[1] ?-1:0
-        });
-    }
-    console.log(list)
-
-
-
-}
 
 function search(i){
     console.log(listNamesShown)
@@ -802,22 +758,6 @@ function search(i){
     listNamesShown.splice(low,0,searchFor)
     return low;
 }
-function tableToArray(participantTable){
-    let rows = participantTable.rows;
-    let list = [];
-    let participantRowData;
-    let arrayRow;
-    for (var i = 0; i < rows.length; i++) {
-        participantRowData = rows[i].children
-        arrayRow = [];
-        for (var j = 0; j < participantRowData.length; j++) {
-            arrayRow.push(participantRowData[j].innerHTML);
-        }
-        list.push(arrayRow);
-    }
-    return list;
-}
-
 
 function addMeetingModal(){
     const studentInputTable = document.getElementById("student-input-table")
