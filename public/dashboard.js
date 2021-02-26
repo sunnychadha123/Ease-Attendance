@@ -532,7 +532,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            var row = participantTable.insertRow(1+ search(i));
+            var row = participantTable.insertRow(1+ findIndexOfRow(i));
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
@@ -572,7 +572,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 presentParticipantCount += 1
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -603,7 +603,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Absent"){
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -636,7 +636,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -666,7 +666,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Left Meeting"){
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
@@ -729,8 +729,7 @@ function sortByFirst(){
     updateParticipantTable()
 }
 
-function search(i){
-    console.log(listNamesShown)
+function findIndexOfRow(i){
 
     let searchFor;
     if(ParticipantTableSortBy === "first")
@@ -743,7 +742,6 @@ function search(i){
     var mid;
     while(low<=high){
         mid = Math.floor((low+high)/2)
-        console.log(mid)
         if(listNamesShown[mid] < searchFor){
             low = mid +1
         }else if (listNamesShown[mid] > searchFor){
@@ -753,7 +751,6 @@ function search(i){
             listNamesShown.splice(mid,0,searchFor)
             return mid;
         }
-        console.log("still going")
     }
     listNamesShown.splice(low,0,searchFor)
     return low;
