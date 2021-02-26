@@ -145,7 +145,20 @@ auth.onAuthStateChanged((user) => {
                             for (let j = 0; j < currentMeeting.events.length; j++) {
                                 var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
                                 var cell1 = row.insertCell(0);
-                                cell1.innerHTML = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
+                                let currentRecord = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
+                                currentRecord = currentRecord.split(" ")
+                                let currentRecordDate = ""
+                                for(let k = currentRecord.length-9; k < currentRecord.length; k++){
+                                    currentRecordDate += currentRecord[k];
+                                    if(k !== currentRecord.length-1){
+                                        currentRecordDate += " ";
+                                    }
+                                }
+                                currentRecord.splice(currentRecord.length-9,9)
+                                currentRecord = currentRecord.join(" ")
+                                const currentRecordLocaleDate = new Date(currentRecordDate)
+                                currentRecord += " at: " + currentRecordLocaleDate.toLocaleString()
+                                cell1.innerHTML = currentRecord
                             }
                         })
                         var cell1 = currentRow.insertCell(0)
