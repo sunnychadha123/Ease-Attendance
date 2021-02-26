@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta property="og:title" content="Ease Attendance | Dashboard" />
+    <meta property="og:description" content="The Ease Attendance dashboard - take attendance" />
+    <meta property="og:url" content="https://easeattendance.com/dashboard" />
+    <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/easeattendance-c68ed.appspot.com/o/Ease%20Attendance%20Meeting.png?alt=media&token=5ccc93bd-a156-4d04-b3a4-1bc53d4481ac" />
+    <meta property="og:type" content="website" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.6"/>
+    <meta name="robots" content="index, follow">
     <title>Ease Attendance | Dashboard</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -106,15 +113,21 @@
                     <a id="left-meeting-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Left Meeting</a>
                     <a id="not-registered-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Registered</a>
                     <div id="refresh-cover" class="ld ld-over-full">
-                        <a id="refresh" onclick="refreshTable()" type="button" class="btn btn-secondary filter-button"><span class="iconify restart-icon" data-inline="false" data-icon="ic:round-restart-alt" style="font-size: 30px;"></span></a>
+                        <a title="Refresh table" id="refresh" onclick="refreshTable()" type="button" class="btn btn-secondary filter-button"><span class="iconify restart-icon" data-inline="false" data-icon="ic:round-restart-alt" style="font-size: 30px;"></span></a>
                         <div id="ld-spin" class="ld ld-ring ld-spin"></div>
                     </div>
                 </div>
                 <table class="table" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
-                        <th class="table-head-title" scope="col">First Name</th>
-                        <th class="table-head-title" scope="col">Last Name</th>
+                        <th class="table-head-title"  scope="col">
+                            <a id = "firstNameBtn" onclick="sortByFirst()" class = "sort-buttons" style="color : #F5B364">First Name</a>
+                        </th>
+
+                        <th class="table-head-title"  scope="col">
+                            <a id = "lastNameBtn" onclick="sortByLast()" class = "sort-buttons" style="color: white">Last Name</a>
+                        </th>
+
                         <th class="table-head-title" scope="col">Status</th>
                     </tr>
                     </thead>

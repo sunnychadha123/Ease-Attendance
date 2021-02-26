@@ -6,7 +6,7 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "        <span class=\"icon-bar middle-bar\"></span>\n" +
     "        <span class=\"icon-bar bottom-bar\"></span>\n" +
     "    </button>\n" +
-    "    <div class=\"collapse navbar-collapse justify-content-end\" id=\"main-navigation\">\n" +
+    "    <div class=\"collapse text-center navbar-collapse justify-content-end\" id=\"main-navigation\">\n" +
     "        <ul class=\"navbar-nav\">\n" +
     "            <li class=\"nav-item nav-right\">\n" +
     "                <a id=\"#features\" class=\"nav-link middle\" href=\"/features\">Features</a>\n" +

@@ -39,6 +39,8 @@ var editingIndex = 1
 var checkVerificationTimer
 var notRegisteredCount = 0
 var MeetingIsOccurring = false
+var ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
+var listNamesShown = []
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -143,7 +145,20 @@ auth.onAuthStateChanged((user) => {
                             for (let j = 0; j < currentMeeting.events.length; j++) {
                                 var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
                                 var cell1 = row.insertCell(0);
-                                cell1.innerHTML = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
+                                let currentRecord = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
+                                currentRecord = currentRecord.split(" ")
+                                let currentRecordDate = ""
+                                for(let k = currentRecord.length-9; k < currentRecord.length; k++){
+                                    currentRecordDate += currentRecord[k];
+                                    if(k !== currentRecord.length-1){
+                                        currentRecordDate += " ";
+                                    }
+                                }
+                                currentRecord.splice(currentRecord.length-9,9)
+                                currentRecord = currentRecord.join(" ")
+                                const currentRecordLocaleDate = new Date(currentRecordDate)
+                                currentRecord += " at: " + currentRecordLocaleDate.toLocaleString()
+                                cell1.innerHTML = currentRecord
                             }
                         })
                         var cell1 = currentRow.insertCell(0)
@@ -581,13 +596,14 @@ function filterClick(clicked_id){
     let presentParticipantCount = 0;
     let totalParticipants = 0;
     clearTable()
+    listNamesShown = []
     if(clicked_id === "all-filter"){
         document.getElementById("present-filter").classList.remove("filter-active")
         document.getElementById("absent-filter").classList.remove("filter-active")
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            var row = participantTable.insertRow(1);
+            var row = participantTable.insertRow(1+ findIndexOfRow(i));
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
@@ -627,7 +643,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 presentParticipantCount += 1
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -658,7 +674,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Absent"){
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -691,7 +707,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -721,7 +737,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Left Meeting"){
-                var row = participantTable.insertRow(1);
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
@@ -767,6 +783,49 @@ function filterClick(clicked_id){
     }
 }
 
+function sortByLast(){
+    ParticipantTableSortBy = "last"
+    var lastButton = document.getElementById("lastNameBtn")
+    lastButton.style.color = "#F5B364"
+    var firstButton = document.getElementById("firstNameBtn")
+    firstButton.style.color = "white"
+    updateParticipantTable()
+}
+function sortByFirst(){
+    ParticipantTableSortBy = "first"
+    var lastButton = document.getElementById("lastNameBtn")
+    lastButton.style.color = "white"
+    var firstButton = document.getElementById("firstNameBtn")
+    firstButton.style.color = "#F5B364"
+    updateParticipantTable()
+}
+
+function findIndexOfRow(i){
+
+    let searchFor;
+    if(ParticipantTableSortBy === "first")
+        searchFor = Participants[i].firstName
+    else if (ParticipantTableSortBy === "last")
+        searchFor = Participants[i].lastName
+
+    var low = 0
+    var high = listNamesShown.length-1
+    var mid;
+    while(low<=high){
+        mid = Math.floor((low+high)/2)
+        if(listNamesShown[mid] < searchFor){
+            low = mid +1
+        }else if (listNamesShown[mid] > searchFor){
+            high = mid-1
+        }
+        else if (listNamesShown[mid] === searchFor){
+            listNamesShown.splice(mid,0,searchFor)
+            return mid;
+        }
+    }
+    listNamesShown.splice(low,0,searchFor)
+    return low;
+}
 
 function addMeetingModal(){
     const studentInputTable = document.getElementById("student-input-table")
