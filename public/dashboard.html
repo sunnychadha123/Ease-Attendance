@@ -108,15 +108,21 @@
                     <a id="left-meeting-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Left Meeting</a>
                     <a id="not-registered-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Not Registered</a>
                     <div id="refresh-cover" class="ld ld-over-full">
-                        <a id="refresh" onclick="refreshTable()" type="button" class="btn btn-secondary filter-button"><span class="iconify restart-icon" data-inline="false" data-icon="ic:round-restart-alt" style="font-size: 30px;"></span></a>
+                        <a title="Refresh table" id="refresh" onclick="refreshTable()" type="button" class="btn btn-secondary filter-button"><span class="iconify restart-icon" data-inline="false" data-icon="ic:round-restart-alt" style="font-size: 30px;"></span></a>
                         <div id="ld-spin" class="ld ld-ring ld-spin"></div>
                     </div>
                 </div>
                 <table class="table" id="participant-table">
                     <thead id="participant-table-head">
                     <tr>
-                        <th class="table-head-title" scope="col">First Name</th>
-                        <th class="table-head-title" scope="col">Last Name</th>
+                        <th class="table-head-title"  scope="col">
+                            <a id = "firstNameBtn" onclick="sortByFirst()" class = "sort-buttons" style="color : #F5B364">First Name</a>
+                        </th>
+
+                        <th class="table-head-title"  scope="col">
+                            <a id = "lastNameBtn" onclick="sortByLast()" class = "sort-buttons" style="color: white">Last Name</a>
+                        </th>
+
                         <th class="table-head-title" scope="col">Status</th>
                     </tr>
                     </thead>
