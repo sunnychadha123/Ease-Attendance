@@ -532,7 +532,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            var row = participantTable.insertRow(1+ search(i));
+            var row = participantTable.insertRow(1+ findIndexOfRow(i));
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
@@ -572,7 +572,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 presentParticipantCount += 1
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -603,7 +603,7 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Absent"){
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -636,7 +636,7 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
@@ -666,7 +666,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Left Meeting"){
-                var row = participantTable.insertRow(1+ search(i));
+                var row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
@@ -728,53 +728,8 @@ function sortByFirst(){
     firstButton.style.color = "#F5B364"
     updateParticipantTable()
 }
-function findParticipantIndex(participantTable, nameToFind){
-/*  //Sort Table:
-    var switching, i ,x,y,shouldSwitch,rows;
-    switching = true;
 
-    while (switching) {
-        switching = false;
-        rows = participantTable.rows
-        for(i = 1; i < (rows.length-1); i++){
-            shouldSwitch = false;
-            if(ParticipantTableSortBy === "first"){
-                x = rows[i].cells[0].innerHTML;
-                y = rows[i+1].cells[0].innerHTML;
-            }
-            else if (ParticipantTableSortBy === "last"){
-                x = rows[i].cells[1].innerHTML;
-                y = rows[i+1].cells[1].innerHTML;
-            }
-            if(x.toLowerCase()>y.toLowerCase()){
-                shouldSwitch = true;
-                break;
-            }
-        }
-        if(shouldSwitch){
-            rows[i].parentNode.insertBefore(rows[i+1],rows[i]);
-            switching= true;
-        }
-    }*/
-    let list = tableToArray(participantTable)
-    console.log(list)
-    if(ParticipantTableSortBy === "first"){
-        list.sort(function (a,b){
-            return a[0]>b[0] ? 1 : a[0] < b[0] ?-1:0
-        });
-    }else if(ParticipantTableSortBy === "last"){
-        list.sort(function (a,b){
-            return a[1]>b[1] ? 1 : a[1] < b[1] ?-1:0
-        });
-    }
-    console.log(list)
-
-
-
-}
-
-function search(i){
-    console.log(listNamesShown)
+function findIndexOfRow(i){
 
     let searchFor;
     if(ParticipantTableSortBy === "first")
@@ -787,7 +742,6 @@ function search(i){
     var mid;
     while(low<=high){
         mid = Math.floor((low+high)/2)
-        console.log(mid)
         if(listNamesShown[mid] < searchFor){
             low = mid +1
         }else if (listNamesShown[mid] > searchFor){
@@ -797,27 +751,10 @@ function search(i){
             listNamesShown.splice(mid,0,searchFor)
             return mid;
         }
-        console.log("still going")
     }
     listNamesShown.splice(low,0,searchFor)
     return low;
 }
-function tableToArray(participantTable){
-    let rows = participantTable.rows;
-    let list = [];
-    let participantRowData;
-    let arrayRow;
-    for (var i = 0; i < rows.length; i++) {
-        participantRowData = rows[i].children
-        arrayRow = [];
-        for (var j = 0; j < participantRowData.length; j++) {
-            arrayRow.push(participantRowData[j].innerHTML);
-        }
-        list.push(arrayRow);
-    }
-    return list;
-}
-
 
 function addMeetingModal(){
     const studentInputTable = document.getElementById("student-input-table")
