@@ -63,6 +63,26 @@ class Meeting{
 
 // Dictionary of current meetings
 Meetings = {}
+
+
+// Get all meetings that might be occurring and are in backup
+db.collection("MeetingsBackup").get().then((querySnapshot) => {
+    querySnapshot.forEach((doc) => {
+        let data = doc.data();
+        Meetings[doc.id] = new Meeting(doc.id, data.meetingName, data.hostEmail, data.id, data.uuid);
+        Meetings[doc.id].messageLog = data.messageLog;
+        Meetings[doc.id].recordLog = data.recordLog;
+        Meetings[doc.id].meetingStart = data.meetingStart;
+        Meetings[doc.id].hostUID = data.hostUID;
+    })
+}).catch(() => {
+    console.error("Error getting from Meeting Backup")
+})
+// delay to make sure that Meetings Backup is initialized
+var timeDelay = new Date().getTime() + (5 * 1000);
+while (new Date().getTime() <= timeDelay) {}
+console.log("MeetingsBackup loaded and initialized")
+
 console.log("dictionary of current meetings created")
 // Initialize nodemailer to send messages for support
 const transporter = nodemailer.createTransport({
@@ -262,6 +282,21 @@ app.post('/api/requests', (req, res) => {
                     // push messages that set meeting ID and meeting Name in front end
                     Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
                     Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
+                    // add information to MeetingsBackup
+                    db.collection("MeetingsBackup").doc(host_id).set({
+                        meetingID: Meetings[host_id].meetingId,
+                        hostID: host_id,
+                        meetingName: Meetings[host_id].meetingName,
+                        hostEmail: Meetings[host_id].hostEmail,
+                        hostUID: Meetings[host_id].hostUID,
+                        messageLog: Meetings[host_id].messageLog,
+                        recordLog: Meetings[host_id].recordLog,
+                        meetingStart: currentDate,
+                        uuid: Meetings[host_id].uuid
+                    }).then(() => {
+                    }).catch(()=>{
+                        console.error("Error saving starting meeting to Meetings backup")
+                    })
                     console.log("Meeting started: " + body.payload.object.topic)
                     // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                     db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
@@ -293,6 +328,20 @@ app.post('/api/requests', (req, res) => {
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
                             console.log("Meeting started: " + body.payload.object.topic)
+                            db.collection("MeetingsBackup").doc(host_id).set({
+                                meetingID: Meetings[host_id].meetingId,
+                                hostID: host_id,
+                                meetingName: Meetings[host_id].meetingName,
+                                hostEmail: Meetings[host_id].hostEmail,
+                                hostUID: Meetings[host_id].hostUID,
+                                messageLog: Meetings[host_id].messageLog,
+                                recordLog: Meetings[host_id].recordLog,
+                                meetingStart: currentDate,
+                                uuid: Meetings[host_id].uuid
+                            }).then(() => {
+                            }).catch(()=>{
+                                console.error("Error saving starting meeting to Meetings backup")
+                            })
                             // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                                 messages: Meetings[host_id].messageLog
@@ -323,6 +372,20 @@ app.post('/api/requests', (req, res) => {
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringID,doc.data().firebaseID).toString())
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageStringStart,doc.data().firebaseID).toString())
                             console.log("Meeting started: " + body.payload.object.topic)
+                            db.collection("MeetingsBackup").doc(host_id).set({
+                                meetingID: Meetings[host_id].meetingId,
+                                hostID: host_id,
+                                meetingName: Meetings[host_id].meetingName,
+                                hostEmail: Meetings[host_id].hostEmail,
+                                hostUID: Meetings[host_id].hostUID,
+                                messageLog: Meetings[host_id].messageLog,
+                                recordLog: Meetings[host_id].recordLog,
+                                meetingStart: currentDate,
+                                uuid: Meetings[host_id].uuid
+                            }).then(() => {
+                            }).catch(()=>{
+                                console.error("Error saving starting meeting to Meetings backup")
+                            })
                             // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                                 messages: Meetings[host_id].messageLog
@@ -353,6 +416,13 @@ app.post('/api/requests', (req, res) => {
                 let messageString = "participant.joined " + participantName + " " + participantEmail
                 Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
                 Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
+                db.collection("MeetingsBackup").doc(host_id).update({
+                    messageLog: Meetings[host_id].messageLog,
+                    recordLog: Meetings[host_id].recordLog
+                }).then(()=>{
+                }).catch(()=>{
+                    console.error("Error updating Meetings Backup in participant joined")
+                })
                 // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                     messages: Meetings[host_id].messageLog
@@ -374,6 +444,13 @@ app.post('/api/requests', (req, res) => {
                             let messageString = "participant.joined " + participantName + " " + participantEmail
                             Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString())
+                            db.collection("MeetingsBackup").doc(host_id).update({
+                                messageLog: Meetings[host_id].messageLog,
+                                recordLog: Meetings[host_id].recordLog
+                            }).then(()=>{
+                            }).catch(()=>{
+                                console.error("Error updating Meetings Backup in participant joined")
+                            })
                             // update CurrentMeetings on firebase (this automatically updates the list on the front end because client is listening to updates on CurrentMeetings)
                             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                                 messages: Meetings[host_id].messageLog
@@ -408,6 +485,13 @@ app.post('/api/requests', (req, res) => {
                 let messageString = "participant.left " + participantName + " " + participantEmail
                 Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
                 Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
+                db.collection("MeetingsBackup").doc(host_id).update({
+                    messageLog: Meetings[host_id].messageLog,
+                    recordLog: Meetings[host_id].recordLog
+                }).then(()=>{
+                }).catch(()=>{
+                    console.error("Error updating Meetings Backup in participant left")
+                })
                 // update current meetings on firebase
                 db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                     messages: Meetings[host_id].messageLog
@@ -428,6 +512,13 @@ app.post('/api/requests', (req, res) => {
                             // adds multiple times
                             Meetings[host_id].recordLog.push(CryptoJS.AES.encrypt(recordString, Meetings[host_id].hostUID).toString())
                             Meetings[host_id].messageLog.push(CryptoJS.AES.encrypt(messageString, Meetings[host_id].hostUID).toString())
+                            db.collection("MeetingsBackup").doc(host_id).update({
+                                messageLog: Meetings[host_id].messageLog,
+                                recordLog: Meetings[host_id].recordLog
+                            }).then(()=>{
+                            }).catch(()=>{
+                                console.error("Error updating Meetings Backup in participant left")
+                            })
                             // update current meetings on firebase
                             db.collection("CurrentMeetings").doc(Meetings[host_id].hostUID).set({
                                 messages: Meetings[host_id].messageLog
@@ -483,6 +574,10 @@ app.post('/api/requests', (req, res) => {
                     }).then(()=> {
                         //delete the current meeting when meeting has ended
                         if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
+                            db.collection("MeetingsBackup").doc(host_id).delete().then(()=>{
+                            }).catch(()=>{
+                                console.error("Error deleting Meeting Backup")
+                            })
                             db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
                                 if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
                                     delete Meetings[host_id]
@@ -501,6 +596,10 @@ app.post('/api/requests', (req, res) => {
                         //delete the current meeting when meeting has ended
                         if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
                             clearInterval(tryEndMeetingInterval)
+                            db.collection("MeetingsBackup").doc(host_id).delete().then(()=>{
+                            }).catch(()=>{
+                                console.error("Error deleting Meeting Backup")
+                            })
                             db.collection("CurrentMeetings").doc(hostUID).delete().then(() => {
                                 if (Meetings[host_id] && uuid === Meetings[host_id].uuid) {
                                     delete Meetings[host_id]
