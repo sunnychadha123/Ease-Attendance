@@ -181,7 +181,7 @@ auth.onAuthStateChanged((user) => {
                     }
 
                 });
-                firestore.collection("ZoomOAuth").where("userID","==",user.uid).get().then((querySnapshot)=>{
+                firestore.collection("ZoomOAuth").where("firebaseID","==",user.uid).get().then((querySnapshot)=>{
                     querySnapshot.forEach((doc)=>{
                         zoomID = doc.data().userID;
                     })
