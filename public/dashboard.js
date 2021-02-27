@@ -41,6 +41,7 @@ var notRegisteredCount = 0
 var MeetingIsOccurring = false
 var ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
 var listNamesShown = []
+let shouldRefresh = false
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -58,7 +59,13 @@ function arr_diff (newMess, oldMess) {
 }
 
 firestore.collection("UpdateBrowser").doc("updateDate").onSnapshot((doc) => {
-    window.location.href = "/dashboard";
+    if(shouldRefresh) {
+        window.location.href = "/dashboard";
+    }
+}).then(()=>{
+    shouldRefresh = true
+}).catch(()=>{
+
 })
 auth.onAuthStateChanged((user) => {
     if (user) {
