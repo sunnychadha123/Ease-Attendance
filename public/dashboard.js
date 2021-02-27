@@ -62,11 +62,9 @@ firestore.collection("UpdateBrowser").doc("updateDate").onSnapshot((doc) => {
     if(shouldRefresh) {
         window.location.href = "/dashboard";
     }
-}).then(()=>{
     shouldRefresh = true
-}).catch(()=>{
-
 })
+
 auth.onAuthStateChanged((user) => {
     if (user) {
         firestore.collection("Users").doc(user.uid).onSnapshot((doc) => {
