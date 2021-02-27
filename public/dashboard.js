@@ -23,25 +23,26 @@ class PastMeeting{
         this.docID = docID
     }
 }
-var Meetings = []
-var PastMeetings
-var isEditingMeeting = false
-var MeetingsdidLoad = false
-var Participants = []
-var CurrentMessages = []
-var EncounteredParticipants = new Set()
-var names = []
-var CurrentMeeting = ""
-var CurrentMeetingID = ""
-var meetingIndex = -1
-var currentRecordIndex = -1
-var editingIndex = 1
-var checkVerificationTimer
-var notRegisteredCount = 0
-var MeetingIsOccurring = false
-var ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
-var listNamesShown = []
+let Meetings = []
+let PastMeetings
+let isEditingMeeting = false
+let MeetingsdidLoad = false
+let Participants = []
+let CurrentMessages = []
+let EncounteredParticipants = new Set()
+let names = []
+let CurrentMeeting = ""
+let CurrentMeetingID = ""
+let meetingIndex = -1
+let currentRecordIndex = -1
+let editingIndex = 1
+let checkVerificationTimer
+let notRegisteredCount = 0
+let MeetingIsOccurring = false
+let ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
+let listNamesShown = []
 let shouldRefresh = false
+let zoomID = -1
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -180,24 +181,28 @@ auth.onAuthStateChanged((user) => {
                     }
 
                 });
-
-                firestore.collection("CurrentMeetings").doc(user.uid).onSnapshot((doc) =>{
-                    if(MeetingsdidLoad){
-                        evaluateParticipantTable(doc)
-                    }
-                    else{
-                        let getMeetingInterval = setInterval(()=>{
-                            if(MeetingsdidLoad){
-                                evaluateParticipantTable(doc)
-                                clearInterval(getMeetingInterval)
-                            }
-                        },500)
-                    }
-                }, (error) => {
-                    redNotification("Problem connecting to server")
+                firestore.collection("ZoomOAuth").where("userID","==",user.uid).get().then((querySnapshot)=>{
+                    querySnapshot.forEach((doc)=>{
+                        zoomID = doc.data().userID;
+                    })
+                    firestore.collection("CurrentMeetings").doc(zoomID).onSnapshot((doc) =>{
+                        if(MeetingsdidLoad){
+                            evaluateParticipantTable(doc)
+                        }
+                        else{
+                            let getMeetingInterval = setInterval(()=>{
+                                if(MeetingsdidLoad){
+                                    evaluateParticipantTable(doc)
+                                    clearInterval(getMeetingInterval)
+                                }
+                            },500)
+                        }
+                    }, (error) => {
+                        redNotification("Problem connecting to server")
+                    })
+                }).catch((error)=>{
+                    redNotification(error.message)
                 })
-
-
         }
         else{
             //user email is not verified
@@ -278,7 +283,7 @@ function decryptMessages(messages){
 }
 function evaluateParticipantTable(doc){
     if(doc.data()){
-        const meetingMessages = doc.data().messages
+        const meetingMessages = doc.data().messageLog
         // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
         const newCalculated = arr_diff(meetingMessages,CurrentMessages)
         var newMessages = []
