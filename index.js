@@ -500,7 +500,7 @@ app.post('/deauthorize', (req, res) => {
                           })
                           if(Meetings[userID]){
                               delete Meetings[userID];
-                              db.collection("CurrentMeetings").doc(firebaseUserID).delete().then(() => {
+                              db.collection("CurrentMeetings").doc(userID).delete().then(() => {
                                   console.log("Meetings deleted for user with useruid " + firebaseUserID)
                               }).catch(() => {
                                   console.error("Error deleting meeting for user with uid " + firebaseUserID)
