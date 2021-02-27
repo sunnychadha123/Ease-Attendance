@@ -61,6 +61,14 @@ class Meeting{
   }
 }
 
+// Make client refresh browser on push
+db.collection("UpdateBrowser").doc("updateDate").set({
+    date: new Date()
+}).then().catch(()=>{
+    console.error("error setting updateDate doc to update client end")
+})
+
+
 // Dictionary of current meetings
 Meetings = {}
 
