@@ -567,10 +567,11 @@ $("#student-search-input-field").on('keyup', function (e) {
     }
 
     clearTable()
+    listNamesShown = []
     for(let i = Participants.length-1; i >= 0; i--){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
         if(fullName.toLowerCase().includes(currValue.toLowerCase().trim())){
-            var row = participantTable.insertRow(1);
+            var row = participantTable.insertRow(1+findIndexOfRow(i));
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
             var cell1 = row.insertCell(0)
