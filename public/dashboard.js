@@ -57,6 +57,9 @@ function arr_diff (newMess, oldMess) {
     return diff
 }
 
+setTimeout(() =>{
+    window.location.href = "/dashboard";
+},43200)
 auth.onAuthStateChanged((user) => {
     if (user) {
         firestore.collection("Users").doc(user.uid).onSnapshot((doc) => {
