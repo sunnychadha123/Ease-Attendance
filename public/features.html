@@ -142,7 +142,9 @@
 <div id="footer"></div>
 <script type="text/javascript" src="nav-footer.js"></script>
 <script>
-    new WOW().init();
+    new WOW({
+        offset: 200
+    }).init();
 </script>
 <script>
     LottieInteractivity.create({
@@ -181,15 +183,10 @@
         setTimeout(() =>{
             document.getElementsByTagName("body")[0].style.visibility = "visible";
             document.getElementsByTagName("body")[0].classList.add("fadeBody")
-        });
-        },2500)
-    $(document).scroll(function() {
-        if(!didAddAnimation){
             document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
             document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
-            didAddAnimation = true
-        }
-    });
+        });
+        },4000)
 
 </script>
 </html>
