@@ -235,9 +235,6 @@ if(port !== 4000){
         let dbDate = doc.data().date;
         let currentDate = new Date();
         dbDate = dbDate.toDate()
-        console.log(currentDate.toString())
-        console.log(dbDate.toString())
-        console.log(currentDate - dbDate)
         if(currentDate.getTime() - dbDate.getTime() >= 30000){
             db.collection("UpdateBrowser").doc("updateDate").set({
                 date: new Date()

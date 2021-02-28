@@ -73,7 +73,7 @@
             <div class="ui-col col justify-content-center text-center">
                 <h3 id="ui-title" class="caption-title">Intuitive UI</h3>
                 <h5 id="ui-caption" class="caption">Ease Attendance features an easy to use user interface so anyone can get started within minutes</h5>
-                <img title="Intuitive UI" src="Images/Meeting-absent.png" class="hidden animate__animated animate__fadeInUp attendance-img attendance-center" id="ui-img">
+                <img title="Intuitive UI" src="Images/Meeting-absent.png" class="hidden wow animate__animated animate__fadeInUp attendance-img attendance-center" id="ui-img">
             </div>
         </div>
         <div class="feature-icon-row row justify-content-center text-center">
@@ -181,8 +181,8 @@
     });
     $(document).ready(function() {
         setTimeout(() =>{
-            document.getElementsByTagName("body")[0].style.visibility = "visible";
-            document.getElementsByTagName("body")[0].classList.add("fadeBody")
+            document.getElementsByTagName("html")[0].style.visibility = "visible";
+            document.getElementsByTagName("html")[0].classList.add("fadeBody")
             document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
             document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
             document.getElementById("meetings-started").classList.remove("hidden")
