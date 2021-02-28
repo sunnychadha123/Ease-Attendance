@@ -3,11 +3,18 @@ html{
     overflow-x: hidden!important;
     max-width: 100vw;
     -webkit-backface-visibility: hidden;
-    visibility: hidden;
+    background-color: white;
+}
+.fadeBody{
+    animation-name: fade;
+    --animate-delay: 1s;
+    animation-duration: 2s;
 }
 body {
     overflow-x: hidden;
     display: none;
+    visibility: hidden;
+    opacity: 1;
 }
 #main-fluid{
     margin-top: 10px;
@@ -243,6 +250,14 @@ body {
 
 .fadeInUp {
     animation-name: fadeInUp;
+}
+@keyframes fade {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @media (max-width: 1250px) {

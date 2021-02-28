@@ -177,7 +177,11 @@
         $('body').show();
     });
     $(document).ready(function() {
-        document.getElementsByTagName("html")[0].style.visibility = "visible";
-    });
+        setTimeout(() =>{
+            document.getElementsByTagName("body")[0].style.visibility = "visible";
+            document.getElementsByTagName("body")[0].classList.add("fadeBody")
+        });
+        },1000)
+
 </script>
 </html>
