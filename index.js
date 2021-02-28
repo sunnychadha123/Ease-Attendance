@@ -303,7 +303,7 @@ app.post('/api/requests', (req, res) => {
                                 tryCounterA += 1
                             }
                             if(tryCounterA >= 10){
-                                clearInterval()
+                                clearInterval(tryStartMeetingInterval)
                                 updateStartMeeting(body,host_id)
                             }
                         }).catch((error)=>{

@@ -49,7 +49,7 @@ OR
 
 ### Manual Meeting Creation
 
-![](Images/AddMeeing.png)
+![](Images/AddMeeting.png)
 1. Open the "My Meetings" Tab and click "Add Meeting"
 2. Fill out the Meeting Name, ID, and names of participants
 3. Click "Finish"
