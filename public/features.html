@@ -173,6 +173,7 @@
     });
 </script>
 <script>
+    let didAddAnimation = false
     $(function () {
         $('body').show();
     });
@@ -180,10 +181,15 @@
         setTimeout(() =>{
             document.getElementsByTagName("body")[0].style.visibility = "visible";
             document.getElementsByTagName("body")[0].classList.add("fadeBody")
-            document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
-            document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
         });
         },2500)
+    $(document).scroll(function() {
+        if(!didAddAnimation){
+            document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
+            document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
+            didAddAnimation = true
+        }
+    });
 
 </script>
 </html>
