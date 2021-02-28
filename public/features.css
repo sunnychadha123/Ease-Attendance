@@ -141,6 +141,21 @@ body {
     border-radius: 20px;
     box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
 }
+.zoom-button{
+
+    width: 133px;
+    margin: auto;
+    background-color: white;
+    border: 1px solid #2a6ee2;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+.zoom-button:hover{
+    background-color: #2a6ee2;
+    color: white;
+}
 .start-row{
     padding-bottom: 50px;
 }
