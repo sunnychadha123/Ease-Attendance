@@ -12,6 +12,9 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "    <div class=\"collapse text-center navbar-collapse justify-content-end\" id=\"main-navigation\">\n" +
     "        <ul class=\"navbar-nav\">\n" +
     "            <li class=\"nav-item nav-right\">\n" +
+    "                <a id=\"#donate\" class=\"nav-link middle\" href=\"https://www.buymeacoffee.com/varunchitturi\">Donate</a>\n" +
+    "            </li>\n" +
+    "            <li class=\"nav-item nav-right\">\n" +
     "                <a id=\"#features\" class=\"nav-link middle\" href=\"/features\">Features</a>\n" +
     "            </li>\n" +
     "            <li class=\"nav-item nav-right\">\n" +
@@ -40,6 +43,7 @@ const footerBlock = "<footer>\n" +
     "                <h5 class=\"footer-title\">Pages</h5>\n" +
     "                <a href=\"/\" class=\"footer-link\"><h6>Home</h6></a>\n" +
     "                <a href=\"documentation\" class=\"footer-link\"><h6>Documentation</h6></a>\n" +
+    "                <a href=\"https://www.buymeacoffee.com/varunchitturi\" class=\"footer-link\"><h6>Donate</h6></a>\n" +
     "                <a href=\"features\" class=\"footer-link\"><h6>Features</h6></a>\n" +
     "                <a href=\"about-us\" class=\"footer-link\"><h6>About Us</h6></a>\n" +
     "                <a href=\"support\" class=\"footer-link\"><h6>Support</h6></a>\n" +
