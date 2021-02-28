@@ -227,10 +227,10 @@ app.post('/support-message', (req,res) => {
   res.send()
 })
 
-function updateParticipants(host_id, messageString, recordString){
+function updateParticipants(host_id, messageString, recordString,hostUID){
     db.collection("CurrentMeetings").doc(host_id).update({
-        messageLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(messageString,Meetings[host_id].hostUID).toString()),
-        recordLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(recordString,Meetings[host_id].hostUID).toString())
+        messageLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(messageString,hostUID).toString()),
+        recordLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(recordString,hostUID).toString())
     }).then().catch((error)=>{
         console.error(error.message)
     })
@@ -316,7 +316,7 @@ app.post('/api/requests', (req, res) => {
                     let currentDate = new Date()
                     let recordString = participantName +  " has joined" + "  " + currentDate
                     let messageString = "participant.joined " + participantName + " " + participantEmail
-                    updateParticipants(host_id, messageString, recordString)
+                    updateParticipants(host_id, messageString, recordString,meetingDoc.data().hostUID)
                 }
                 else{
                     let tryCounterB = 0
@@ -326,7 +326,7 @@ app.post('/api/requests', (req, res) => {
                                 let currentDate = new Date()
                                 let recordString = participantName +  " has joined" + "  " + currentDate
                                 let messageString = "participant.joined " + participantName + " " + participantEmail
-                                updateParticipants(host_id, messageString, recordString)
+                                updateParticipants(host_id, messageString, recordString,meetingDoc2.data().hostUID)
                             }
                             else{
                                 tryCounterB += 1
@@ -357,7 +357,7 @@ app.post('/api/requests', (req, res) => {
                     let currentDate = new Date()
                     let recordString = participantName +  " has left" + "  " + currentDate
                     let messageString = "participant.left " + participantName + " " + participantEmail
-                    updateParticipants(host_id, messageString, recordString)
+                    updateParticipants(host_id, messageString, recordString,meetingDoc.data().hostUID)
                 }
                 else{
                     let tryCounterC = 0
@@ -368,7 +368,7 @@ app.post('/api/requests', (req, res) => {
                                 let currentDate = new Date()
                                 let recordString = participantName +  " has left" + "  " + currentDate
                                 let messageString = "participant.left " + participantName + " " + participantEmail
-                                updateParticipants(host_id, messageString, recordString)
+                                updateParticipants(host_id, messageString, recordString,meetingDoc2.data().hostUID)
                             }
                             else{
                                 tryCounterC += 1
@@ -397,7 +397,7 @@ app.post('/api/requests', (req, res) => {
                     let currentRecords = meetingDocData.recordLog
                     let recordString = "Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate
                     currentRecords.push(CryptoJS.AES.encrypt(recordString,meetingDocData.hostUID).toString())
-                    let meetingID = meetingDocData.meetingId
+                    let meetingID = meetingDocData.meetingID
                     let hostUID = meetingDocData.hostUID
                     let meetingName = meetingDocData.meetingName
                     let meetingStart = meetingDocData.meetingStart
