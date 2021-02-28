@@ -1,3 +1,6 @@
+/*
+    * Copyright (c) 2021 Ease Attendance - Varun Chitturi
+*/
 var email = require("./email.js").email
 console.log("email html loaded")
 const port = process.env.PORT || 4000
@@ -45,15 +48,6 @@ console.log("cloud firestore initialized")
 // initialize firestore auth
 const auth = admin.auth()
 console.log("firestore auth initialized")
-
-// Make client refresh browser on push
-db.collection("UpdateBrowser").doc("updateDate").set({
-    date: new Date()
-}).then().catch(()=>{
-    console.error("error setting updateDate doc to update client end")
-})
-
-
 console.log("dictionary of current meetings created")
 // Initialize nodemailer to send messages for support
 const transporter = nodemailer.createTransport({

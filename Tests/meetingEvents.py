@@ -1,3 +1,6 @@
+'''
+ * Copyright (c) 2021 Ease Attendance - Varun Chitturi
+'''
 import requests
 from time import sleep
 import names

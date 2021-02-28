@@ -1,3 +1,6 @@
+/*
+ * Copyright (c) 2021 Ease Attendance - Varun Chitturi
+ */
 function greenNotification(message){
 
     $(".notify").addClass("notify-active-green");

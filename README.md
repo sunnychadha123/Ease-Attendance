@@ -1,7 +1,7 @@
 
 # Ease Attendance
 
-#### Varun Chitturi and Aditya Patel
+#### Developers: Varun Chitturi and Aditya Patel
 
 An integration with Zoom to allow teachers to be able to take attendance faster and easier. This Zoom Marketplace app connects to Zoom and allows teachers to easily and automatically track the attendance of their students. Later, detailed records are produced and stored for reference. This app connects to easeattendance.com to take attendance.
 
@@ -53,3 +53,7 @@ OR
 1. Open the "My Meetings" Tab and click "Add Meeting"
 2. Fill out the Meeting Name, ID, and names of participants
 3. Click "Finish"
+
+
+
+Copyright (c) 2021 Ease Attendance - Varun Chitturi
