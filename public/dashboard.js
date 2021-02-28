@@ -97,7 +97,7 @@ auth.onAuthStateChanged((user) => {
                             meetingTable.deleteRow(1)
                         }
                         const studentInputTable = document.getElementById("student-input-table")
-                        for (i = Meetings.length - 1; i >= 0; i--) {
+                        for (let i = Meetings.length - 1; i >= 0; i--) {
                             var currentRow = meetingTable.insertRow(1)
                             currentRow.classList.add("meeting-row")
                             currentRow.addEventListener("click", function () {
@@ -115,8 +115,8 @@ auth.onAuthStateChanged((user) => {
                                 while (studentInputTable.rows.length !== 0) {
                                     studentInputTable.deleteRow(0)
                                 }
-                                for (i = 0; i < currentMeeting.arr.length; i++) {
-                                    addStudent(CryptoJS.AES.decrypt(currentMeeting.arr[i], user.uid).toString(CryptoJS.enc.Utf8))
+                                for (let j = 0; j < currentMeeting.arr.length; j++) {
+                                    addStudent(CryptoJS.AES.decrypt(currentMeeting.arr[j], user.uid).toString(CryptoJS.enc.Utf8))
                                 }
                             })
                             var cell1 = currentRow.insertCell(0)
@@ -426,7 +426,7 @@ function evaluateParticipantTable(doc){
                 else{
                     let wasPresent = false
                     for(let i = 0; i < Participants.length; i++){
-                        if(Participants[i].state === "Not Registered" && Participants[i].email === participantEmail){
+                        if(Participants[i].state === "Not Registered" && Participants[i].email === participantEmail && Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             Participants[i].bufferCount += 1
                             wasPresent = true;
                             break;
