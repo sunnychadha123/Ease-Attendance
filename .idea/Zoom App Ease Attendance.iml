@@ -13,5 +13,6 @@
     <orderEntry type="library" name="bootstrap" level="application" />
     <orderEntry type="library" name="wow" level="application" />
     <orderEntry type="library" name="crypto-js" level="application" />
+    <orderEntry type="library" name="widget.prod" level="application" />
   </component>
 </module>
