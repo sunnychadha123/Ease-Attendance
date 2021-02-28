@@ -4,6 +4,7 @@ html{
     max-width: 100vw;
     -webkit-backface-visibility: hidden;
     background-color: white;
+    visibility: hidden;
 }
 .fadeBody{
     animation-name: fade;
@@ -13,7 +14,6 @@ html{
 body {
     overflow-x: hidden;
     display: none;
-    visibility: hidden;
     opacity: 1;
 }
 #main-fluid{

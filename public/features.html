@@ -183,11 +183,13 @@
         setTimeout(() =>{
             document.getElementsByTagName("html")[0].style.visibility = "visible";
             document.getElementsByTagName("html")[0].classList.add("fadeBody")
-            document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
-            document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
             document.getElementById("meetings-started").classList.remove("hidden")
             document.getElementById("sign-up-img").classList.remove("hidden")
         },1000);
+        setTimeout(()=>{
+            document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
+            document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
+        },3000)
         })
 
 </script>
