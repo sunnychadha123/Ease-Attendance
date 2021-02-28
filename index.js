@@ -230,6 +230,22 @@ function updateParticipants(host_id, messageString, recordString,hostUID){
     })
 }
 
+if(port !== 4000){
+    db.collection("UpdateBrowser").doc("updateDate").get().then((doc)=>{
+        let dbDate = doc.data().date;
+        let currentDate = new Date();
+        if(currentDate - dbDate >= 30000){
+            db.collection("UpdateBrowser").doc("updateDate").set({
+                date: new Date()
+            }).then().catch(()=>{
+                console.error("error setting updateDate doc to update client end")
+            })
+        }
+    }).catch((error)=>{
+        console.error(error.message)
+    })
+}
+
 function updateStartMeeting(body,host_id){
     db.collection("ZoomOAuth").doc(host_id).get().then((doc)=>{
         let currentDate = new Date()
@@ -260,13 +276,6 @@ function updateStartMeeting(body,host_id){
         console.error(error.message)
     })
 }
-app.post('/api/github',(req, res) => {
-    res.status(200);
-    res.send();
-    console.log(req);
-    console.log(req.body)
-
-})
 
 app.post('/api/requests', (req, res) => {
     res.status(200)
