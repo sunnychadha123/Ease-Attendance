@@ -1,0 +1,6 @@
+{
+  "name":"Ease Attendance",
+  "scripts": {
+    "postdeploy": "node refreshClient.js"
+  }
+}
