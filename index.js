@@ -260,7 +260,7 @@ function updateStartMeeting(body,host_id){
         console.error(error.message)
     })
 }
-app.post('/api/github,',(req, res) => {
+app.post('/api/github',(req, res) => {
     res.status(200);
     res.send();
     console.log(req);
