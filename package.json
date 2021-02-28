@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "heroku-postbuild": "node refreshClient.js"
+    "poststart": "node refreshClient.js"
   },
   "author": "",
   "license": "ISC",
