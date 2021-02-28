@@ -393,7 +393,7 @@ app.post('/api/requests', (req, res) => {
                     let meetingDocData = meetingDoc.data()
                     let currentDate = new Date()
                     let currentMessages = meetingDocData.messageLog
-                    currentMessages.push(CryptoJS.AES.encrypt("meeting.ended",Meetings[host_id].hostUID).toString())
+                    currentMessages.push(CryptoJS.AES.encrypt("meeting.ended",meetingDocData.hostUID).toString())
                     let currentRecords = meetingDocData.recordLog
                     let recordString = "Meeting: " + body.payload.object.topic + " has ended " + "with ID: " + body.payload.object.id + "  " + currentDate
                     currentRecords.push(CryptoJS.AES.encrypt(recordString,meetingDocData.hostUID).toString())
@@ -498,15 +498,15 @@ app.post('/deauthorize', (req, res) => {
                           }).catch((error) => {
                               console.error(error.message)
                           })
-                          if(Meetings[userID]){
-                              delete Meetings[userID];
+                          db.collection("CurrentMeetings").doc(userID).get().then((doc)=>{
                               db.collection("CurrentMeetings").doc(userID).delete().then(() => {
                                   console.log("Meetings deleted for user with useruid " + firebaseUserID)
                               }).catch(() => {
                                   console.error("Error deleting meeting for user with uid " + firebaseUserID)
                               })
-                          }
-
+                          }).catch((error)=>{
+                              console.error(error.message)
+                          })
                           db.collection("Periods").where("useruid", "==", firebaseUserID).get().then((querySnapshot) => {
                               querySnapshot.forEach((Perioddoc) => {
                                   db.collection("Periods").doc(Perioddoc.id).delete().then(()=> {
