@@ -57,12 +57,12 @@
                 </div>
                 <h3 id="take-attendance-title" class=" text-center caption-title">Quickly take attendance</h3>
                 <h5 class="take-attendance-caption text-center caption ">Start a meeting and open the website. Watch the attendance update live.</h5>
-                <img id="meetings-started" title="Take attendance" class="wow hidden animate__animated attendance-img attendance-left text-lg-left text-center description-img" src="Images/Meeting%20Started.png">
+                <img id="meetings-started" title="Take attendance" class="animate__fadeInLeft wow hidden animate__animated attendance-img attendance-left text-lg-left text-center description-img" src="Images/Meeting%20Started.png">
             </div>
             <div class="col-lg-4 quick-start-text">
                 <h3 class="caption-title text-center">Instant setup</h3>
                 <h5 class="caption  text-center">Just install the plugin, create an account, and start a meeting. It's that simple.</h5>
-                <img title="Sign up" class="wow hidden animate__animated attendance-img attendance-right text-lg-left text-center" src="Images/sign-up-ease.png" id="sign-up-img">
+                <img title="Sign up" class="wow hidden animate__fadeInRight animate__animated attendance-img attendance-right text-lg-left text-center" src="Images/sign-up-ease.png" id="sign-up-img">
                 <h3 id="paragraph-title-1" class="caption-title text-center">The benefits of using Ease Attendance</h3>
                 <h5 class="caption text-center" id="paragraph-1-text">Using Ease, you can save around to 5-10 minutes every time you take attendance. <strong>This can add up to&nbsp;an hour a day!</strong> With Ease, you now have up to 5 extra hours every school week that you can spend on class activities. We know how precious class time is during this pandemic, so don't let something as arbitrary as taking attendance take away from education.</h5>
 
@@ -183,12 +183,10 @@
         setTimeout(() =>{
             document.getElementsByTagName("html")[0].style.visibility = "visible";
             document.getElementsByTagName("html")[0].classList.add("fadeBody")
-            document.getElementById("meetings-started").classList.remove("hidden")
-            document.getElementById("sign-up-img").classList.remove("hidden")
         },1000);
         setTimeout(()=>{
-            document.getElementById("meetings-started").classList.add("animate__fadeInLeft")
-            document.getElementById("sign-up-img").classList.add("animate__fadeInRight")
+            document.getElementById("meetings-started").classList.remove("hidden")
+            document.getElementById("sign-up-img").classList.remove("hidden")
         },3000)
         })
 
