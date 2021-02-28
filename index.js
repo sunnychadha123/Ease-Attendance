@@ -339,6 +339,7 @@ app.post('/api/requests', (req, res) => {
                                 let recordString = participantName +  " has joined" + "  " + currentDate
                                 let messageString = "participant.joined " + participantName + " " + participantEmail
                                 updateParticipants(host_id, messageString, recordString,meetingDoc2.data().hostUID)
+                                clearInterval(tryJoinParticipantInterval)
                             }
                             else{
                                 tryCounterB += 1
@@ -381,6 +382,7 @@ app.post('/api/requests', (req, res) => {
                                 let recordString = participantName +  " has left" + "  " + currentDate
                                 let messageString = "participant.left " + participantName + " " + participantEmail
                                 updateParticipants(host_id, messageString, recordString,meetingDoc2.data().hostUID)
+                                clearInterval(tryLeaveParticipantInterval)
                             }
                             else{
                                 tryCounterC += 1
@@ -443,6 +445,7 @@ app.post('/api/requests', (req, res) => {
                         let tryEndMeetingInterval = setInterval(()=>{
                             db.collection("CurrentMeetings").doc(host_id).get().then((meetingDoc2)=>{
                                 if(meetingDoc2.exists && meetingDoc2.data().uuid === uuid){
+                                    clearInterval(tryEndMeetingInterval)
                                     db.collection("CurrentMeetings").doc(host_id).delete().then(()=>{
                                     }).catch((error)=>{
                                         console.error(error.message)
