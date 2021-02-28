@@ -2,6 +2,9 @@
 #main-fluid{
     margin-top: 200px;
 }
+a{
+    color: black;
+}
 textarea {
     height: 100px!important;
     resize: none;
