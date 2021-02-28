@@ -1,2 +1,1 @@
-web: npm start
-web: npm postdeploy
+web: npm start && npm postdeploy
