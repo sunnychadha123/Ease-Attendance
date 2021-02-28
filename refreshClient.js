@@ -4,7 +4,7 @@
 require('dotenv').config()
 const refreshAdmin = require('firebase-admin')
 refreshAdmin.initializeApp({
-    credential: admin.credential.cert({
+    credential: refreshAdmin.credential.cert({
             "type": "service_account",
             "project_id": "easeattendance-c68ed",
             "private_key_id": process.env.firebase_admin_key_id,
