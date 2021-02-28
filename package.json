@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "poststart": "node refreshClient.js"
+    "start": "node index.js refreshClient.js"
   },
   "author": "",
   "license": "ISC",
