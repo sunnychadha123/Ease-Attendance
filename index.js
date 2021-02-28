@@ -311,7 +311,7 @@ app.post('/api/requests', (req, res) => {
                 participantEmail = participant.user_name.replace(/\s/g, '#%^()!!');
             }
             console.log("Participant " + participantName + " has joined")
-            db.collection("CurrentMeetings").doc(host_id).get.then((meetingDoc) =>{
+            db.collection("CurrentMeetings").doc(host_id).get().then((meetingDoc) =>{
                 if(meetingDoc.exists && meetingDoc.data().uuid === body.payload.object.uuid){
                     let currentDate = new Date()
                     let recordString = participantName +  " has joined" + "  " + currentDate
