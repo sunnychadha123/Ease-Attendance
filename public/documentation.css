@@ -75,8 +75,31 @@ header{
     margin-top: 150px;
 }
 .guide-img{
-    width: 700px;
+    width: 830px;
     margin-bottom: 20px;
     box-shadow: 2px 2px 4px 2px #cdcdcd;
     border-radius: 10px;
+}
+
+.zoom-button{
+    margin-top: 15px;
+    margin-bottom: 30px;
+    width: 133px;
+    display: inline-block;
+
+    background-color: white;
+    border: 1px solid #2a6ee2;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+.zoom-button:hover{
+    background-color: #2a6ee2;
+    color: white;
+}
+.row{
+    padding: 0;
+    display: flex;
+    justify-content: center;
 }
