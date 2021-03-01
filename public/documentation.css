@@ -51,6 +51,9 @@ header{
     counter-increment: item;
     margin-bottom: 15px;
 }
+.noNumberElement{
+    margin-bottom: 15px;
+}
 .guide-list-element:before {
     font-size: 18px;
     margin-right: 10px;
@@ -81,6 +84,7 @@ header{
     box-shadow: 2px 2px 4px 2px #cdcdcd;
     border-radius: 10px;
 }
+
 .zoom-button-doc{
     margin-left: 150px!important;
     margin-top: 40px!important;
@@ -98,6 +102,12 @@ header{
     padding-left: 10px !important;
     border-radius: 20px;
     box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+#participantNumImg{
+    width: 300px;
+}
+#refreshImg{
+    width: 400px;
 }
 #sign-up{
     margin-left: 170px!important;
