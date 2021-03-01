@@ -127,7 +127,7 @@ header{
     color: white;
 }
 .row{
-    padding: 0;
+    padding: 20px;
     display: flex;
     justify-content: center;
 }
