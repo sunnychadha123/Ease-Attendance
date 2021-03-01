@@ -65,16 +65,26 @@ def removeParticipant(participantName, meetingName, meetingID, hostID,email):
 
 VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
 AdityaHostID = "TbQ_nGjpR9aMPQnS-IkQPQ"
-meetingID = "12345612390"
-meetingName = "a new meetinga sdf"
+meetingID = "7378583629"
+meetingName = "Period 3"
 
 startMeeting(meetingName, meetingID, AdityaHostID)
 
 input("next")
 
-for x in range(100):
-    addParticipant(names.get_first_name() + " " + names.get_last_name(), meetingName, meetingID, AdityaHostID,"generic Email")
-    sleep(0.00)
+list = []
+for x in range(10):
+    list.append(names.get_full_name())
+    addParticipant(list[x], meetingName, meetingID, AdityaHostID,list[x]+"@gmail.com")
+    sleep(1)
+
+
+input("next")
+
+for x in list:
+    removeParticipant(x, meetingName, meetingID, AdityaHostID,x + "@gmail.com")
+    sleep(1)
+
 
 input("next")
 
