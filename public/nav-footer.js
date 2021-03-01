@@ -29,7 +29,7 @@ const navBlock = " <nav class=\"navbar fixed-top navbar-expand-lg\">\n" +
     "            <li class=\"nav-item nav-right\" id=\"login-button\">\n" +
     "                <a id=\"#log-in\" class=\"nav-link middle\" id=\"login-link\" href=\"login\">Log In</a>\n" +
     "            </li>\n" +
-    "            <li class=\"nav-item nav-right\">\n" +
+    "            <li class=\"nav-item nav-right\" id=\"sign-up-nav\">\n" +
     "                <a id=\"#sign-up\" class=\"nav-link sign-up\" href=\"signup\">Sign Up</a>\n" +
     "            </li>\n" +
     "        </ul>\n" +
