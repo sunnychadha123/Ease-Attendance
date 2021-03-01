@@ -71,7 +71,7 @@ header{
     color: grey;
 }
 #scrollable2 {
-    margin-left: 30%;
+    margin-left: 35%;
     margin-top: 150px;
 }
 .guide-img{
@@ -79,4 +79,17 @@ header{
     margin-bottom: 20px;
     box-shadow: 2px 2px 4px 2px #cdcdcd;
     border-radius: 10px;
+}
+@media (max-width: 991px) {
+    .sidebar1 {
+        display: none;
+    }
+    .guide-img{
+        width: 350px;
+
+    }
+    #scrollable2 {
+        margin-left: 30px;
+        margin-top: 150px;
+    }
 }

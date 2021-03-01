@@ -63,14 +63,14 @@ def removeParticipant(participantName, meetingName, meetingID, hostID,email):
 VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
 AdityaHostID = "TbQ_nGjpR9aMPQnS-IkQPQ"
 meetingID = "12345612390"
-meetingName = "TEST MEETING"
+meetingName = "Period 1"
 
 participants = []
 
 
 input("press enter to start a meeting: ")
 
-startMeeting(meetingName, meetingID, AdityaHostID)
+startMeeting(meetingName, meetingID, VarunHostID)
 
 
 participantCount = input("enter the number of participants you want to add: ")
@@ -83,7 +83,7 @@ except ValueError:
 for x in range(participantCount):
     firstName = names.get_first_name()
     lastName = names.get_last_name()
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
     participants.append([firstName,lastName])
     sleep(0.00)
 
@@ -94,8 +94,8 @@ input("press enter to make participants leave: ")
 for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
+    removeParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
     sleep(0.00)
 input("press enter to end the meeting: ")
 
-endMeeting(meetingName, meetingID, AdityaHostID)
+endMeeting(meetingName, meetingID, VarunHostID)
