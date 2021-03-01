@@ -49,26 +49,26 @@
     <div class="sidebar1 col" >
         <h3>Getting Started</h3>
         <hr>
-        <a href="#prerequisites" class="doc-link"><h6>Prerequisites</h6></a>
+        <a href="#"><h6>Prerequisites</h6></a>
         <hr>
-        <a href="#install-zoom" class="doc-link"><h6>Step 1 - Install Zoom App</h6></a>
+        <a href="#install-zoom"><h6>Step 1 - Install Zoom App</h6></a>
         <hr>
-        <a  href="#signup" class="doc-link"><h6>Step 2 - Sign Up</h6></a>
+        <a  href="#signup" ><h6>Step 2 - Sign Up</h6></a>
         <hr>
-        <a  href="#roster" class="doc-link"><h6>Step 3 - Add Class Roster</h6></a>
+        <a  href="#roster"><h6>Step 3 - Add Class Roster</h6></a>
         <hr>
-        <a  href="#start" class="doc-link"><h6>Step 4 - Start Meeting</h6></a>
+        <a  href="#start"><h6>Video Tutorial</h6></a>
         <br>
         <h3>Tools</h3>
         <hr>
         <a href="#filter-by-attendance"><h6>Filter by attendance status</h6></a>
-        <br>
+        <hr>
         <a href="#check-participant-num"><h6>Check number of Participants</h6></a>
-        <br>
+        <hr>
         <a href="#search-participants"><h6>Participant Search</h6></a>
-        <br>
+        <hr>
         <a href="#sort-last-first-names"><h6>Sort Participants</h6></a>
-        <br>
+        <hr>
         <a href="#refresh-button"><h6>Refresh</h6></a>
         <br>
         <h3>Definitions</h3>
@@ -93,12 +93,14 @@
     <div id="scrollable2">
         <h1 id="get-started-title" class="step-title">Getting Started</h1>
 
-        <h2 id="prerequisites" class="step-title doc-link">Prerequisites</h2>
-        <ol class="guide-list">
-            <li class="guide-list-element">Have separate scheduled Zoom meetings for each class. Ease Attendance keeps track of expected participants for <br>each meeting, and will compare the actual participants with the expected participants to check attendance.</li>
+        <h2 id="prerequisites" class="step-title">Prerequisites</h2>
+        <ol class="guide-list ">
+            <li class="guide-list-element">Have separate scheduled Zoom meetings for each class. Ease Attendance keeps track of class roster for <br>each meeting, and will compare the meeting participants with the roster to check attendance.</li>
             <img src="Images/Zoom_Meetings.png" class="guide-img"/>
             <li class="guide-list-element">For the best experience, have students log into classes with their full name, ex. “John Doe”. This will allow the sort by<br>first/last names to work most effectively.</li>
             <li class="guide-list-element">Inform students to not change their displayed Zoom names, or else Ease Attendance might miss their attendance.</li>
+            <li class="guide-list-element">For the best experience, have students log into classes with their full name, ex. “John Doe”. Any additional information can be put in between first and last names.</li>
+            <li class="guide-list-element">Inform students to not change displayed Zoom names from one meeting to another. If a student changes their name, they will show up as unregistered while their registered name on the roster will show up as absent.</li>
         </ol>
         <h2 id="install-zoom" class="step-title doc-link">Step 1 - Install Zoom App</h2>
         <ol class="guide-list">
@@ -124,12 +126,12 @@
         <ul>
             <li><h4>Automatic </h4></li>
             <ol class="guide-list">
-                <li class="guide-list-element">Start a Zoom Meetings and watch participants be displayed on Ease Attendance as they join.</li>
+                <li class="guide-list-element">Start a Zoom Meetings and watch your meeting participants fill up the dashboard.</li>
                 <img src="Images/DashboardUpdateParticipants.png" class="guide-img"/>
-                <li class="guide-list-element">When the participants finish coming into the Zoom meeting, click on update participants in the <br>Ease Attendance dashboard to store them in a Meeting Roster.</li>
+                <li class="guide-list-element">When the participants finish coming into the Zoom meeting, click on update participants in the <br>Ease Attendance dashboard to store them in a Meeting Roster. Confirm the meeting details and click finish. </li>
 
                 <img src="Images/DashboardAddMeetingAutomatic.png" class="guide-img"/>
-                <li class="guide-list-element">Confirm meeting details and click finish. Go to the My Meetings tab to confirm that your meeting has been created</li>
+                <li class="guide-list-element">Go to the My Meetings tab to confirm that your meeting has been created</li>
                 <img src="Images/DashboardMeetingAutomaticAdded.png" class="guide-img"/>
             </ol>
             <li><h4>Manual </h4><p class="secondary">Note: This action will not create a meeting for you on Zoom but instead registers the following as a class roster on Ease Attendance</p></li>
@@ -144,27 +146,28 @@
                 <img src="Images/DashboardMeetingAutomaticAdded.png" class="guide-img"/>
             </ol>
         </ul>
-        <h2 id="start" class="step-title doc-link">Step 4 - Start Meeting</h2>
-        <ol class="guide-list">
-            <li class="guide-list-element">Start any meeting and watch your class attendance update live!</li>
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/iCvkS_ZyMF4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+        <h2 id="start" class="step-title doc-link">Video Tutorial</h2>
+        <div class="indent">
 
-            </iframe>
+            <video width="730" height="440" controls>
+                <source src="https://firebasestorage.googleapis.com/v0/b/easeattendance-c68ed.appspot.com/o/Video%20Tutorial.mp4?alt=media&token=9b73ba35-6089-4295-9390-19cffd467bbd" type="video/mp4">
+            </video>
+            <br><br>
 
-        </ol>
+        </div>
         <h1 id="tools-title" class="step-title">Tools</h1>
-        <ol class="guide-list">
+        <div class="indent">
             <h2 id="filter-by-attendance" class="step-title doc-link">Filter by attendance status</h2>
-            <li class="noNumberElement">Sort by "Present", "Absent", "Left Meeting", or "Not Registered" by clicking on them in the Dashboard.</li>
+            <p class="noNumberElement">Sort by "Present", "Absent", "Left Meeting", or "Not Registered" by clicking on them in the Dashboard.</p>
             <img src="Images/FilterByAttendanceStatus.png" class="guide-img" />
             <h2 id="check-participant-num" class="step-title doc-link">Check number of Participants</h2>
-            <li class="noNumberElement">Ease Attendance displays the number of people in your meeting over the number of people who should be in your meeting.</li>
-            <img id="participantNumImg" src="Images/NumberParticipants.png" class="guide-img" width="400px"/>
+            <p class="noNumberElement">Ease Attendance displays the number of people in your meeting over the number of people who should be in your meeting.</p>
+            <img id="participantNumImg" src="Images/NumberParticipants.png" class="guide-img" width="940"/>
             <h2 id="search-participants" class="step-title doc-link">Participant Search</h2>
-            <li class="noNumberElement">Search for specific participants by entering their names in the Participant Search.</li>
+            <p class="noNumberElement">Search for specific participants by entering their names in the Participant Search.</p>
             <img src="Images/ParticipantSearch.png" class="guide-img" />
             <h2 id="sort-last-first-names" class="step-title doc-link">Sort Participants</h2>
-            <li class="noNumberElement">Sort participants by first or last name by clicking on the "First Name" or "Last Name" buttons.</li>
+            <p class="noNumberElement">Sort participants by first or last name by clicking on the "First Name" or "Last Name" buttons.</p>
             <img src="Images/SortParticipantsFirstLastNames.png" class="guide-img" />
             <h2 id="refresh-button" class="step-title doc-link">Refresh</h2>
             <li class="noNumberElement">Refreshing your meeting can fix some temporary issues or update participants quicker.</li>
