@@ -83,7 +83,7 @@ header{
 }
 #scrollable2 {
     margin-left: 30%;
-    overflow-x: auto;
+    overflow-x: hidden;
     margin-top: 150px;
 }
 .guide-img{
