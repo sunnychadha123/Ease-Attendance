@@ -78,7 +78,7 @@ header{
 .guide-img{
     width: 830px;
     margin-bottom: 20px;
-    box-shadow: 2px 2px 4px 2px #cdcdcd;
+    box-shadow: 4px 4px 10px 4px #e2e2e2;
     border-radius: 10px;
 }
 .zoom-button-doc{
