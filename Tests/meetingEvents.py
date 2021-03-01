@@ -65,27 +65,43 @@ def removeParticipant(participantName, meetingName, meetingID, hostID,email):
 
 VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
 AdityaHostID = "TbQ_nGjpR9aMPQnS-IkQPQ"
+
 meetingID = "7378583629"
 meetingName = "Period 3"
 
-startMeeting(meetingName, meetingID, AdityaHostID)
+
+startMeeting(meetingName, meetingID, VarunHostID)
 
 input("next")
 
 list = []
-for x in range(10):
-    list.append(names.get_full_name())
-    addParticipant(list[x], meetingName, meetingID, AdityaHostID,list[x]+"@gmail.com")
-    sleep(1)
 
 
-input("next")
 
-for x in list:
-    removeParticipant(x, meetingName, meetingID, AdityaHostID,x + "@gmail.com")
-    sleep(1)
+participantCount = input("enter the number of participants you want to add: ")
+try:
+    participantCount = int(participantCount)
+except ValueError:
+    participantCount = 30
+    print("Defaulting to 30 participants")
+
+for x in range(participantCount):
+    firstName = names.get_first_name()
+    lastName = names.get_last_name()
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
+    participants.append([firstName,lastName])
+    sleep(0.00)
+
+participants.sort()
+print(participants)
+
+input("press enter to make participants leave: ")
+for x in range(participantCount):
+    firstName = participants[x][0]
+    lastName = participants[x][1]
+    removeParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
+    sleep(0.00)
+input("press enter to end the meeting: ")
 
 
-input("next")
-
-endMeeting(meetingName, meetingID, AdityaHostID)
+endMeeting(meetingName, meetingID, VarunHostID)
