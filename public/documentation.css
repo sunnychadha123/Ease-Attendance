@@ -77,6 +77,16 @@ header{
 .indent{
     margin-left: 30px;
 }
+li{
+    margin-bottom: 15px;
+}
+h2{
+    margin-bottom: 20px;
+}
+h1{
+    margin-bottom: 15px;
+}
+
 .secondary{
     font-size: 14px;
     color: grey;
@@ -88,7 +98,8 @@ header{
 }
 .guide-img{
     width: 830px;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 30px;
     box-shadow: 4px 4px 10px 4px #e9e9e9;
     border-radius: 10px;
 }
