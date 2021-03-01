@@ -93,7 +93,7 @@ h1{
 }
 #scrollable2 {
     overflow-x: hidden;
-    margin-left: 35%;
+    margin-left: 30%;
     margin-top: 150px;
 }
 .guide-img{
@@ -138,22 +138,66 @@ h1{
     background-color: #2a6ee2;
     color: white;
 }
-.row{
+.row {
     padding: 20px;
     display: flex;
     justify-content: center;
+}
 
+@media (max-width: 1330px) {
+    .guide-img{
+        width: 500px;
+
+    }
+    #scrollable2 {
+        margin-left: 35%;
+        margin-top: 150px;
+    }
+    video{
+        width: 500px;
+    }
+
+}
 @media (max-width: 991px) {
     .sidebar1 {
         display: none;
     }
     .guide-img{
-        width: 350px;
+        width: 550px;
 
     }
     #scrollable2 {
         margin-left: 30px;
         margin-top: 150px;
     }
+    .indent{
+        margin-left: 0;
+    }
+    ul{
+        padding-left: 0;
+    }
+    ol{
+        padding-left: 0;
+    }
+    .zoom-button-doc{
+        margin-left: 0!important;
+    }
+    #sign-up{
+        margin-left: auto!important;
+
+    }
+}
+
+@media (max-width: 767px) {
+
+    .guide-img{
+        width: 350px;
+
+    }
+    #scrollable2 {
+        margin-left: 15px;
+        margin-top: 150px;
+    }
+
 
 }
