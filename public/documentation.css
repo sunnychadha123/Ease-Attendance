@@ -54,7 +54,7 @@ header{
 }
 .guide-list-element {
     counter-increment: item;
-    margin-bottom: 15px;
+    margin-bottom: 25px;
 }
 .noNumberElement{
     margin-bottom: 15px;
