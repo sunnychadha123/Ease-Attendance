@@ -77,7 +77,7 @@ header{
 .indent{
     margin-left: 30px;
 }
-li{
+.guide-li{
     margin-bottom: 15px;
 }
 h2{
@@ -106,8 +106,8 @@ h1{
 
 .zoom-button-doc{
     margin-left: 150px!important;
-    margin-top: 40px!important;
-    margin-bottom: 50px!important;
+    margin-top: 10px!important;
+    margin-bottom: 10px!important;
 }
 .zoom-button{
     margin-top: 15px;
@@ -130,8 +130,8 @@ h1{
 }
 #sign-up{
     margin-left: 170px!important;
-    margin-top: 40px;
-    margin-bottom: 50px;
+    margin-top: 10px!important;
+    margin-bottom: 15px!important;
 }
 .zoom-button:hover{
     background-color: #2a6ee2;
