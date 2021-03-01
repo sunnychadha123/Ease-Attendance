@@ -21,7 +21,12 @@ header{
     pointer-events: none;
 
 }
+.doc-link-2:before{
+    height: 555px;
+    visibility: hidden;
 
+
+}
 
 .sidebar1 {
     padding: 30px;
@@ -49,6 +54,9 @@ header{
 }
 .guide-list-element {
     counter-increment: item;
+    margin-bottom: 25px;
+}
+.noNumberElement{
     margin-bottom: 15px;
 }
 .guide-list-element:before {
@@ -66,30 +74,130 @@ header{
 .step-title{
     margin-bottom: 20px;
 }
+.indent{
+    margin-left: 30px;
+}
+.guide-li{
+    margin-bottom: 15px;
+}
+h2{
+    margin-bottom: 20px;
+}
+h1{
+    margin-bottom: 15px;
+}
+
 .secondary{
     font-size: 14px;
     color: grey;
 }
 #scrollable2 {
-    margin-left: 35%;
+    overflow-x: hidden;
+    margin-left: 30%;
     margin-top: 150px;
 }
 .guide-img{
-    width: 700px;
-    margin-bottom: 20px;
-    box-shadow: 2px 2px 4px 2px #cdcdcd;
+    width: 830px;
+    margin-top: 10px;
+    margin-bottom: 30px;
+    box-shadow: 4px 4px 10px 4px #e9e9e9;
     border-radius: 10px;
+}
+
+
+.zoom-button-doc{
+    margin-left: 150px!important;
+    margin-top: 10px!important;
+    margin-bottom: 10px!important;
+}
+.zoom-button{
+    margin-top: 15px;
+    margin-bottom: 30px;
+    width: 133px;
+    display: inline-block;
+
+    background-color: white;
+    border: 1px solid #2a6ee2;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
+    border-radius: 20px;
+    box-shadow: 0 4px 4px rgba(177, 177, 177, 0.25) !important;
+}
+#participantNumImg{
+    width: 300px;
+}
+#refreshImg{
+    width: 400px;
+}
+#sign-up{
+    margin-left: 170px!important;
+    margin-top: 10px!important;
+    margin-bottom: 15px!important;
+}
+.zoom-button:hover{
+    background-color: #2a6ee2;
+    color: white;
+}
+.row {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+@media (max-width: 1330px) {
+    .guide-img{
+        width: 500px;
+
+    }
+    #scrollable2 {
+        margin-left: 35%;
+        margin-top: 150px;
+    }
+    video{
+        width: 500px;
+    }
+
 }
 @media (max-width: 991px) {
     .sidebar1 {
         display: none;
     }
     .guide-img{
-        width: 350px;
+        width: 550px;
 
     }
     #scrollable2 {
         margin-left: 30px;
         margin-top: 150px;
     }
+    .indent{
+        margin-left: 0;
+    }
+    ul{
+        padding-left: 0;
+    }
+    ol{
+        padding-left: 0;
+    }
+    .zoom-button-doc{
+        margin-left: 0!important;
+    }
+    #sign-up{
+        margin-left: auto!important;
+
+    }
+}
+
+@media (max-width: 767px) {
+
+    .guide-img{
+        width: 350px;
+
+    }
+    #scrollable2 {
+        margin-left: 15px;
+        margin-top: 150px;
+    }
+
+
 }
