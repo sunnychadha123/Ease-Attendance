@@ -80,7 +80,9 @@ header{
     box-shadow: 2px 2px 4px 2px #cdcdcd;
     border-radius: 10px;
 }
-
+.zoom-button-doc{
+    margin-left: 150px!important;
+}
 .zoom-button{
     margin-top: 15px;
     margin-bottom: 30px;
