@@ -360,7 +360,7 @@ function evaluateParticipantTable(doc){
                         const name = decryptedName.split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
-                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, "Has Not Joined Yet")
+                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, "Has Not Joined")
                         currParticipant.bufferCount = 0
                         Participants.unshift(currParticipant)
 
@@ -410,7 +410,7 @@ function evaluateParticipantTable(doc){
                             if(Participants[i].state === "Absent" && Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                                 isRegistered = true;
                                 Participants.splice(i,1)
-                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, now)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, dateFormat(now))
                                 currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
                                 Participants.unshift(currParticipant)
@@ -418,7 +418,7 @@ function evaluateParticipantTable(doc){
                             }
                         }
                         if(!isRegistered){
-                            let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now)
+                            let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, dateFormat(now))
                             currParticipant.bufferCount = 1
                             currParticipant.email = participantEmail
                             Participants.unshift(currParticipant)
@@ -439,7 +439,7 @@ function evaluateParticipantTable(doc){
                     }
                     var now = new Date();
                     if(!wasPresent){
-                        let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now)
+                        let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, dateFormat(now))
                         currParticipant.bufferCount = 1
                         currParticipant.email = participantEmail
                         Participants.unshift(currParticipant)
@@ -556,6 +556,11 @@ function evaluateParticipantTable(doc){
             $("#add-on-registered").hide()
         }
     }
+}
+function dateFormat(d){
+    h = (d.getHours()<10?'0':'') + d.getHours()
+    m = (d.getMinutes()<10?'0':'') + d.getMinutes()
+    return h+":"+m
 }
 function clearTable(){
     const participantTable = document.getElementById("participant-table")
