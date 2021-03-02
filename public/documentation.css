@@ -27,7 +27,10 @@ header{
 
 
 }
-
+video:focus{
+    outline: none!important;
+    border: none!important;
+}
 .sidebar1 {
     padding: 30px;
     padding-top: 80px;
