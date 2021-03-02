@@ -485,6 +485,7 @@ function evaluateParticipantTable(doc){
                 updateParticipantTable()
             }
         }
+
         document.getElementById("ld-spin").style.display = "none"
         document.getElementById("refresh").disabled = false
         document.getElementById("refresh-cover").classList.remove("running")
