@@ -378,14 +378,14 @@ function evaluateParticipantTable(doc){
                     participantFirst = data[1]
                     participantLast = data[data.length-3]
                 }
-                let participantEmail = data[data.length-1]
+                let participantEmail = data[data.length-2]
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
                     let wasPresent = false
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
-                    var now = data[4]
+                    var now = data[data.length-1]
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             if(Participants[i].email && participantEmail === Participants[i].email){
@@ -394,8 +394,8 @@ function evaluateParticipantTable(doc){
                             }
                             if(Participants[i].email && participantEmail === Participants[i].email && Participants[i].state === "Left Meeting"){
                                 didActOnEvent = true
-                                Participants.splice(i,1)
                                 let currParticipant = new Participant(participantFirst, participantLast, "Present",true, Participants[i].timeJoined)
+                                Participants.splice(i,1)
                                 currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
                                 Participants.unshift(currParticipant)
@@ -454,9 +454,9 @@ function evaluateParticipantTable(doc){
                 }
                 else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-2]
+                    participantLast = data[data.length-3]
                 }
-                let participantEmail = data[data.length-1]
+                let participantEmail = data[data.length-2]
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
                 for(let i = 0 ; i < Participants.length; i++){
                     if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].email && Participants[i].email === participantEmail){
