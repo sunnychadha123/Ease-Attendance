@@ -222,12 +222,20 @@ app.post('/support-message', (req,res) => {
 })
 
 function updateParticipants(host_id, messageString, recordString,hostUID){
+    messageString += addTime()
+    console.log(messageString)
+    console.log(recordString)
     db.collection("CurrentMeetings").doc(host_id).update({
         messageLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(messageString,hostUID).toString()),
         recordLog: admin.firestore.FieldValue.arrayUnion(CryptoJS.AES.encrypt(recordString,hostUID).toString())
     }).then().catch((error)=>{
         console.error(error.message)
     })
+}
+function addTime(){
+    var today = new Date();
+    var date = " " +today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    return date
 }
 
 if(port !== 4000){

@@ -72,22 +72,21 @@ meetingName = "Period 3"
 
 startMeeting(meetingName, meetingID, AdityaHostID)
 
-participants = []
+participants = [['Andrea', 'Landers'], ['August', 'Young'], ['Bernice', 'Williams'], ['Charlie', 'Barron'], ['Elba', 'Weekley'], ['Ethel', 'Guajardo'], ['Jason', 'Brown'], ['Maria', 'Doyle'], ['Marina', 'Simmons'], ['Tia', 'Gonzales']]
 
 
 
-participantCount = input("enter the number of participants you want to add: ")
-try:
+'''try:
     participantCount = int(participantCount)
 except ValueError:
     participantCount = 30
     print("Defaulting to 30 participants")
-
+'''
+participantCount = 10
 for x in range(participantCount):
-    firstName = names.get_first_name()
-    lastName = names.get_last_name()
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
-    participants.append([firstName,lastName])
+    firstName = participants[x][0]
+    lastName = participants[x][1]
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,firstName+lastName+"generic@Email")
     sleep(0.00)
 
 participants.sort()
@@ -97,7 +96,7 @@ input("press enter to make participants leave: ")
 for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
+    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,firstName+lastName+"generic@Email")
     sleep(0.00)
 input("press enter to end the meeting: ")
 
