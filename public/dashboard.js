@@ -376,7 +376,7 @@ function evaluateParticipantTable(doc){
                 }
                 else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-2]
+                    participantLast = data[data.length-3]
                 }
                 let participantEmail = data[data.length-1]
                 let fullName = participantFirst.trim() + " " + participantLast.trim()

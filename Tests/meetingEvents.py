@@ -70,7 +70,7 @@ meetingID = "7378583629"
 meetingName = "Period 3"
 
 
-startMeeting(meetingName, meetingID, AdityaHostID)
+#startMeeting(meetingName, meetingID, AdityaHostID)
 
 participants = [['Andrea', 'Landers'], ['August', 'Young'], ['Bernice', 'Williams'], ['Charlie', 'Barron'], ['Elba', 'Weekley'], ['Ethel', 'Guajardo'], ['Jason', 'Brown'], ['Maria', 'Doyle'], ['Marina', 'Simmons'], ['Tia', 'Gonzales']]
 
@@ -86,7 +86,7 @@ participantCount = 10
 for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,firstName+lastName+"generic@Email")
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
     sleep(0.00)
 
 participants.sort()
