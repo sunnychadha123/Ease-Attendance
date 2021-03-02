@@ -15,5 +15,6 @@
     <orderEntry type="library" name="crypto-js" level="application" />
     <orderEntry type="library" name="widget.prod" level="application" />
     <orderEntry type="library" name="button.prod" level="application" />
+    <orderEntry type="library" name="@types/jquery" level="application" />
   </component>
 </module>
