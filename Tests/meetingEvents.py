@@ -70,11 +70,9 @@ meetingID = "7378583629"
 meetingName = "Period 3"
 
 
-startMeeting(meetingName, meetingID, VarunHostID)
+startMeeting(meetingName, meetingID, AdityaHostID)
 
-input("next")
-
-list = []
+participants = []
 
 
 
@@ -88,7 +86,7 @@ except ValueError:
 for x in range(participantCount):
     firstName = names.get_first_name()
     lastName = names.get_last_name()
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
     participants.append([firstName,lastName])
     sleep(0.00)
 
@@ -99,9 +97,9 @@ input("press enter to make participants leave: ")
 for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, VarunHostID,"generic@Email")
+    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email")
     sleep(0.00)
 input("press enter to end the meeting: ")
 
 
-endMeeting(meetingName, meetingID, VarunHostID)
+endMeeting(meetingName, meetingID, AdityaHostID)
