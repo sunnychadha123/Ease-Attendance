@@ -823,6 +823,8 @@ function sortByLast(){
     lastButton.style.color = "#F5B364"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "white"
+    var timeButton = document.getElementById("timeJoinedBtn")
+    timeButton.style.color = "white"
     updateParticipantTable()
 }
 function sortByFirst(){
@@ -831,6 +833,19 @@ function sortByFirst(){
     lastButton.style.color = "white"
     var firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "#F5B364"
+    var timeButton = document.getElementById("timeJoinedBtn")
+    timeButton.style.color = "white"
+    updateParticipantTable()
+}
+
+function sortByTime(){
+    ParticipantTableSortBy = "time"
+    var lastButton = document.getElementById("lastNameBtn")
+    lastButton.style.color = "white"
+    var firstButton = document.getElementById("firstNameBtn")
+    firstButton.style.color = "white"
+    var timeButton = document.getElementById("timeJoinedBtn")
+    timeButton.style.color = "#F5B364"
     updateParticipantTable()
 }
 
@@ -841,6 +856,8 @@ function findIndexOfRow(i){
         searchFor = Participants[i].firstName
     else if (ParticipantTableSortBy === "last")
         searchFor = Participants[i].lastName
+    else if(ParticipantTableSortBy === "time")
+        searchFor = Participants[i].timeJoined
 
     var low = 0
     var high = listNamesShown.length-1

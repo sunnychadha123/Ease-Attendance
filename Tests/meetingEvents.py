@@ -86,7 +86,7 @@ for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(0.00)
+    sleep(1.00)
 
 print(participants)
 
@@ -95,7 +95,7 @@ for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(0.00)
+    sleep(1.00)
 
 input("press enter to end the meeting: ")
 
@@ -103,7 +103,7 @@ for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(0.00)
+    sleep(1.00)
 
 print(participants)
 
@@ -112,7 +112,7 @@ for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(0.00)
+    sleep(1.00)
 input("press enter to end the meeting: ")
 
 

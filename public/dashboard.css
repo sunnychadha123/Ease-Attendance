@@ -242,6 +242,9 @@ hr{
 #lastNameBtn:hover{
     color: #F5B364 !important;
 }
+#timeJoinedBtn:hover{
+    color: #F5B364 !important;
+}
 .filter-button{
     -webkit-appearance: none!important;
     margin-bottom: 10px;
