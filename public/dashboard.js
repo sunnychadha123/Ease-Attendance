@@ -247,7 +247,7 @@ function updateParticipantTable(){
         filterClick("absent-filter")
     }
     else if( document.getElementById("left-meeting-filter").classList.contains("filter-active")){
-        filterClick("not-registered-filter")
+        filterClick("left-meeting-filter")
     }
     else if( document.getElementById("not-registered-filter").classList.contains("filter-active")){
         filterClick("not-registered-filter")
