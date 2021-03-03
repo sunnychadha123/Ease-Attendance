@@ -386,6 +386,9 @@ function evaluateParticipantTable(doc){
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
                     var now = data[data.length-1]
+                    var date = new Date(now)
+                    now = date.toLocaleTimeString()
+
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             if(Participants[i].email && participantEmail === Participants[i].email){

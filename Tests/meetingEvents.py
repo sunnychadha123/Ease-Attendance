@@ -80,7 +80,7 @@ except ValueError:
 
 startMeeting(meetingName, meetingID, AdityaHostID,ulr)
 
-participantCount = 10
+participantCount = 5
 
 for x in range(participantCount):
     firstName = participants[x][0]
@@ -99,7 +99,7 @@ for x in range(participantCount):
 
 input("press enter to end the meeting: ")
 
-for x in range(participantCount):
+"""for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
@@ -113,7 +113,7 @@ for x in range(participantCount):
     lastName = participants[x][1]
     removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
     sleep(1.00)
-input("press enter to end the meeting: ")
+input("press enter to end the meeting: ")"""
 
 
 endMeeting(meetingName, meetingID, AdityaHostID,ulr)

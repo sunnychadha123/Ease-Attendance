@@ -232,20 +232,7 @@ function updateParticipants(host_id, messageString, recordString,hostUID){
 }
 function addTime(){
     var today = new Date();
-    var hours = today.getHours()
-    if(hours<10){
-        hours = "0"+hours
-    }
-    var min = today.getMinutes()
-    if(min<10){
-        min = "0"+min
-    }
-    var sec = today.getSeconds()
-    if(sec<10){
-        sec = "0"+sec
-    }
-    var date = " " +hours + ":" + min + ":" + sec;
-    return date
+    return " "+today.toISOString()
 }
 
 if(port !== 4000){
