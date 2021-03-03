@@ -14,7 +14,7 @@ class Participant{
         this.lastName = last
         this.state = attendance
         this.partOfRoster = roster
-        this.timeJoined = timeJoined
+        this.timeJoined = timeJoined // stores time joined, only changed once when participant joins for first time
     }
 }
 class PastMeeting{
@@ -43,7 +43,7 @@ let editingIndex = 1
 let checkVerificationTimer
 let notRegisteredCount = 0
 let MeetingIsOccurring = false
-let ParticipantTableSortBy = "first" // can be "first" or "last" to sort participants table
+let ParticipantTableSortBy = "first" // can be "first" or "last" or "time" to sort participants table
 let listNamesShown = []
 let shouldRefresh = false
 let zoomID = -1
@@ -360,7 +360,7 @@ function evaluateParticipantTable(doc){
                         const name = decryptedName.split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
-                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, " ")
+                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, " ")// blank time joined if participant hasnt joined yet
                         currParticipant.bufferCount = 0
                         Participants.unshift(currParticipant)
 
@@ -376,18 +376,18 @@ function evaluateParticipantTable(doc){
                 }
                 else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-3]
+                    participantLast = data[data.length-3] // 3rd word from right instead of 2nd due to adding time at end of data
                 }
-                let participantEmail = data[data.length-2]
+                let participantEmail = data[data.length-2]// same reason as ^^^
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
                     let wasPresent = false
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
-                    var now = data[data.length-1]
-                    var date = new Date(now)
-                    now = date.toLocaleTimeString()
+                    var now = data[data.length-1] // gets time from data in ISO format
+                    var date = new Date(now) // converts ISO to date Class
+                    now = date.toLocaleTimeString() // converts Date into local time string
 
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
@@ -397,7 +397,7 @@ function evaluateParticipantTable(doc){
                             }
                             if(Participants[i].email && participantEmail === Participants[i].email && Participants[i].state === "Left Meeting"){
                                 didActOnEvent = true
-                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, Participants[i].timeJoined)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, Participants[i].timeJoined)// doesnt change time joined if left meeting
                                 Participants.splice(i,1)
                                 currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
@@ -413,7 +413,7 @@ function evaluateParticipantTable(doc){
                             if(Participants[i].state === "Absent" && Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                                 isRegistered = true;
                                 Participants.splice(i,1)
-                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, now)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Present",true, now)// if going from absent --> present, add time joined
                                 currParticipant.bufferCount = 1
                                 currParticipant.email = participantEmail
                                 Participants.unshift(currParticipant)
@@ -421,7 +421,7 @@ function evaluateParticipantTable(doc){
                             }
                         }
                         if(!isRegistered){
-                            let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now)
+                            let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now)// if going from ___ --> not registered, add time joined
                             currParticipant.bufferCount = 1
                             currParticipant.email = participantEmail
                             Participants.unshift(currParticipant)
@@ -441,7 +441,7 @@ function evaluateParticipantTable(doc){
                         }
                     }
                     if(!wasPresent){
-                        let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now)
+                        let currParticipant = new Participant(participantFirst, participantLast, "Not Registered",false, now) // add time
                         currParticipant.bufferCount = 1
                         currParticipant.email = participantEmail
                         Participants.unshift(currParticipant)
@@ -457,9 +457,9 @@ function evaluateParticipantTable(doc){
                 }
                 else if(data.length > 3){
                     participantFirst = data[1]
-                    participantLast = data[data.length-3]
+                    participantLast = data[data.length-3] // changed length, so need to change this minus
                 }
-                let participantEmail = data[data.length-2]
+                let participantEmail = data[data.length-2]// changed length, so need to change this minus
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
                 for(let i = 0 ; i < Participants.length; i++){
                     if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim() && Participants[i].email && Participants[i].email === participantEmail){
@@ -474,7 +474,7 @@ function evaluateParticipantTable(doc){
                         }
                         else if(Participants[i].state === "Present"){
                             if(Participants[i].bufferCount === 1){
-                                let currParticipant = new Participant(participantFirst, participantLast, "Left Meeting",true, Participants[i].timeJoined)
+                                let currParticipant = new Participant(participantFirst, participantLast, "Left Meeting",true, Participants[i].timeJoined) // doesnt add new time if partic goes from left meeting --> present
                                 Participants.splice(i,1)
                                 currParticipant.bufferCount = 0
                                 currParticipant.email = participantEmail
@@ -559,7 +559,7 @@ function evaluateParticipantTable(doc){
         }
     }
 }
-function dateFormat(d){
+function dateFormat(d){ // dont think this is used, was in previous code
     h = (d.getHours()<10?'0':'') + d.getHours()
     m = (d.getMinutes()<10?'0':'') + d.getMinutes()
     s = (d.getSeconds()<10?'0':'') + d.getSeconds()
@@ -643,8 +643,8 @@ function filterClick(clicked_id){
             row.style.color = "#000000"
             var cell1 = row.insertCell(0)
             var cell2 = row.insertCell(1)
-            var cell3 = row.insertCell(2)
-            var cell4 = row.insertCell(3)
+            var cell3 = row.insertCell(2) // cell 3 contains time now
+            var cell4 = row.insertCell(3) // changed cell3 to cell4
             cell4.innerHTML = Participants[i].state
             if(Participants[i].state === "Present"){
                 cell4.style.color = "#00bc50"
@@ -677,8 +677,8 @@ function filterClick(clicked_id){
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)
-                var cell4 = row.insertCell(3)
+                var cell3 = row.insertCell(2)// cell 3 contains time now
+                var cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#00bc50"
                 cell1.innerHTML = Participants[i].firstName
@@ -710,8 +710,8 @@ function filterClick(clicked_id){
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)
-                var cell4 = row.insertCell(3)
+                var cell3 = row.insertCell(2)// cell 3 contains time now
+                var cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#dd174d"
                 cell1.innerHTML = Participants[i].firstName
@@ -745,8 +745,8 @@ function filterClick(clicked_id){
                 row.style.color = "#000000"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)
-                var cell4 = row.insertCell(3)
+                var cell3 = row.insertCell(2)// cell 3 contains time now
+                var cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
@@ -776,8 +776,8 @@ function filterClick(clicked_id){
                 row.style.backgroundColor = "#ffffff"
                 var cell1 = row.insertCell(0)
                 var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)
-                var cell4 = row.insertCell(3)
+                var cell3 = row.insertCell(2)// cell 3 contains time now
+                var cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#ddb217"
                 cell1.innerHTML = Participants[i].firstName
@@ -869,7 +869,6 @@ function findIndexOfRow(i){
     while(low<=high){
         mid = Math.floor((low+high)/2)
         var temp = listNamesShown[mid]
-
         if(temp < searchFor){
             low = mid +1
         }else if (temp > searchFor){

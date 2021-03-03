@@ -231,7 +231,7 @@ function updateParticipants(host_id, messageString, recordString,hostUID){
     })
 }
 function addTime(){
-    var today = new Date();
+    var today = new Date(); // adds time in ISO format to message string
     return " "+today.toISOString()
 }
 
