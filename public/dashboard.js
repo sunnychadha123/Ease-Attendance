@@ -852,7 +852,7 @@ function sortByTime(){
     updateParticipantTable()
 }
 
-function findIndexOfRow(i){
+function findIndexOfRow( i){
 
     let searchFor;
     if(ParticipantTableSortBy === "first")
@@ -862,7 +862,6 @@ function findIndexOfRow(i){
     else if(ParticipantTableSortBy === "time"){
         searchFor = Participants[i].timeJoined
     }
-
     var low = 0
     var high = listNamesShown.length-1
     var mid;
@@ -873,14 +872,27 @@ function findIndexOfRow(i){
             low = mid +1
         }else if (temp > searchFor){
             high = mid-1
-        }
-        else if (temp === searchFor){
+        }else if (temp === searchFor){
             listNamesShown.splice(mid,0,searchFor)
             return mid;
         }
     }
     listNamesShown.splice(low,0,searchFor)
     return low;
+}
+
+function stringDateToDate(stringDate){
+    //stringdate should be in HH:MM:SS AM/PM format
+    var hours = parseInt(stringDate.slice(0,2))
+    var amPm = stringDate.slice(stringDate.length-2)
+    if( (amPm === "PM" && hours !== 12 /*All pm except 12 PM*/)){
+        hours += 12
+    }
+    if((amPm === "AM" && hours === 12)/*12 AM*/){
+        hours -= 12
+    }
+    var twentyHourTime = hours.toString() + stringDate.slice(2,stringDate.length-3)
+    return new Date(twentyHourTime)
 }
 
 function addMeetingModal(){
