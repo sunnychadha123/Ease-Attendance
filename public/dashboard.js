@@ -360,7 +360,7 @@ function evaluateParticipantTable(doc){
                         const name = decryptedName.split(" ")
                         const participantFirst = name[0]
                         const participantLast = name[name.length-1]
-                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, "Has Not Joined")
+                        let currParticipant = new Participant(participantFirst, participantLast, "Absent", true, " ")
                         currParticipant.bufferCount = 0
                         Participants.unshift(currParticipant)
 
