@@ -859,20 +859,30 @@ function findIndexOfRow(i){
         searchFor = Participants[i].firstName
     else if (ParticipantTableSortBy === "last")
         searchFor = Participants[i].lastName
-    else if(ParticipantTableSortBy === "time")
+    else if(ParticipantTableSortBy === "time"){
         searchFor = Participants[i].timeJoined
+        console.log(searchFor)
+        searchFor = searchFor.slice(searchFor.length-2,searchFor.length)+ searchFor.slice(0, searchFor.length-2)
+        console.log(searchFor)
+    }
 
     var low = 0
     var high = listNamesShown.length-1
     var mid;
+    var temp
     while(low<=high){
         mid = Math.floor((low+high)/2)
-        if(listNamesShown[mid] < searchFor){
+        var temp = listNamesShown[mid]
+        if(ParticipantTableSortBy === "time"){
+            temp = temp.slice(temp.length-2,temp.length)+ temp.slice(0, temp.length-2)
+        }
+
+        if(temp < searchFor){
             low = mid +1
-        }else if (listNamesShown[mid] > searchFor){
+        }else if (temp > searchFor){
             high = mid-1
         }
-        else if (listNamesShown[mid] === searchFor){
+        else if (temp === searchFor){
             listNamesShown.splice(mid,0,searchFor)
             return mid;
         }
