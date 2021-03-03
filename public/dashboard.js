@@ -14,7 +14,7 @@ class Participant{
         this.lastName = last
         this.state = attendance
         this.partOfRoster = roster
-        this.timeJoined = timeJoined // stores time joined, only changed once when participant joins for first time
+        this.timeJoined = timeJoined // stores ISO time joined, only changed once when participant joins for first time
     }
 }
 class PastMeeting{
@@ -386,8 +386,6 @@ function evaluateParticipantTable(doc){
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
                     var now = data[data.length-1] // gets time from data in ISO format
-                    var date = new Date(now) // converts ISO to date Class
-                    now = date.toLocaleTimeString() // converts Date into local time string
 
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
@@ -661,7 +659,7 @@ function filterClick(clicked_id){
             }
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
-            cell3.innerHTML = Participants[i].timeJoined
+            cell3.innerHTML = isoToLocalString(Participants[i].timeJoined)
         }
     }
     else if(clicked_id === "present-filter"){
@@ -683,7 +681,7 @@ function filterClick(clicked_id){
                 cell4.style.color = "#00bc50"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
-                cell3.innerHTML = Participants[i].timeJoined
+                cell3.innerHTML = isoToLocalString(Participants[i].timeJoined)
                 totalParticipants += 1
             }
             else if(Participants[i].state === "Not Registered"){
@@ -716,7 +714,7 @@ function filterClick(clicked_id){
                 cell4.style.color = "#dd174d"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
-                cell3.innerHTML = Participants[i].timeJoined
+                cell3.innerHTML = ""
                 totalParticipants += 1
             }
             else if(Participants[i].state === "Present"){
@@ -750,7 +748,7 @@ function filterClick(clicked_id){
                 cell4.innerHTML = Participants[i].state
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
-                cell3.innerHTML = Participants[i].timeJoined
+                cell3.innerHTML = isoToLocalString(Participants[i].timeJoined)
                 presentParticipantCount += 1
             }
             else if(Participants[i].state === "Present"){
@@ -782,7 +780,7 @@ function filterClick(clicked_id){
                 cell4.style.color = "#ddb217"
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
-                cell3.innerHTML = Participants[i].timeJoined
+                cell3.innerHTML = isoToLocalString(Participants[i].timeJoined)
                 totalParticipants += 1
             }
             else if(Participants[i].state === "Not Registered"){
@@ -818,6 +816,16 @@ function filterClick(clicked_id){
         $("#add-on-registered").prop('disabled',true)
         $("#add-on-registered").hide()
     }
+}
+
+function isoToLocalString(ISO){
+
+    var date = new Date(ISO) // converts ISO to date Class
+    var local = date.toLocaleTimeString() // converts Date into local time string
+    if (local === "Invalid Date"){
+        local = ""
+    }
+    return local
 }
 
 function sortByLast(){
@@ -879,20 +887,6 @@ function findIndexOfRow( i){
     }
     listNamesShown.splice(low,0,searchFor)
     return low;
-}
-
-function stringDateToDate(stringDate){
-    //stringdate should be in HH:MM:SS AM/PM format
-    var hours = parseInt(stringDate.slice(0,2))
-    var amPm = stringDate.slice(stringDate.length-2)
-    if( (amPm === "PM" && hours !== 12 /*All pm except 12 PM*/)){
-        hours += 12
-    }
-    if((amPm === "AM" && hours === 12)/*12 AM*/){
-        hours -= 12
-    }
-    var twentyHourTime = hours.toString() + stringDate.slice(2,stringDate.length-3)
-    return new Date(twentyHourTime)
 }
 
 function addMeetingModal(){
