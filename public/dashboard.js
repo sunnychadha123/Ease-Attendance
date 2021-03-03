@@ -593,22 +593,24 @@ $("#student-search-input-field").on('keyup', function (e) {
             var cell1 = row.insertCell(0)
             var cell2 = row.insertCell(1)
             var cell3 = row.insertCell(2)
+            var cell4 = row.insertCell(3)
             if(Participants[i].state === "Not Registered"){
                 row.style.backgroundColor = "#b8b8b8"
-                cell3.style.color = "#000000"
+                cell4.style.color = "#000000"
             }
             else if(Participants[i].state === "Absent"){
-                cell3.style.color = "#dd174d"
+                cell4.style.color = "#dd174d"
             }
             else if(Participants[i].state === "Left Meeting"){
-                cell3.style.color = "#ddb217"
+                cell4.style.color = "#ddb217"
             }
             else if(Participants[i].state === "Present"){
-                cell3.style.color = "#00bc50"
+                cell4.style.color = "#00bc50"
             }
-            cell3.innerHTML = Participants[i].state
+            cell4.innerHTML = Participants[i].state
             cell1.innerHTML = Participants[i].firstName
             cell2.innerHTML = Participants[i].lastName
+            cell3.innerHTML = isoToLocalString(Participants[i].timeJoined)
         }
     }
 
