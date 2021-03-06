@@ -371,10 +371,10 @@ function evaluateParticipantTable(doc){
             else if(eventType === "participant.joined"){
                 var participantFirst = ""
                 var participantLast = ""
-                if(data.length === 3){
+                if(data.length === 4){
                     participantFirst = data[1]
                 }
-                else if(data.length > 3){
+                else if(data.length > 4){
                     participantFirst = data[1]
                     participantLast = data[data.length-3] // 3rd word from right instead of 2nd due to adding time at end of data
                 }
