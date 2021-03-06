@@ -32,7 +32,8 @@ hr{
 }
 
 #documentation-link, #documentation-link:active{
-    color: #ee6165;
+    /*color: #ee6165;*/
+    color: #000000;
 
 }
 #documentation-link:hover, #documentation-link:focus{
