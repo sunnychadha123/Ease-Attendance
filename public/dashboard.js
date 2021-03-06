@@ -557,12 +557,6 @@ function evaluateParticipantTable(doc){
         }
     }
 }
-function dateFormat(d){ // dont think this is used, was in previous code
-    h = (d.getHours()<10?'0':'') + d.getHours()
-    m = (d.getMinutes()<10?'0':'') + d.getMinutes()
-    s = (d.getSeconds()<10?'0':'') + d.getSeconds()
-    return h+":"+m
-}
 function clearTable(){
     const participantTable = document.getElementById("participant-table")
     const currentNumRows = participantTable.rows.length
