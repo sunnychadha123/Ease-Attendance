@@ -47,6 +47,7 @@ let ParticipantTableSortBy = "first" // can be "first" or "last" or "time" to so
 let listNamesShown = []
 let shouldRefresh = false
 let zoomID = -1
+let rosterParticipantCount = 0
 $("#add-on-registered").prop('disabled',true)
 $("#add-on-registered").hide()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
@@ -119,6 +120,7 @@ auth.onAuthStateChanged((user) => {
                                 while (studentInputTable.rows.length !== 0) {
                                     studentInputTable.deleteRow(0)
                                 }
+                                rosterParticipantCount = 0
                                 for (let j = 0; j < currentMeeting.arr.length; j++) {
                                     addStudent(CryptoJS.AES.decrypt(currentMeeting.arr[j], user.uid).toString(CryptoJS.enc.Utf8))
                                 }
@@ -515,6 +517,7 @@ function evaluateParticipantTable(doc){
                 while (studentInputTable.rows.length !== 0) {
                     studentInputTable.deleteRow(0)
                 }
+                rosterParticipantCount = 0
                 EncounteredParticipants.forEach(participant => {
                     addStudent(participant)
                 })
@@ -896,10 +899,13 @@ function addMeetingModal(){
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
+    rosterParticipantCount = 0
     addStudent()
     document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
 }
 function addStudent(name){
+    rosterParticipantCount += 1
+    document.getElementById("roster-participant-count").innerHTML = "Participant Count: " + rosterParticipantCount
     const studentInputTable = document.getElementById("student-input-table")
     var row = studentInputTable.insertRow(studentInputTable.rows.length)
     row.innerHTML = studentTableBlock
@@ -929,6 +935,8 @@ function addStudent(name){
     });
 }
 function deleteStudent(e){
+    rosterParticipantCount -= 1
+    document.getElementById("roster-participant-count").innerHTML = "Participant Count: " + rosterParticipantCount
     const currentRow = e.parentNode.parentNode
     currentRow.parentNode.removeChild(currentRow)
 }
@@ -952,6 +960,7 @@ function addNotRegistered(){
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
+    rosterParticipantCount = 0
     for(let i = 0; i < Participants.length; i++){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
         addStudent(fullName)
