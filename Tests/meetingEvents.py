@@ -80,12 +80,15 @@ except ValueError:
 
 startMeeting(meetingName, meetingID, AdityaHostID,ulr)
 
+
 participantCount = 10
+
 
 for x in range(participantCount):
     firstName = participants[x][0]
     lastName = participants[x][1]
     addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
+
     input("next Student,  " + str(participantCount)+" students left")
 
 input("press enter to make participants leave: ")
@@ -104,6 +107,7 @@ for x in range(participantCount):
     addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
     sleep(1.00)
 
+
 input("press enter to make participants leave: ")
 
 for x in range(participantCount):
@@ -114,7 +118,24 @@ for x in range(participantCount):
 
 input("press enter to end the meeting: ")
 
+"""for x in range(participantCount):
+    firstName = participants[x][0]
+    lastName = participants[x][1]
+    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
+    sleep(1.00)
+
+print(participants)
+
+input("press enter to make participants leave: ")
+for x in range(participantCount):
+    firstName = participants[x][0]
+    lastName = participants[x][1]
+    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
+    sleep(1.00)
+input("press enter to end the meeting: ")"""
+
 
 endMeeting(meetingName, meetingID, AdityaHostID,ulr)
+
 
 
