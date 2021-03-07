@@ -862,10 +862,14 @@ function sortByTime(){
 function findIndexOfRow( i){
 
     let searchFor;
-    if(ParticipantTableSortBy === "first")
+    if(ParticipantTableSortBy === "first"){
         searchFor = Participants[i].firstName
-    else if (ParticipantTableSortBy === "last")
+        searchFor = searchFor.toLowerCase()
+    }
+    else if (ParticipantTableSortBy === "last"){
         searchFor = Participants[i].lastName
+        searchFor = searchFor.toLowerCase()
+    }
     else if(ParticipantTableSortBy === "time"){
         searchFor = Participants[i].timeJoined
     }
