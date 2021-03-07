@@ -108,7 +108,7 @@ auth.onAuthStateChanged((user) => {
                             currentRow.addEventListener("click", function () {
                                 var index = this.rowIndex
                                 currentRecordIndex = index - 1
-                                document.getElementById("meeting-modal-title").innerHTML = "Edit Meeting"
+                                document.getElementById("meeting-modal-title").innerHTML = "Edit Roster"
                                 editingIndex = index
                                 $('#add-edit-meeting-modal').modal('show');
                                 const currentMeeting = Meetings[index - 1]
@@ -382,13 +382,12 @@ function evaluateParticipantTable(doc){
                 }
                 let participantEmail = data[data.length-2]// same reason as ^^^
                 let fullName = participantFirst.trim() + " " + participantLast.trim()
+                let now = data[data.length-1] // gets time from data in ISO format
                 EncounteredParticipants.add(fullName.trim())
                 if(meetingIndex !== -1){
                     let wasPresent = false
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
-                    var now = data[data.length-1] // gets time from data in ISO format
-
                     for(var i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             if(Participants[i].email && participantEmail === Participants[i].email){
@@ -512,7 +511,7 @@ function evaluateParticipantTable(doc){
                 $("#delete-meeting-button").hide()
                 $("#meeting-id-input-field").prop('disabled',true)
                 $("#meeting-name-input-field").prop('disabled',true)
-                $("#save-meeting-button").innerHTML = "Add Meeting"
+                $("#save-meeting-button").innerHTML = "Add Roster"
                 const studentInputTable = document.getElementById("student-input-table")
                 while (studentInputTable.rows.length !== 0) {
                     studentInputTable.deleteRow(0)
@@ -521,7 +520,7 @@ function evaluateParticipantTable(doc){
                 EncounteredParticipants.forEach(participant => {
                     addStudent(participant)
                 })
-                document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
+                document.getElementById("meeting-modal-title").innerHTML = "Add Roster"
             }
             else{
                 greenNotification("Your meeting has been saved")
@@ -808,6 +807,12 @@ function filterClick(clicked_id){
         document.getElementById("current-participant-number").innerHTML = ""
     }
     if(notRegisteredCount > 0){
+        if(meetingIndex === - 1){
+            document.getElementById("add-on-registered").innerHTML = "Create Roster"
+        }
+        else{
+            document.getElementById("add-on-registered").innerHTML = "Update Roster"
+        }
         $("#add-on-registered").prop('disabled',false)
         $("#add-on-registered").show()
     }
@@ -901,7 +906,7 @@ function addMeetingModal(){
     }
     rosterParticipantCount = 0
     addStudent()
-    document.getElementById("meeting-modal-title").innerHTML = "Add Meeting"
+    document.getElementById("meeting-modal-title").innerHTML = "Add Roster"
 }
 function addStudent(name){
     rosterParticipantCount += 1
@@ -917,7 +922,7 @@ function addStudent(name){
             row.cells[1].children[0].value = res[res.length-1]
         }
        else{
-            row.cells[1].children[0].value = "(Last Name)"
+            row.cells[1].children[0].value = ""
         }
     }
     $("input").on("click", function(){
@@ -945,10 +950,12 @@ function addNotRegistered(){
     $("#meeting-name-input-field").prop('disabled',true)
     if(meetingIndex === -1){
         isEditingMeeting = false
+        document.getElementById("meeting-modal-title").innerHTML = "Create Roster"
     }
     else{
         isEditingMeeting = true
         editingIndex = meetingIndex+1
+        document.getElementById("meeting-modal-title").innerHTML = "Update Roster"
     }
     const studentInputTable = document.getElementById("student-input-table")
     $("#delete-meeting-button").prop('disabled',true)
@@ -965,7 +972,6 @@ function addNotRegistered(){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
         addStudent(fullName)
     }
-    document.getElementById("meeting-modal-title").innerHTML = "Update Participants"
 }
 
 
@@ -1094,10 +1100,10 @@ function deleteMeeting(){
     const currentId = currentMeeting.id
     const reference = uid+currentId
     firestore.collection("Periods").doc(reference).delete().then(() => {
-        greenNotification("Meeting deleted")
+        greenNotification("Roster deleted")
         $("#add-edit-meeting-modal").modal("hide")
     }).catch((error) => {
-        redNotification("Error deleting meeting")
+        redNotification("Error deleting roster")
     });
 }
 
@@ -1196,7 +1202,7 @@ function addMeeting(){
                     studentsNames: names,
                 }).then(() => {
                     $("#add-edit-meeting-modal").modal("hide")
-                    greenNotification("Meetings Updated")
+                    greenNotification("Rosters Updated")
                 }).catch((error)=>{
                     $(".notify").addClass("notify-active");
                     $("#notifyType").addClass("failureServer");

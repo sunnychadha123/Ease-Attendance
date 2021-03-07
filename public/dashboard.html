@@ -54,19 +54,19 @@
             <li class="nav-item">
                 <a class="nav-link active" id="attendance-tab" href="#attendance" data-toggle="tab" role="tab" aria-controls="attendance" aria-selected="true">
                     <span class="iconify" data-inline="false" data-icon="bi:card-checklist" style="font-size: 18px;"></span>
-                    Take Attendance <span class="sr-only">(current)</span>
+                     &nbsp;Attendance <span class="sr-only">(current)</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="meetings-tab" href="#meetings" data-toggle="tab" role="tab" aria-controls="meetings" aria-selected="false">
-                    <span class="iconify" data-inline="false" data-icon="fluent:meet-now-16-regular" style=" font-size: 18px;"></span>
-                    My Meetings
+                    <span class="iconify" data-inline="false" data-icon="bi:people" style="font-size: 18px;"></span>
+                    &nbsp;My Rosters
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="records-tab" href="#records" data-toggle="tab" role="tab" aria-controls="students" aria-selected="false">
                     <span class="iconify" data-inline="false" data-icon="ic:outline-access-time" style="font-size: 18px;"></span>
-                    Meeting Records
+                    &nbsp;Meeting Records
                 </a>
             </li>
         </ul>
@@ -108,7 +108,7 @@
                     </div>
                     <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Participant Name" aria-label="Student Name" aria-describedby="addon-wrapping">
                 </div>
-                <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Participants</button>
+                <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Roster</button>
                 <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
                     <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
@@ -142,7 +142,7 @@
                 </table>
             </div>
             <div class="tab-pane fade container col justify-content-center" id="meetings" role="tabpanel" aria-labelledby="profile-tab">
-                <h1 id="meeting-title" class="tab-title float-left">My Meetings</h1>
+                <h1 id="meeting-title" class="tab-title float-left">My Rosters</h1>
                 <table class="table" id="my-meetings-table">
                     <thead>
                     <tr>
@@ -153,7 +153,7 @@
                     <tbody id="meeting-table">
                     </tbody>
                 </table>
-                <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-meeting-button">Add Meeting</button>
+                <button onclick="addMeetingModal()" class="float-right btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-meeting-button">Add Roster</button>
             </div>
             <div class="tab-pane fade" id="records" role="tabpanel" aria-labelledby="contact-tab"><h1 id="past-meeting-title">Meeting Records</h1>
                 <div id="records-search" class="input-group flex-nowrap float-left">
@@ -278,7 +278,7 @@
                     <button onclick="addStudent()" class="float-right btn" type="button" id="add-student-button">Add Student</button>
                 </div>
                 <div class="modal-footer">
-                    <button onclick="deleteMeeting()" id="delete-meeting-button" type="button" class="btn btn-primary">Delete Meeting</button>
+                    <button onclick="deleteMeeting()" id="delete-meeting-button" type="button" class="btn btn-primary">Delete Roster</button>
                     <button onclick="addMeeting()" id="save-meeting-button" type="button" class="btn btn-primary">Finish</button>
                 </div>
             </div>
