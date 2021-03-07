@@ -16,7 +16,7 @@ def startMeeting(meetingName, meetingID, hostID,url):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response)
+    print(meetingName+" started")
 
 
 def endMeeting(meetingName, meetingID, hostID,url):
@@ -28,7 +28,7 @@ def endMeeting(meetingName, meetingID, hostID,url):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response)
+    print(meetingName+" ended")
 
 
 def addParticipant(participantName, meetingName, meetingID, hostID, email,url):
@@ -40,7 +40,7 @@ def addParticipant(participantName, meetingName, meetingID, hostID, email,url):
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response)
+    print(participantName+" added")
 
 
 def removeParticipant(participantName, meetingName, meetingID, hostID,email,url):
@@ -53,89 +53,115 @@ def removeParticipant(participantName, meetingName, meetingID, hostID,email,url)
 
     response = requests.request("POST", url, headers=headers, data=payload)
 
-    print(response)
+    print(participantName+" removed")
 
 
 urlactual = "https://www.easeattendance.com/api/requests"
 urltest = "http://localhost:4000/api/requests"
+
+ulr = ''
+
 VarunHostID = "hIk5FOWfR-SFE9DgN-2N2w"
 AdityaHostID = "TbQ_nGjpR9aMPQnS-IkQPQ"
+
+HostID = ''
 
 meetingID = "7378583629"
 meetingName = "Period 3"
 
-ulr = urltest
+
+participants = ["Jeff Sessions", "yahn sweeed", "jown jow", 'jim expo', 'sound cloud', 'control panel',
+                'firstnameonlyyyyyy','supa hot fire', ' anotherfirstnameonlyy','stupid',
+                'maria','no candy during sandy', 'razer pro', 'another name','give up', 'big busu',
+                'all ma homies hate jeff evans', 'jeff evans', 'jeffevansnospace',
+                'holy shoot', 'too many names', 'too long', 'so many participants',
+                'asdfghjkhgdfrdectrdetycrdeytcrdceyft', 'hillary clint']
 
 
-participants = [['Andrea', 'Landers'], ['August', 'Young'], ['Bernice', 'Williams'], ['Charlie', 'Barron'], ['Elba', 'Weekley'], ['Ethel', 'Guajardo'], ['Jason', 'Brown'], ['Maria', 'Doyle'], ['Marina', 'Simmons'], ['Tia', 'Gonzales']]
+if input("who dis?(v/a) ") == "v":
+    HostID = VarunHostID
+    print("Hello Varun")
+else:
+    HostID = AdityaHostID
+    print("Hello Dad")
+
+print()
+
+if input("would you like to send the webhook to easeattendance.com or localhost:4000?(e/l)")=="e":
+    url = urlactual
+    print("will send webhook to https://www.easeattendance.com/api/requests")
+else:
+    url = urltest
+    print("will send webhook to http://localhost:4000/api/requests")
+print()
+
+print("the default meetingID   = "+meetingID)
+if input("would you like to change this? (y/n) ") =="y":
+    meetingID = input("what would you like to change this to? ")
+print()
+
+print("the default meetingName = "+meetingName)
+if input("would you like to change this? (y/n) ") =="y":
+    meetingName = input("what would you like to change this to? ")
+print()
+
+temp = input("would you like to use a predefined participant list(p), create a randomly generated(r) or make your "
+             "own(o)? (p/r/o) ")
+if temp == "o":
+    participants.clear()
+    size = int(input("how big is your custom? "))
+    for x in range(size):
+        nex = input("gimme the number " +str(x) +" participant's full name: ")
+        participants.append(nex)
+
+if temp == "r":
+    size = int(input("how many random participant full names would you like? "))
+    participants.clear()
+    for x in range(size):
+        participants.append(names.get_full_name())
 
 
+print("your participant list is "+str(participants))
+print()
 
-'''try:
-    participantCount = int(participantCount)
-except ValueError:
-    participantCount = 30
-    print("Defaulting to 30 participants")
-'''
-
-startMeeting(meetingName, meetingID, AdityaHostID,ulr)
-
-
-participantCount = 10
-
-
-for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-
-    input("next Student,  " + str(participantCount)+" students left")
-
-input("press enter to make participants leave: ")
-
-for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(1.00)
-
-input("press enter to make participants rejoin: ")
-
-for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(1.00)
+print("the order of operations is the order in which meeting will start/end, or participants will join/leave")
+print("ms stands for meeting started. me for meeting ended. pj for participants join, and pl for leave")
+print("for example, entering \"ms pj pl pj me\" will cause a meeting start webhook, then all participants join, "
+      "then leave, then rejoin, then the meeting will end")
+orderOperations = input("what order of operations would you like(enter space-separated format)? ")
+print()
+sleepTimeBetweenOperations = float(input("enter the time this test should wait in between operations, for example "
+                                         "between starting a meeting and beginning to add participants, or between "
+                                         "finishing adding participants and removing them: "))
+print()
+sleepTimeParts = float(input("would you like a sleep time between each participant join or left? enter the length of "
+                             "the sleep between each participant join/left in seconds here: "))
+print()
+print("starting...")
+print()
 
 
-input("press enter to make participants leave: ")
+OrderOperationsArray = orderOperations.split()
 
-for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(1.00)
+print(OrderOperationsArray)
 
-input("press enter to end the meeting: ")
-
-"""for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    addParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(1.00)
-
-print(participants)
-
-input("press enter to make participants leave: ")
-for x in range(participantCount):
-    firstName = participants[x][0]
-    lastName = participants[x][1]
-    removeParticipant(firstName + " " + lastName, meetingName, meetingID, AdityaHostID,"generic@Email",ulr)
-    sleep(1.00)
-input("press enter to end the meeting: ")"""
-
-
-endMeeting(meetingName, meetingID, AdityaHostID,ulr)
-
-
+for x in OrderOperationsArray:
+    if x == "ms":
+        startMeeting(meetingName,meetingID, HostID, url)
+    if x == "me":
+        endMeeting(meetingName,meetingID, HostID, url)
+    if x == "pj":
+        for name in participants:
+            addParticipant(name,meetingName,meetingID,HostID,name+'@gmail.com',url)
+            sleep(sleepTimeParts)
+    if x == 'pl':
+        for name in participants:
+            removeParticipant(name,meetingName,meetingID,HostID,name+'@gmail.com',url)
+            sleep(sleepTimeParts)
+    print()
+    print()
+    print(x +" operation completed")
+    print()
+    print()
+    sleep(sleepTimeBetweenOperations)
 
