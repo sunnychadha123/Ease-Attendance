@@ -20,6 +20,10 @@ function authenticate(){
         document.getElementById("signUpMessage").innerHTML = "Please choose a shorter display name"
         document.getElementById("signup").disabled = false
     }
+    else if(name.length === 0){
+        document.getElementById("signUpMessage").innerHTML = "Please enter a display name"
+        document.getElementById("signup").disabled = false
+    }
     else if (!validateEmail(email)){
         document.getElementById("signUpMessage").innerHTML = "Please enter a valid email"
         document.getElementById("signup").disabled = false
