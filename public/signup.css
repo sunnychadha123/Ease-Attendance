@@ -277,7 +277,9 @@ input[type=checkbox]:not(old):checked + label > span:before {
 .agree-term {
     display: inline-block;
     width: auto; }
-
+.policy-link{
+    color: #222;
+}
 label {
     position: absolute;
     left: 0;

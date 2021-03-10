@@ -11,7 +11,12 @@ function authenticate(){
     const repass = document.getElementById("re_pass").value
     const email = document.getElementById("email").value.trim()
     const name = document.getElementById("name").value.trim()
-    if(name.length > 35){
+    const agreePolicy = document.getElementById("agree-policies").checked
+    if(agreePolicy === false){
+        document.getElementById("signUpMessage").innerHTML = "Please agree to the privacy policy and terms"
+        document.getElementById("signup").disabled = false
+    }
+    else if(name.length > 35){
         document.getElementById("signUpMessage").innerHTML = "Please choose a shorter display name"
         document.getElementById("signup").disabled = false
     }
