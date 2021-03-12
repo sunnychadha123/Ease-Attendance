@@ -288,6 +288,7 @@ app.post('/api/requests', (req, res) => {
     res.send()
     console.log("post request to /api/requests sent ")
     console.log(req.body)
+    console.log(req.headers.authorization)
     if(req && req.headers && req.headers.authorization === process.env.zoom_verification_token){
         const body = req.body
         const host_id = body.payload.object.host_id
