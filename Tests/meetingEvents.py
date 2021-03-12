@@ -9,7 +9,7 @@ import names
 def startMeeting(meetingName, meetingID, hostID, url):
     payload = "{\r\n  \"event\": \"meeting.started\",\r\n  \"event_ts\": 1234566789900,\r\n  \"payload\": {\r\n    \"account_id\": \"o8KK_AAACq6BBEyA70CA\",\r\n    \"object\": {\r\n      \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\r\n      \"id\": \"" + meetingID + "\",\r\n      \"host_id\": \"" + hostID + "\",\r\n      \"topic\": \"" + meetingName + "\",\r\n      \"type\": 2,\r\n      \"start_time\": \"2019-07-09T17:00:00Z\",\r\n      \"duration\": 60,\r\n      \"timezone\": \"America/Los_Angeles\"\r\n    }\r\n  }\r\n}"
     headers = {
-        'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
+        'authorization': process.env.zoom_verification_token,
         'Content-Type': 'application/json'
     }
 
@@ -21,7 +21,7 @@ def startMeeting(meetingName, meetingID, hostID, url):
 def endMeeting(meetingName, meetingID, hostID, url):
     payload = "{\n  \"event\": \"meeting.ended\",\n  \"event_ts\": 1234566789900,\n  \"payload\": {\n    \"account_id\": \"o8KK_AAACq6BBEyA70CA\",\n    \"object\": {\n      \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n      \"id\": \"" + meetingID + "\",\n      \"host_id\": \"" + hostID + "\",\n      \"topic\": \"" + meetingName + "\",\n      \"type\": 2,\n      \"start_time\": \"2019-07-09T17:00:00Z\",\n      \"duration\": 60,\n      \"timezone\": \"America/Los_Angeles\"\n    }\n  }\n}"
     headers = {
-        'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
+        'authorization': process.env.zoom_verification_token,
         'Content-Type': 'application/json'
     }
 
@@ -33,7 +33,7 @@ def endMeeting(meetingName, meetingID, hostID, url):
 def addParticipant(participantName, meetingName, meetingID, hostID, email, url):
     payload = "{\n  \"event\": \"meeting.participant_joined\",\n  \"event_ts\": \"long\",\n  \"payload\": {\n    \"account_id\": \"string\",\n    \"object\": {\n      \"id\": \"" + meetingID + "\",\n      \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n      \"host_id\": \"" + hostID + "\",\n      \"topic\": \"" + meetingName + "\",\n      \"type\": \"2\",\n      \"start_time\": \"string [date-time]\",\n      \"timezone\": \"string\",\n      \"duration\": \"integer\",\n      \"participant\": {\n        \"user_id\": \"11111111\",\n        \"user_name\": \"" + participantName + "\",\n        \"email\": \"" + email + "\",\n        \"id\": \"string\",\n        \"join_time\": \"string [date-time]\"\n      }\n    }\n  }\n}"
     headers = {
-        'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
+        'authorization': process.env.zoom_verification_token,
         'Content-Type': 'application/json'
     }
 
@@ -45,7 +45,7 @@ def addParticipant(participantName, meetingName, meetingID, hostID, email, url):
 def removeParticipant(participantName, meetingName, meetingID, hostID, email, url):
     payload = "{\n    \"event\": \"meeting.participant_left\",\n    \"event_ts\": \"long\",\n    \"payload\": {\n        \"account_id\": \"string\",\n        \"object\": {\n            \"id\": \"" + meetingID + "\",\n            \"uuid\": \"czLF6FFFoQOKgAB99DlDb9g==\",\n            \"host_id\": \"" + hostID + "\",\n            \"topic\": \"" + meetingName + "\",\n            \"type\": \"2\",\n            \"start_time\": \"string [date-time]\",\n            \"timezone\": \"string\",\n            \"duration\": \"integer\",\n            \"participant\": {\n                \"user_id\": \"11111111\",\n                \"user_name\": \"" + participantName + "\",\n                \"email\": \"" + email + "\",\n                \"id\": \"string\",\n                \"join_time\": \"string [date-time]\"\n            }\n        }\n    }\n}"
     headers = {
-        'authorization': 'YYzbQmUuQ72ZZsbaionu2A',
+        'authorization': process.env.zoom_verification_token,
         'Content-Type': 'application/json'
     }
 
@@ -67,12 +67,7 @@ HostID = ''
 meetingID = "7378583629"
 meetingName = "Period 3"
 
-participants = ["Jeff Sessions", "yahn sweeed", "jown jow", 'jim expo', 'sound cloud', 'control panel',
-                'firstnameonlyyyyyy', 'supa hot fire', ' anotherfirstnameonlyy', 'stupid',
-                'maria', 'no candy during sandy', 'razer pro', 'another name', 'give up', 'big busu',
-                'all ma homies hate jeff evans', 'jeff evans', 'jeffevansnospace',
-                'holy shoot', 'too many names', 'too long', 'so many participants',
-                'asdfghjkhgdfrdectrdetycrdeytcrdceyft', 'hillary clint']
+participants = []
 
 if input("who dis?(v/a) ") == "v":
     HostID = VarunHostID
