@@ -289,7 +289,7 @@ app.post('/api/requests', (req, res) => {
     console.log("post request to /api/requests sent ")
     console.log(req.body)
     console.log(req.headers.authorization)
-    if(req && req.headers && (req.headers.authorization === process.env.zoom_verification_token || req.headers.authorization === process.env.zoom_verification_token2)){
+    if(req && req.headers && (req.headers.authorization === process.env.zoom_verification_token)){
         const body = req.body
         const host_id = body.payload.object.host_id
         if(body.event === "meeting.started"){
@@ -477,7 +477,7 @@ app.post('/api/requests', (req, res) => {
 })
 
 app.post('/deauthorize', (req, res) => {
-  if (req.headers.authorization === process.env.zoom_verification_token || req.headers.authorization === process.env.zoom_verification_token2) {
+  if (req.headers.authorization === process.env.zoom_verification_token) {
     console.log("post request to /deauthorize received " + req.body)
     console.log(req.body)
     res.status(200)
