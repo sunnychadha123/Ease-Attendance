@@ -1111,6 +1111,17 @@ function deleteMeeting(){
         redNotification("Error deleting roster")
     });
 }
+async function deleteMeetingNoNotification(){
+    const currentMeeting = Meetings[editingIndex-1]
+    const uid = auth.currentUser.uid
+    const currentId = currentMeeting.id
+    const currentName = currentMeeting.name
+    const reference = uid+currentId+encodeURIComponent(currentName).replace(/\./g, '%2E')
+    firestore.collection("Periods").doc(reference).delete().then(() => {
+    }).catch((error) => {
+    });
+}
+
 
 function check(){
     const idInput = document.getElementById("meeting-id-input-field").value
@@ -1196,9 +1207,7 @@ function addMeeting(){
                 const periodName = document.getElementById("meeting-name-input-field").value
                 const meetingId = document.getElementById("meeting-id-input-field").value
                 if(isEditingMeeting){
-                    if(meetingId !== Meetings[editingIndex-1].id){
-                        deleteMeeting()
-                    }
+                    deleteMeeting()
                 }
                 firestore.collection("Periods").doc(user.uid+meetingId+encodeURIComponent(periodName).replace(/\./g, '%2E')).set({
                     useruid : user.uid,
