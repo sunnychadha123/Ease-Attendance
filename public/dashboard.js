@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Ease Attendance - letun Chitturi
+ * Copyright (c) 2021 Ease Attendance - Varun Chitturi
  */
 class Meeting{
     constructor(name,id,arr){
