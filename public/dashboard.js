@@ -1102,7 +1102,8 @@ function deleteMeeting(){
     const currentMeeting = Meetings[editingIndex-1]
     const uid = auth.currentUser.uid
     const currentId = currentMeeting.id
-    const reference = uid+currentId
+    const currentName = currentMeeting.name
+    const reference = uid+currentId+encodeURIComponent(currentName).replace(/\./g, '%2E')
     firestore.collection("Periods").doc(reference).delete().then(() => {
         greenNotification("Roster deleted")
         $("#add-edit-meeting-modal").modal("hide")
@@ -1167,7 +1168,7 @@ function checkID(){
 function checkDuplicateID(){
     const meetingId = document.getElementById("meeting-id-input-field").value
     if(!isEditingMeeting){
-        for(i = 0; i < Meetings.length; i++){
+        for(let i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
                 document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
@@ -1175,7 +1176,7 @@ function checkDuplicateID(){
         }
     }
     else{
-        for(i = 0; i < Meetings.length; i++){
+        for(let i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId && i !== editingIndex-1){
                 document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
@@ -1199,7 +1200,7 @@ function addMeeting(){
                         deleteMeeting()
                     }
                 }
-                firestore.collection("Periods").doc(user.uid+meetingId).set({
+                firestore.collection("Periods").doc(user.uid+meetingId+encodeURIComponent(periodName).replace(/\./g, '%2E')).set({
                     useruid : user.uid,
                     periodName : periodName,
                     meetingId : meetingId,
