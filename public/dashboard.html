@@ -40,7 +40,7 @@
 </head>
 <div class="notify"><span id="notifyType"></span></div>
 <body>
-<a href="/documentation" id="documentation-link"><div id="help-button"><span class="iconify" data-inline="false" data-icon="ion:help" style="font-size: 25px;"></span>
+<a title="View documentation" href="/documentation" target="_blank" id="documentation-link"><div id="help-button"><span class="iconify" data-inline="false" data-icon="ion:help" style="font-size: 25px;"></span>
 </div></a>
 <div class="container-fluid row full-width">
 
@@ -108,7 +108,8 @@
                     </div>
                     <input id="student-search-input-field" onclick="this.select()" type="text" class="form-control student-search-input" placeholder="Participant Name" aria-label="Student Name" aria-describedby="addon-wrapping">
                 </div>
-                <button onclick="addNotRegistered()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered">Update Roster</button>
+                <button onclick="addNotRegisteredCreate()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered-create">Create Roster</button>
+                <button onclick="addNotRegisteredUpdate()" class="float-left btn" data-toggle="modal" data-target="#add-edit-meeting-modal" type="button" id="add-on-registered-update">Update Roster</button>
                 <div id="filter-group" class="btn-group float-right" role="group" aria-label="Basic example">
                     <a id="all-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button filter-active">All</a>
                     <a id="present-filter" onclick="filterClick(this.id)" type="button" class="btn btn-secondary filter-button">Present</a>
@@ -250,6 +251,7 @@
                             </div>
                             <input allow="[0-9]" id="meeting-id-input-field" onclick="this.select()" type="text" class="form-control modal-input" placeholder="Meeting ID" aria-label="Meeting ID" aria-describedby="addon-wrapping">
                         </div>
+                        <h6 style="color: #d74242" id="roster-error-message"></h6>
                         <h5>Participants</h5>
                         <h6 class="text-secondary modal-title" id="roster-participant-count">Participant Count: 0</h6>
                         <table id="student-input-table">

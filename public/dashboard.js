@@ -48,8 +48,40 @@ let listNamesShown = []
 let shouldRefresh = false
 let zoomID = -1
 let rosterParticipantCount = 0
-$("#add-on-registered").prop('disabled',true)
-$("#add-on-registered").hide()
+let rosterCreateButton = $("#add-on-registered-create")
+let rosterUpdateButton = $("#add-on-registered-update")
+let rosterErrorMessage = $("#roster-error-message")
+function hideRegisterRosterButtons(){
+    rosterCreateButton.prop('disabled',true)
+    rosterCreateButton.hide()
+    rosterUpdateButton.prop('disabled',true)
+    rosterUpdateButton.hide()
+}
+function showUpdateRosterButton(){
+    rosterUpdateButton.prop('disabled',false)
+    rosterUpdateButton.show()
+}
+function showCreateRosterButton() {
+    rosterCreateButton.prop('disabled', false)
+    rosterCreateButton.show()
+}
+function hideUpdateRosterButton(){
+    rosterUpdateButton.prop('disabled',true)
+    rosterUpdateButton.hide()
+}
+function hideCreateRosterButton(){
+    rosterCreateButton.prop('disabled',true)
+    rosterCreateButton.hide()
+}
+function addRosterErrorMessage(msg){
+    document.getElementById("roster-error-message").innerHTML = msg
+    rosterErrorMessage.show()
+}
+function removeRosterErrorMessage(){
+    rosterErrorMessage.hide()
+}
+
+hideRegisterRosterButtons()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
@@ -57,7 +89,7 @@ const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\
 const firestore = firebase.firestore()
 const auth = firebase.auth()
 function arr_diff (newMess, oldMess) {
-    var diff = []
+    let diff = []
     for(let i = oldMess.length; i < newMess.length;i++){
         diff.push(newMess[i])
     }
@@ -103,10 +135,10 @@ auth.onAuthStateChanged((user) => {
                         }
                         const studentInputTable = document.getElementById("student-input-table")
                         for (let i = Meetings.length - 1; i >= 0; i--) {
-                            var currentRow = meetingTable.insertRow(1)
+                            let currentRow = meetingTable.insertRow(1)
                             currentRow.classList.add("meeting-row")
                             currentRow.addEventListener("click", function () {
-                                var index = this.rowIndex
+                                let index = this.rowIndex
                                 currentRecordIndex = index - 1
                                 document.getElementById("meeting-modal-title").innerHTML = "Edit Roster"
                                 editingIndex = index
@@ -125,8 +157,8 @@ auth.onAuthStateChanged((user) => {
                                     addStudent(CryptoJS.AES.decrypt(currentMeeting.arr[j], user.uid).toString(CryptoJS.enc.Utf8))
                                 }
                             })
-                            var cell1 = currentRow.insertCell(0)
-                            var cell2 = currentRow.insertCell(1)
+                            let cell1 = currentRow.insertCell(0)
+                            let cell2 = currentRow.insertCell(1)
                             cell1.innerHTML = Meetings[i].name
                             cell2.innerHTML = Meetings[i].id
                             cell2.classList.add("meeting-id-text")
@@ -149,10 +181,10 @@ auth.onAuthStateChanged((user) => {
                         }
                         const currentRecordTable = document.getElementById("current-record-table")
                         for (let i = PastMeetings.length - 1; i >= 0; i--) {
-                            var currentRow = recordTable.insertRow(1)
+                            let currentRow = recordTable.insertRow(1)
                             currentRow.classList.add("record-row");
                             currentRow.addEventListener("click", function () {
-                                var index = this.rowIndex
+                                let index = this.rowIndex
                                 currentRecordIndex = index - 1
                                 const currentMeeting = PastMeetings[index - 1]
                                 document.getElementById("current-record-name").innerHTML = "Meeting Name: " + currentMeeting.MeetingName
@@ -163,8 +195,8 @@ auth.onAuthStateChanged((user) => {
                                     currentRecordTable.deleteRow(0)
                                 }
                                 for (let j = 0; j < currentMeeting.events.length; j++) {
-                                    var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
-                                    var cell1 = row.insertCell(0);
+                                    let row = currentRecordTable.insertRow(currentRecordTable.rows.length)
+                                    let cell1 = row.insertCell(0);
                                     let currentRecord = CryptoJS.AES.decrypt(currentMeeting.events[j], user.uid).toString(CryptoJS.enc.Utf8);
                                     currentRecord = currentRecord.split(" ")
                                     let currentRecordDate = ""
@@ -181,9 +213,9 @@ auth.onAuthStateChanged((user) => {
                                     cell1.innerHTML = currentRecord
                                 }
                             })
-                            var cell1 = currentRow.insertCell(0)
-                            var cell2 = currentRow.insertCell(1)
-                            var cell3 = currentRow.insertCell(2)
+                            let cell1 = currentRow.insertCell(0)
+                            let cell2 = currentRow.insertCell(1)
+                            let cell3 = currentRow.insertCell(2)
                             currentRow.style.backgroundColor = "#ffffff"
                             cell1.innerHTML = PastMeetings[i].MeetingName
                             cell2.innerHTML = PastMeetings[i].MeetingID
@@ -291,7 +323,7 @@ function evaluateParticipantTable(doc){
         const meetingMessages = doc.data().messageLog
         // newCalculated and newMessages are created to make sure that newMessages holds the value and not the reference
         const newCalculated = arr_diff(meetingMessages,CurrentMessages)
-        var newMessages = []
+        let newMessages = []
         for(let i = 0; i < newCalculated.length; i++){
             CurrentMessages.push(newCalculated[i])
             newMessages.push(newCalculated[i])
@@ -314,7 +346,7 @@ function evaluateParticipantTable(doc){
             meetingIndex = -1
             clearTable()
         }
-        for(var j = 0; j < newMessages.length; j++){
+        for(let j = 0; j < newMessages.length; j++){
             const currentMessage = CryptoJS.AES.decrypt(newMessages[j], auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
             const data = currentMessage.split(" ")
             const eventType = data[0]
@@ -326,7 +358,7 @@ function evaluateParticipantTable(doc){
                     participantTable.deleteRow(1)
                 }
                 document.getElementById("meeting-id-attendance").hidden = false
-                var meetingName = ""
+                let meetingName = ""
                 for(i = 1; i < data.length;i++){
                     meetingName += data[i] + " "
                 }
@@ -371,8 +403,8 @@ function evaluateParticipantTable(doc){
                 updateParticipantTable()
             }
             else if(eventType === "participant.joined"){
-                var participantFirst = ""
-                var participantLast = ""
+                let participantFirst = ""
+                let participantLast = ""
                 if(data.length === 4){
                     participantFirst = data[1]
                 }
@@ -388,7 +420,7 @@ function evaluateParticipantTable(doc){
                     let wasPresent = false
                     let didActOnEvent = false
                     let presentParticipantIndex = -1
-                    for(var i = 0 ; i < Participants.length; i++){
+                    for(let i = 0 ; i < Participants.length; i++){
                         if(Participants[i].firstName.toLowerCase().trim() === participantFirst.toLowerCase().trim() && Participants[i].lastName.toLowerCase().trim() === participantLast.toLowerCase().trim()){
                             if(Participants[i].email && participantEmail === Participants[i].email){
                                 wasPresent = true;
@@ -449,8 +481,8 @@ function evaluateParticipantTable(doc){
                 updateParticipantTable()
             }
             else if(eventType === "participant.left"){
-                var participantFirst = ""
-                var participantLast = ""
+                let participantFirst = ""
+                let participantLast = ""
                 if(data.length === 4){
                     participantFirst = data[1]
                 }
@@ -501,8 +533,7 @@ function evaluateParticipantTable(doc){
             document.getElementById("currentMeeting-name").innerHTML = "No Meeting Has Started"
             document.getElementById("meeting-id-attendance").value = ""
             document.getElementById("meeting-id-attendance").hidden = true
-            $("#add-on-registered").prop('disabled',true)
-            $("#add-on-registered").hide()
+            hideRegisterRosterButtons()
             if(meetingIndex === -1){
                 $('#add-edit-meeting-modal').modal('show');
                 $("#meeting-id-input-field").val(CurrentMeetingID)
@@ -554,8 +585,7 @@ function evaluateParticipantTable(doc){
             document.getElementById("ld-spin").style.display = "none"
             document.getElementById("refresh").disabled = false
             document.getElementById("refresh-cover").classList.remove("running")
-            $("#add-on-registered").prop('disabled',true)
-            $("#add-on-registered").hide()
+            hideRegisterRosterButtons()
         }
     }
 }
@@ -583,13 +613,13 @@ $("#student-search-input-field").on('keyup', function (e) {
     for(let i = Participants.length-1; i >= 0; i--){
         const fullName = Participants[i].firstName + " " + Participants[i].lastName
         if(fullName.toLowerCase().includes(currValue.toLowerCase().trim())){
-            var row = participantTable.insertRow(1+findIndexOfRow(i));
+            let row = participantTable.insertRow(1+findIndexOfRow(i));
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-            var cell3 = row.insertCell(2)
-            var cell4 = row.insertCell(3)
+            let cell1 = row.insertCell(0)
+            let cell2 = row.insertCell(1)
+            let cell3 = row.insertCell(2)
+            let cell4 = row.insertCell(3)
             if(Participants[i].state === "Not Registered"){
                 row.style.backgroundColor = "#b8b8b8"
                 cell4.style.color = "#000000"
@@ -626,7 +656,7 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
-            var row = participantTable.insertRow(1+ findIndexOfRow(i));
+            let row = participantTable.insertRow(1+ findIndexOfRow(i));
             Participants[i].row = row
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount+=1
@@ -637,10 +667,10 @@ function filterClick(clicked_id){
                 row.style.backgroundColor = "#ffffff"
             }
             row.style.color = "#000000"
-            var cell1 = row.insertCell(0)
-            var cell2 = row.insertCell(1)
-            var cell3 = row.insertCell(2) // cell 3 contains time now
-            var cell4 = row.insertCell(3) // changed cell3 to cell4
+            let cell1 = row.insertCell(0)
+            let cell2 = row.insertCell(1)
+            let cell3 = row.insertCell(2) // cell 3 contains time now
+            let cell4 = row.insertCell(3) // changed cell3 to cell4
             cell4.innerHTML = Participants[i].state
             if(Participants[i].state === "Present"){
                 cell4.style.color = "#00bc50"
@@ -668,13 +698,13 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Present"){
                 presentParticipantCount += 1
-                var row = participantTable.insertRow(1+ findIndexOfRow(i));
+                let row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
-                var cell1 = row.insertCell(0)
-                var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)// cell 3 contains time now
-                var cell4 = row.insertCell(3) // changed cell3 to cell4
+                let cell1 = row.insertCell(0)
+                let cell2 = row.insertCell(1)
+                let cell3 = row.insertCell(2)// cell 3 contains time now
+                let cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#00bc50"
                 cell1.innerHTML = Participants[i].firstName
@@ -701,13 +731,13 @@ function filterClick(clicked_id){
         document.getElementById("left-meeting-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Absent"){
-                var row = participantTable.insertRow(1+ findIndexOfRow(i));
+                let row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
                 row.style.color = "#000000"
-                var cell1 = row.insertCell(0)
-                var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)// cell 3 contains time now
-                var cell4 = row.insertCell(3) // changed cell3 to cell4
+                let cell1 = row.insertCell(0)
+                let cell2 = row.insertCell(1)
+                let cell3 = row.insertCell(2)// cell 3 contains time now
+                let cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#dd174d"
                 cell1.innerHTML = Participants[i].firstName
@@ -736,13 +766,13 @@ function filterClick(clicked_id){
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Not Registered"){
                 notRegisteredCount += 1
-                var row = participantTable.insertRow(1+ findIndexOfRow(i));
+                let row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#b8b8b8"
                 row.style.color = "#000000"
-                var cell1 = row.insertCell(0)
-                var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)// cell 3 contains time now
-                var cell4 = row.insertCell(3) // changed cell3 to cell4
+                let cell1 = row.insertCell(0)
+                let cell2 = row.insertCell(1)
+                let cell3 = row.insertCell(2)// cell 3 contains time now
+                let cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell1.innerHTML = Participants[i].firstName
                 cell2.innerHTML = Participants[i].lastName
@@ -768,12 +798,12 @@ function filterClick(clicked_id){
         document.getElementById("not-registered-filter").classList.remove("filter-active")
         for(let i = Participants.length-1; i >= 0; i--){
             if(Participants[i].state === "Left Meeting"){
-                var row = participantTable.insertRow(1+ findIndexOfRow(i));
+                let row = participantTable.insertRow(1+ findIndexOfRow(i));
                 row.style.backgroundColor = "#ffffff"
-                var cell1 = row.insertCell(0)
-                var cell2 = row.insertCell(1)
-                var cell3 = row.insertCell(2)// cell 3 contains time now
-                var cell4 = row.insertCell(3) // changed cell3 to cell4
+                let cell1 = row.insertCell(0)
+                let cell2 = row.insertCell(1)
+                let cell3 = row.insertCell(2)// cell 3 contains time now
+                let cell4 = row.insertCell(3) // changed cell3 to cell4
                 cell4.innerHTML = Participants[i].state
                 cell4.style.color = "#ddb217"
                 cell1.innerHTML = Participants[i].firstName
@@ -807,25 +837,24 @@ function filterClick(clicked_id){
         document.getElementById("current-participant-number").innerHTML = ""
     }
     if(notRegisteredCount > 0){
-        if(meetingIndex === - 1){
-            document.getElementById("add-on-registered").innerHTML = "Create Roster"
+        if(meetingIndex === -1){
+            hideUpdateRosterButton()
+            showCreateRosterButton()
         }
         else{
-            document.getElementById("add-on-registered").innerHTML = "Update Roster"
+            showCreateRosterButton()
+            showUpdateRosterButton()
         }
-        $("#add-on-registered").prop('disabled',false)
-        $("#add-on-registered").show()
     }
     else{
-        $("#add-on-registered").prop('disabled',true)
-        $("#add-on-registered").hide()
+        hideRegisterRosterButtons()
     }
 }
 
 function isoToLocalString(ISO){
 
-    var date = new Date(ISO) // converts ISO to date Class
-    var local = date.toLocaleTimeString() // converts Date into local time string
+    let date = new Date(ISO) // converts ISO to date Class
+    let local = date.toLocaleTimeString() // converts Date into local time string
     if (local === "Invalid Date"){
         local = ""
     }
@@ -834,32 +863,32 @@ function isoToLocalString(ISO){
 
 function sortByLast(){
     ParticipantTableSortBy = "last"
-    var lastButton = document.getElementById("lastNameBtn")
+    let lastButton = document.getElementById("lastNameBtn")
     lastButton.style.color = "#F5B364"
-    var firstButton = document.getElementById("firstNameBtn")
+    let firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "white"
-    var timeButton = document.getElementById("timeJoinedBtn")
+    let timeButton = document.getElementById("timeJoinedBtn")
     timeButton.style.color = "white"
     updateParticipantTable()
 }
 function sortByFirst(){
     ParticipantTableSortBy = "first"
-    var lastButton = document.getElementById("lastNameBtn")
+    let lastButton = document.getElementById("lastNameBtn")
     lastButton.style.color = "white"
-    var firstButton = document.getElementById("firstNameBtn")
+    let firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "#F5B364"
-    var timeButton = document.getElementById("timeJoinedBtn")
+    let timeButton = document.getElementById("timeJoinedBtn")
     timeButton.style.color = "white"
     updateParticipantTable()
 }
 
 function sortByTime(){
     ParticipantTableSortBy = "time"
-    var lastButton = document.getElementById("lastNameBtn")
+    let lastButton = document.getElementById("lastNameBtn")
     lastButton.style.color = "white"
-    var firstButton = document.getElementById("firstNameBtn")
+    let firstButton = document.getElementById("firstNameBtn")
     firstButton.style.color = "white"
-    var timeButton = document.getElementById("timeJoinedBtn")
+    let timeButton = document.getElementById("timeJoinedBtn")
     timeButton.style.color = "#F5B364"
     updateParticipantTable()
 }
@@ -878,12 +907,12 @@ function findIndexOfRow( i){
     else if(ParticipantTableSortBy === "time"){
         searchFor = Participants[i].timeJoined
     }
-    var low = 0
-    var high = listNamesShown.length-1
-    var mid;
+    let low = 0
+    let high = listNamesShown.length-1
+    let mid;
     while(low<=high){
         mid = Math.floor((low+high)/2)
-        var temp = listNamesShown[mid]
+        let temp = listNamesShown[mid]
         if(temp < searchFor){
             low = mid +1
         }else if (temp > searchFor){
@@ -916,10 +945,10 @@ function addStudent(name){
     rosterParticipantCount += 1
     document.getElementById("roster-participant-count").innerHTML = "Participant Count: " + rosterParticipantCount
     const studentInputTable = document.getElementById("student-input-table")
-    var row = studentInputTable.insertRow(studentInputTable.rows.length)
+    let row = studentInputTable.insertRow(studentInputTable.rows.length)
     row.innerHTML = studentTableBlock
     if(name){
-        var res = name.split(" ")
+        let res = name.split(" ")
 
         row.cells[0].children[0].value = res[0]
         if(res.length !== 1){
@@ -949,25 +978,44 @@ function deleteStudent(e){
     const currentRow = e.parentNode.parentNode
     currentRow.parentNode.removeChild(currentRow)
 }
-function addNotRegistered(){
-    $("#meeting-id-input-field").prop('disabled',true)
-    $("#meeting-name-input-field").prop('disabled',true)
-    if(meetingIndex === -1){
-        isEditingMeeting = false
-        document.getElementById("meeting-modal-title").innerHTML = "Create Roster"
-    }
-    else{
-        isEditingMeeting = true
-        editingIndex = meetingIndex+1
-        document.getElementById("meeting-modal-title").innerHTML = "Update Roster"
-    }
+function addNotRegisteredUpdate(){
+    let meetingIDInputField = $("#meeting-id-input-field")
+    let meetingNameInputField = $("#meeting-name-input-field")
+    let deleteMeetingButton =  $("#delete-meeting-button")
+    meetingIDInputField.prop('disabled',true)
+    isEditingMeeting = true
+    editingIndex = meetingIndex+1
+    document.getElementById("meeting-modal-title").innerHTML = "Update Roster"
     const studentInputTable = document.getElementById("student-input-table")
-    $("#delete-meeting-button").prop('disabled',true)
-    $("#delete-meeting-button").hide()
-    $("#meeting-id-input-field").val(CurrentMeetingID)
-    $("#meeting-name-input-field").val(CurrentMeeting)
-    $("#meeting-id-input-field").removeClass("is-invalid")
-    $("#meeting-name-input-field").removeClass("is-invalid")
+    deleteMeetingButton.prop('disabled',true)
+    deleteMeetingButton.hide()
+    meetingIDInputField.val(CurrentMeetingID)
+    meetingNameInputField.val(CurrentMeeting)
+    meetingIDInputField.removeClass("is-invalid")
+    meetingNameInputField.removeClass("is-invalid")
+    while(studentInputTable.rows.length !== 0){
+        studentInputTable.deleteRow(0)
+    }
+    rosterParticipantCount = 0
+    for(let i = 0; i < Participants.length; i++){
+        const fullName = Participants[i].firstName + " " + Participants[i].lastName
+        addStudent(fullName)
+    }
+}
+
+function addNotRegisteredCreate(){
+    let meetingIDInputField = $("#meeting-id-input-field")
+    let meetingNameInputField = $("#meeting-name-input-field")
+    let deleteMeetingButton =  $("#delete-meeting-button")
+    meetingIDInputField.prop('disabled',true)
+    isEditingMeeting = false
+    const studentInputTable = document.getElementById("student-input-table")
+    deleteMeetingButton.prop('disabled',true)
+    deleteMeetingButton.hide()
+    meetingIDInputField.val(CurrentMeetingID)
+    meetingNameInputField.val(CurrentMeeting)
+    meetingIDInputField.removeClass("is-invalid")
+    meetingNameInputField.removeClass("is-invalid")
     while(studentInputTable.rows.length !== 0){
         studentInputTable.deleteRow(0)
     }
@@ -1006,9 +1054,9 @@ $("#records-search-input-field").on('keyup', function (e) {
         const name = PastMeetings[i].MeetingName
         const currentRecordTable = document.getElementById("current-record-table")
         if(name.toLowerCase().includes(currValue.toLowerCase().trim())){
-            var currentRow = recordTable.insertRow(1)
+            let currentRow = recordTable.insertRow(1)
             currentRow.addEventListener("click", function () {
-                var index = this.rowIndex
+                let index = this.rowIndex
                 currentRecordIndex = index-1
                 const currentMeeting = PastMeetings[index - 1]
                 document.getElementById("current-record-name").innerHTML = "Meeting Name: " + currentMeeting.MeetingName
@@ -1020,14 +1068,14 @@ $("#records-search-input-field").on('keyup', function (e) {
                     currentRecordTable.deleteRow(0)
                 }
                 for (i = 0; i < currentMeeting.events.length; i++) {
-                    var row = currentRecordTable.insertRow(currentRecordTable.rows.length)
-                    var cell1 = row.insertCell(0)
+                    let row = currentRecordTable.insertRow(currentRecordTable.rows.length)
+                    let cell1 = row.insertCell(0)
                     cell1.innerHTML = currentMeeting.events[i]
                 }
             })
-            var cell1 = currentRow.insertCell(0)
-            var cell2 = currentRow.insertCell(1)
-            var cell3 = currentRow.insertCell(2)
+            let cell1 = currentRow.insertCell(0)
+            let cell2 = currentRow.insertCell(1)
+            let cell3 = currentRow.insertCell(2)
             currentRow.style.backgroundColor = "#ffffff"
             cell1.innerHTML = PastMeetings[i].MeetingName
             cell2.innerHTML = PastMeetings[i].MeetingID
@@ -1051,10 +1099,10 @@ $("#current-record-search-input-field").on('keyup', function (e) {
     for(let i = PastMeetings[currentRecordIndex].events.length-1; i >= 0; i--){
         const currString = CryptoJS.AES.decrypt(PastMeetings[currentRecordIndex].events[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
         if(currString.toLowerCase().includes(currValue.toLowerCase().trim())){
-            var row = currentRecordTable.insertRow(0);
+            let row = currentRecordTable.insertRow(0);
             row.style.backgroundColor = "#ffffff"
             row.style.color = "#000000"
-            var cell1 = row.insertCell(0)
+            let cell1 = row.insertCell(0)
             cell1.innerHTML = CryptoJS.AES.decrypt(PastMeetings[currentRecordIndex].events[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
 
         }
@@ -1128,9 +1176,9 @@ function check(){
     const nameInput = document.getElementById("meeting-name-input-field").value
 
     names = []
-    var currentName = ""
-    var currentCount = 0
-    var shouldProceed = true;
+    let currentName = ""
+    let currentCount = 0
+    let shouldProceed = true;
     if(idInput === "" || idInput == null){
         document.getElementById("meeting-id-input-field").classList.add("is-invalid")
         shouldProceed = false;
@@ -1164,12 +1212,16 @@ function check(){
         }
         currentCount += 1
     });
+    if(!shouldProceed){
+        redNotification("Please make sure you fill out all the necessary fields")
+    }
     return shouldProceed
 }
 function checkID(){
     const currID = document.getElementById("meeting-id-input-field").value
     if(currID.length < 9){
         document.getElementById("meeting-id-input-field").classList.add("is-invalid")
+        redNotification("Please enter a valid ID")
         return false
     }
     document.getElementById("meeting-id-input-field").classList.remove("is-invalid")
@@ -1181,7 +1233,6 @@ function checkDuplicateID(){
     if(!isEditingMeeting){
         for(let i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId){
-                document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
             }
         }
@@ -1189,20 +1240,34 @@ function checkDuplicateID(){
     else{
         for(let i = 0; i < Meetings.length; i++){
             if(Meetings[i].id === meetingId && i !== editingIndex-1){
-                document.getElementById("meeting-id-input-field").classList.add("is-invalid")
                 return false;
             }
         }
     }
-    document.getElementById("meeting-id-input-field").classList.remove("is-invalid")
     return true
 }
-
+function checkDuplicateName(){
+    const meetingName = document.getElementById("meeting-name-input-field").value
+    if(!isEditingMeeting){
+        for(let i = 0; i < Meetings.length; i++){
+            if(Meetings[i].name === meetingName){
+                return false;
+            }
+        }
+    }
+    else{
+        for(let i = 0; i < Meetings.length; i++){
+            if(Meetings[i].name === meetingName && i !== editingIndex-1){
+                return false;
+            }
+        }
+    }
+    return true
+}
 function addMeeting(){
-    const shouldProceed = check()
-    if(shouldProceed){
+    if(check()){
         if(checkID()){
-            if(checkDuplicateID()){
+            if(checkDuplicateID() || checkDuplicateName()){
                 const user = auth.currentUser
                 const periodName = document.getElementById("meeting-name-input-field").value
                 const meetingId = document.getElementById("meeting-id-input-field").value
@@ -1218,39 +1283,13 @@ function addMeeting(){
                     $("#add-edit-meeting-modal").modal("hide")
                     greenNotification("Rosters Updated")
                 }).catch((error)=>{
-                    $(".notify").addClass("notify-active");
-                    $("#notifyType").addClass("failureServer");
-                    setTimeout(function(){
-                        $(".notify").removeClass("notify-active");
-                        $("#notifyType").removeClass("failureServer");
-                    },2000);
+                    redNotification("Sorry, we had some trouble connecting to the server")
                 })
             }
             else{
-                $(".notify").addClass("notify-active");
-                $("#notifyType").addClass("failureIDDup");
-                setTimeout(function(){
-                    $(".notify").removeClass("notify-active");
-                    $("#notifyType").removeClass("failureIDDup");
-                },2000);
+                redNotification("You already have a roster with same meeting name and meeting id")
             }
         }
-        else{
-            $(".notify").addClass("notify-active");
-            $("#notifyType").addClass("failureID");
-            setTimeout(function(){
-                $(".notify").removeClass("notify-active");
-                $("#notifyType").removeClass("failureID");
-            },2000);
-        }
-    }
-    else{
-        $(".notify").addClass("notify-active");
-        $("#notifyType").addClass("failure");
-        setTimeout(function(){
-            $(".notify").removeClass("notify-active");
-            $("#notifyType").removeClass("failure");
-        },2000);
     }
 }
 $('#add-edit-meeting-modal').on('hidden.bs.modal', function () {
