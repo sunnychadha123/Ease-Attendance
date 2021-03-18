@@ -37,6 +37,7 @@ let EncounteredParticipants = new Set()
 let names = []
 let CurrentMeeting = ""
 let CurrentMeetingID = ""
+let CurrentRosterName = ""
 let meetingIndex = -1
 let currentRecordIndex = -1
 let editingIndex = 1
@@ -50,7 +51,8 @@ let zoomID = -1
 let rosterParticipantCount = 0
 let rosterCreateButton = $("#add-on-registered-create")
 let rosterUpdateButton = $("#add-on-registered-update")
-let rosterErrorMessage = $("#roster-error-message")
+let chooseRoster = $("#dropdown-roster")
+let chooseRosterMenu = $("#dropdown-roster-menu")
 function hideRegisterRosterButtons(){
     rosterCreateButton.prop('disabled',true)
     rosterCreateButton.hide()
@@ -73,15 +75,42 @@ function hideCreateRosterButton(){
     rosterCreateButton.prop('disabled',true)
     rosterCreateButton.hide()
 }
-function addRosterErrorMessage(msg){
-    document.getElementById("roster-error-message").innerHTML = msg
-    rosterErrorMessage.show()
+function hideChooseRoster(){
+    chooseRoster.hide()
+    chooseRoster.prop("disabled",true)
+    chooseRosterMenu.empty()
 }
-function removeRosterErrorMessage(){
-    rosterErrorMessage.hide()
+function createRosterLink(name,id,index){
+    return "<a onClick=\"changeRoster(this)\" data-meeting-id=\"" + id + "\" data-roster-name=\"" + name + "\" data-roster-index=\"" + index + "\" class=\"dropdown-item\">" + name + "</a>"
 }
-
+function createRosterLinkActive(name,id,index){
+    return "<a onClick=\"changeRoster(this)\" data-meeting-id=\"" + id + "\" data-roster-name=\"" + name + "\" data-roster-index=\"" + index + "\" class=\"dropdown-item roster-active\">" + name + "</a>"
+}
+function showChooseRoster(){
+    chooseRosterMenu.empty()
+    chooseRoster.show()
+    chooseRoster.prop("disabled",false)
+    if(meetingIndex !== -1){
+        for(let i = 0; i < Meetings.length;i++){
+            if(Meetings[i].id === CurrentMeetingID && i === meetingIndex){
+                CurrentRosterName = Meetings[i].name
+                chooseRosterMenu.append(createRosterLinkActive(Meetings[i].name, Meetings[i].id,i))
+            }
+            else if (Meetings[i].id === CurrentMeetingID){
+                chooseRosterMenu.append(createRosterLink(Meetings[i].name, Meetings[i].id,i))
+            }
+        }
+    }
+}
+function changeRoster(roster){
+    $("#dropdown-roster-menu>a.roster-active").removeClass("roster-active");
+    $(roster).addClass("roster-active")
+    meetingIndex = $(roster).data("roster-index")
+    CurrentRosterName = Meetings[meetingIndex].name
+    refreshTable()
+}
 hideRegisterRosterButtons()
+hideChooseRoster()
 const studentTableBlock = "<th scope=\"col\"> <input type=\"text\" placeholder=\"First name\" class=\"form-control student-name student-first-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <input type=\"text\" placeholder=\"Last name\" class=\"form-control student-name modal-input\"></th>\n" +
     "<th scope=\"col\"> <button onclick=\"deleteStudent(this)\" class=\"btn trash-btn\" type=\"button\"><span class=\"iconify\" data-inline=\"false\" data-icon=\"ei:trash\" style=\"font-size: 30px;\"></span></button></th>"
@@ -294,9 +323,15 @@ function refreshTable(){
     document.getElementById("ld-spin").style.display = "block"
     Participants = []
     CurrentMessages = []
+    meetingIndex = -1
     CurrentMeeting = ""
     CurrentMeetingID = ""
-    meetingIndex = -1
+    for(let i = 0; i < Meetings.length;i++){
+        if(Meetings[i].name === CurrentRosterName && CurrentRosterName !== ""){
+            meetingIndex = i;
+            break
+        }
+    }
     setTimeout(()=>{
         firestore.collection("CurrentMeetings").doc(zoomID).get().then((doc)=>{
             evaluateParticipantTable(doc)
@@ -312,6 +347,7 @@ function refreshTable(){
         document.getElementById("refresh-cover").classList.remove("running")
     },1000)
 }
+
 function decryptMessages(messages){
     for(let i = 0; i < messages.length; i++){
         const currentMessage = CryptoJS.AES.decrypt(messages[i], auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
@@ -344,6 +380,7 @@ function evaluateParticipantTable(doc){
             document.getElementById("current-participants").innerHTML = ""
             document.getElementById("current-participant-number").innerHTML = ""
             meetingIndex = -1
+            CurrentRosterName = ""
             clearTable()
         }
         for(let j = 0; j < newMessages.length; j++){
@@ -359,7 +396,7 @@ function evaluateParticipantTable(doc){
                 }
                 document.getElementById("meeting-id-attendance").hidden = false
                 let meetingName = ""
-                for(i = 1; i < data.length;i++){
+                for(let i = 1; i < data.length;i++){
                     meetingName += data[i] + " "
                 }
                 CurrentMeeting = meetingName
@@ -367,13 +404,12 @@ function evaluateParticipantTable(doc){
                 if(meetingIndex === -1){
                     document.getElementById("status-dot").classList.remove("dot-success")
                     document.getElementById("status-dot").classList.add("dot-warning")
-                    document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 }
                 else{
                     document.getElementById("status-dot").classList.remove("dot-warning")
                     document.getElementById("status-dot").classList.add("dot-success")
-                    document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + Meetings[meetingIndex].name
                 }
+                document.getElementById("currentMeeting-name").innerHTML = "Meeting: " + meetingName
                 updateParticipantTable()
             }
             else if(eventType === "meeting.id"){
@@ -382,13 +418,17 @@ function evaluateParticipantTable(doc){
                 CurrentMeeting = ""
                 document.getElementById("status-dot").classList.remove("dot-success")
                 document.getElementById("status-dot").classList.add("dot-danger")
-                for(i = 0; i < Meetings.length; i++){
-                    if(String(Meetings[i].id) === String(CurrentMeetingID)){
-                        meetingIndex = i;
-                        break
+                if(meetingIndex === -1){
+                    for(let i = 0; i < Meetings.length; i++){
+                        if(String(Meetings[i].id) === String(CurrentMeetingID)){
+                            meetingIndex = i;
+                            CurrentRosterName = Meetings[meetingIndex].name
+                            break
+                        }
                     }
                 }
                 if(meetingIndex !== -1){
+                    showChooseRoster()
                     for(let i = 0 ; i < Meetings[meetingIndex].arr.length; i++){
                         let decryptedName = CryptoJS.AES.decrypt(Meetings[meetingIndex].arr[i],auth.currentUser.uid).toString(CryptoJS.enc.Utf8);
                         const name = decryptedName.split(" ")
@@ -399,6 +439,9 @@ function evaluateParticipantTable(doc){
                         Participants.unshift(currParticipant)
 
                     }
+                }
+                else{
+                    hideChooseRoster()
                 }
                 updateParticipantTable()
             }
@@ -560,6 +603,7 @@ function evaluateParticipantTable(doc){
             CurrentMeetingID = ""
             CurrentMessages = []
             meetingIndex = -1
+            CurrentRosterName = ""
             Participants = []
             MeetingIsOccurring = false
             EncounteredParticipants = new Set()
@@ -578,6 +622,7 @@ function evaluateParticipantTable(doc){
             CurrentMeetingID = ""
             Participants = []
             meetingIndex = -1
+            CurrentRosterName = ""
             document.getElementById("current-participants").innerHTML = ""
             document.getElementById("current-participant-number").innerHTML = ""
             CurrentMessages = []
@@ -990,7 +1035,7 @@ function addNotRegisteredUpdate(){
     deleteMeetingButton.prop('disabled',true)
     deleteMeetingButton.hide()
     meetingIDInputField.val(CurrentMeetingID)
-    meetingNameInputField.val(CurrentMeeting)
+    meetingNameInputField.val(Meetings[meetingIndex].name)
     meetingIDInputField.removeClass("is-invalid")
     meetingNameInputField.removeClass("is-invalid")
     while(studentInputTable.rows.length !== 0){
@@ -1009,6 +1054,7 @@ function addNotRegisteredCreate(){
     let deleteMeetingButton =  $("#delete-meeting-button")
     meetingIDInputField.prop('disabled',true)
     isEditingMeeting = false
+    document.getElementById("meeting-modal-title").innerHTML = "Create Roster"
     const studentInputTable = document.getElementById("student-input-table")
     deleteMeetingButton.prop('disabled',true)
     deleteMeetingButton.hide()
@@ -1267,7 +1313,7 @@ function checkDuplicateName(){
 function addMeeting(){
     if(check()){
         if(checkID()){
-            if(checkDuplicateID() || checkDuplicateName()){
+            if(checkDuplicateName()){
                 const user = auth.currentUser
                 const periodName = document.getElementById("meeting-name-input-field").value
                 const meetingId = document.getElementById("meeting-id-input-field").value
@@ -1287,7 +1333,8 @@ function addMeeting(){
                 })
             }
             else{
-                redNotification("You already have a roster with same meeting name and meeting id")
+                redNotification("You already have a roster with same roster name")
+                document.getElementById("meeting-name-input-field").classList.add("is-invalid")
             }
         }
     }
