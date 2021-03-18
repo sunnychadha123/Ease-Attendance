@@ -92,7 +92,6 @@ hr{
 }
 .dropdown-item{
     cursor: pointer;
-    overflow: auto;
 }
 .dropdown-item.roster-active{
     background-color: #F5B364;
@@ -108,11 +107,23 @@ hr{
     background-color: #ffffff;
     color: #F5B364;
 }
+.container .dropdown .dropdown-menu a:focus
+{
+    background-color: #ffffff;
+    color: #F5B364;
+}
+.container .dropdown .dropdown-menu a:active
+{
+    background-color: #ffffff;
+    color: #F5B364;
+}
 
 .dropdown-menu{
-    width: 500px;
-    max-height: 500px;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-width: 200px;
+    max-width: 700px;
+    max-height: 400px;
     z-index: 998!important;
 }
 

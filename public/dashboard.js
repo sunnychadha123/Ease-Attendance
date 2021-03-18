@@ -1317,20 +1317,26 @@ function addMeeting(){
                 const user = auth.currentUser
                 const periodName = document.getElementById("meeting-name-input-field").value
                 const meetingId = document.getElementById("meeting-id-input-field").value
-                if(isEditingMeeting){
-                    deleteMeeting()
+                if(periodName.length > 75){
+                    redNotification("Please keep your roster name to under 75 characters")
+                    document.getElementById("meeting-name-input-field").classList.add("is-invalid")
                 }
-                firestore.collection("Periods").doc(user.uid+meetingId+encodeURIComponent(periodName).replace(/\./g, '%2E')).set({
-                    useruid : user.uid,
-                    periodName : periodName,
-                    meetingId : meetingId,
-                    studentsNames: names,
-                }).then(() => {
-                    $("#add-edit-meeting-modal").modal("hide")
-                    greenNotification("Rosters Updated")
-                }).catch((error)=>{
-                    redNotification("Sorry, we had some trouble connecting to the server")
-                })
+                else{
+                    if(isEditingMeeting){
+                        deleteMeeting()
+                    }
+                    firestore.collection("Periods").doc(user.uid+meetingId+encodeURIComponent(periodName).replace(/\./g, '%2E')).set({
+                        useruid : user.uid,
+                        periodName : periodName,
+                        meetingId : meetingId,
+                        studentsNames: names,
+                    }).then(() => {
+                        $("#add-edit-meeting-modal").modal("hide")
+                        greenNotification("Rosters Updated")
+                    }).catch((error)=>{
+                        redNotification("Sorry, we had some trouble connecting to the server")
+                    })
+                }
             }
             else{
                 redNotification("You already have a roster with same roster name")
